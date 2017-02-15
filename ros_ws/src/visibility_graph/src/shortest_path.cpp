@@ -1,4 +1,4 @@
-//HER SKAL DIjKSTRA IMPLEMENTERES
+//HER SKAL A* IMPLEMENTERES
 
 extern "C" {
 #include <math.h>
