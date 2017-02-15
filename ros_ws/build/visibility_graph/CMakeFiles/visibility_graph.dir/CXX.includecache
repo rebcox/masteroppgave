@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/rebecca/GITHUB/mast/ros_ws/src/visibility_graph/src/visilibity.cpp
+visilibity.hpp
+/home/rebecca/GITHUB/mast/ros_ws/src/visibility_graph/src/visilibity.hpp
+cmath
+-
+vector
+-
+queue
+-
+set
+-
+list
+-
+algorithm
+-
+cstdlib
+-
+ctime
+-
+fstream
+-
+iostream
+-
+cstring
+-
+string
+-
+cassert
+-
+

@@ -1,0 +1,2 @@
+visibility_graph
+-DCATKIN_DEVEL_PREFIX=/home/rebecca/GITHUB/mast/ros_ws/devel -DCMAKE_INSTALL_PREFIX=/home/rebecca/GITHUB/mast/ros_ws/install -G Unix Makefiles

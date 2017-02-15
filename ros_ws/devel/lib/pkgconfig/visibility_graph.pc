@@ -1,0 +1,8 @@
+prefix=/home/rebecca/GITHUB/mast/ros_ws/devel
+
+Name: visibility_graph
+Description: Description of visibility_graph
+Version: 0.0.0
+Cflags: -I/home/rebecca/GITHUB/mast/ros_ws/src/visibility_graph/include/visibility_graph
+Libs: -L/home/rebecca/GITHUB/mast/ros_ws/devel/lib 
+Requires: 
