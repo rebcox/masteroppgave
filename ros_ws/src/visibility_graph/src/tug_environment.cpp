@@ -1,6 +1,6 @@
 #include "tug_environment.h"
 #include <sstream>
-
+#include <limits>
 
 namespace Tug
 {
@@ -10,63 +10,8 @@ namespace Tug
     std::cout << "Number of objects: " << paths_.size() << std::endl;
     if(!ok)
     {
-      std::cout << "Could not read environment file" << std::endl;
+      std::cout << "Could not read environment file or environment not valid" << std::endl;
     }
-    /*std::ifstream fin(filename.c_str());
-    //if(fin.fail()) { std::cerr << "\x1b[5;31m" << "Input file
-    //opening failed." << "\x1b[0m\n" << "\a \n"; exit(1);}
-    assert( !fin.fail() );
-
-    //Temporary vars for numbers to be read from file.
-    double x_temp, y_temp;  
-    std::vector<VisiLibity::Point> vertices_temp;
-
-    //Skip comments
-    while( fin.peek() == '/' ) 
-      fin.ignore(200,'\n');
-
-    //Read outer_boundary.
-    while ( fin.peek() != '/' ){
-      fin >> x_temp >> y_temp;
-      //Skip to next line.
-      fin.ignore(1);
-      if( fin.eof() )
-  { 
-    outer_boundary_.set_vertices(vertices_temp);
-    fin.close(); 
-    return;
-  }      
-      vertices_temp.push_back( VisiLibity::Point(x_temp, y_temp) );
-    }
-    outer_boundary_.set_vertices(vertices_temp);
-    vertices_temp.clear();
-    
-    //Read holes.
-    VisiLibity::Polygon polygon_temp;
-    while(1){
-      //Skip comments
-      while( fin.peek() == '/' )
-  fin.ignore(200,'\n');
-      if( fin.eof() )
-  { fin.close(); return; }
-      while( fin.peek() != '/' ){ 
-  fin >> x_temp >> y_temp;
-  if( fin.eof() )
-    { 
-      polygon_temp.set_vertices(vertices_temp);
-      holes_.push_back(polygon_temp);
-      fin.close(); 
-      return;
-    }
-  vertices_temp.push_back( VisiLibity::Point(x_temp, y_temp) );
-  //Skips to next line.
-  fin.ignore(1);
-      }
-      polygon_temp.set_vertices(vertices_temp);
-      holes_.push_back(polygon_temp);
-      vertices_temp.clear();
-    }*/
-
   }
 
   void Environment::add_constant_safety_margin(double margin) //, ClipperLib::Paths &solution)
@@ -77,20 +22,7 @@ namespace Tug
       co.AddPath(paths_[i], ClipperLib::jtMiter, ClipperLib::etClosedPolygon);
     }
     co.Execute(paths_with_safety_margin_, margin);
-
-/*    for (int i = 0; i < holes_.size(); ++i)
-    {
-      offset_polygon(holes_[i], margin);
-    }
-    //for each hole, add margin around by calling dilate
-  */
   }
-
-  void Environment::offset_polygon(VisiLibity::Polygon &polygon, int margin)
-  {
-    //Polygon is defined clock wise.
-  }
-
 
   void Environment::path_to_hole(const ClipperLib::Path &path, VisiLibity::Polygon &hole)
   {
@@ -169,7 +101,88 @@ namespace Tug
     }
     if (pg.size() > 0) ppg.push_back(pg);
     ifs.close();
+
+    return is_valid_environment(ppg);
+
     return true;
+  }
+
+  bool Environment::is_valid_environment(ClipperLib::Paths &paths)
+  {
+    std::cout << "hei" << std::endl;
+    std::cout << paths.size() << std::endl;
+
+    for (int i = 0; i < paths.size()-1; ++i)
+    {
+      for (int j = i+1; j < paths.size(); ++j)
+      {
+        std::cout << i << ", " << j << std::endl;
+        if(path_intersect(paths[i], paths[j]))
+        {
+          std::cout << "intersection!!!!!!!" << std::endl;
+
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  bool Environment::path_intersect(const ClipperLib::Path &path1, const ClipperLib::Path &path2)
+  {
+    //Check if bounding boxes intersects
+    ClipperLib::cInt x_max1, x_min1, y_max1, y_min1;
+    ClipperLib::cInt x_min2, x_max2, y_max2, y_min2;
+    find_max_and_min_in_path(path1, 'X', x_max1, x_min1);
+    find_max_and_min_in_path(path1, 'Y', y_max1, y_min1);
+    find_max_and_min_in_path(path2, 'X', x_max2, x_min2);
+    find_max_and_min_in_path(path2, 'Y', x_max2, x_min2);
+
+    ClipperLib::cInt width1 = abs(x_max1-x_min1);
+    ClipperLib::cInt height1 = abs(y_max1-y_min1);
+    ClipperLib::cInt width2 = abs(x_max2-x_min2);
+    ClipperLib::cInt height2 = abs(y_max2-y_min2);
+
+
+    return (abs(x_min1 - x_min2) * 2 < (width1 + width2)) &&
+           (abs(y_min1 - y_min2) * 2 < (height1 + height2));
+
+/*
+    return !(x_min2 > x_max1
+          || x_max2 < x_min1
+          || y_max2 > y_min1
+          || y_min2 < y_max1);*/
+
+    //PointInPolygon(const IntPoint pt, const Path &poly);
+  }
+
+  void Environment::find_max_and_min_in_path(const ClipperLib::Path &path, char coordinate, ClipperLib::cInt &max_val, ClipperLib::cInt &min_val) //, ClipperLib::cInt &y_max, ClipperLib::cInt &y_min)
+  {
+    if (!(coordinate == 'X' || coordinate == 'Y'))
+    {
+      return;
+    }
+
+    max_val = (ClipperLib::cInt)std::numeric_limits<int>::min();
+    min_val = (ClipperLib::cInt)std::numeric_limits<int>::max();
+
+    ClipperLib::cInt current;
+    for (int i = 0; i < path.size(); ++i)
+    {
+      if (coordinate == 'X')
+        current = path[i].X;
+      else
+        current = path[i].Y;
+
+      if (current < min_val)
+      {
+        min_val = current;
+      }
+      else if (current > max_val)
+      {
+        max_val = current;
+      }
+    }
   }
 
   void Environment::save_environment_as_svg(const std::string filename)

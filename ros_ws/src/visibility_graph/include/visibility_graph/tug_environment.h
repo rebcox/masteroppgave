@@ -28,6 +28,9 @@ namespace Tug
       void convert_to_visilibity_environment(const ClipperLib::Paths &paths);
       void path_to_hole(const ClipperLib::Path &path, VisiLibity::Polygon &hole);
       void create_visibility_graph(double epsilon);
+      bool is_valid_environment(ClipperLib::Paths &paths);
+      bool path_intersect(const ClipperLib::Path &path1, const ClipperLib::Path &path2);
+      void find_max_and_min_in_path(const ClipperLib::Path &path, char coordinate, ClipperLib::cInt &max_val, ClipperLib::cInt &min_val);
   };
 }
 

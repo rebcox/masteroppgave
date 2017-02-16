@@ -272,7 +272,7 @@ int main(int argc, char **argv)
 
   VisiLibity::Point start(-15.0, -15.0);
   //Construct the finish Point
-  VisiLibity::Point finish(150, 150);
+  VisiLibity::Point finish(230, 55); //150, 150);
 
   //Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/ros_ws/src/visibility_graph/src/ex1tug.txt", 1.0);
 //  VisiLibity::Polyline my_shortest_path;
@@ -331,8 +331,8 @@ int main(int argc, char **argv)
 */
   tug_environment.save_environment_as_svg("sol1.svg");
 
-  tug_environment.add_constant_safety_margin(10); //, solution);
-  tug_environment.save_environment_as_svg("sol2.svg");
+  //tug_environment.add_constant_safety_margin(10); //, solution);
+  //tug_environment.save_environment_as_svg("sol2.svg");
 
 
   VisiLibity::Polyline my_shortest_path_after_safety;
