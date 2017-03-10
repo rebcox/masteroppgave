@@ -12,29 +12,20 @@ namespace Tug
   {
   public:
     A_star_search(const Point &start,
-                  const Point &finish, //const VisiLibity::Visibility_Graph &visibility_graph,
-                  const VisiLibity::Visibility_Graph &visibility_graph,
-                  const VisiLibity::Visibility_Polygon &start_visibility_polygon,
-                  const VisiLibity::Visibility_Polygon &finish_visibility_polygon,
+                  const Point &finish,
                   const std::vector<Point> &points,
-                  //const std::vector<bool> &points_to_remove,
                   VisiLibity::Polyline &shortest_path,
                   double epsilon);
     ~A_star_search(){};
     VisiLibity::Polyline best_first_search(const Point &start,
                                           const Point &finish,
-                                          const VisiLibity::Visibility_Graph &visibility_graph,
-                                          const VisiLibity::Visibility_Polygon &start_visibility_polygon,
-                                          const VisiLibity::Visibility_Polygon &finish_visibility_polygon,
-                                          const std::vector<Point> points_in_environment); //,
-                                          //const std::vector<bool> &points_to_remove);
+                                          const std::vector<Point> &points_in_environment);
   private:
     double epsilon_;
     double heurestic(const Point &point1, const Point &point2);
     double eucledian_distance(const Point &point1, const Point &point2);
     bool   trivial_case(const Point &start,
                         const Point &finish,
-                        const VisiLibity::Visibility_Polygon &start_visibility_polygon,
                         VisiLibity::Polyline &shortest_path_output);
     void attach_child(Shortest_Path_Node *child, Shortest_Path_Node *current_node, 
                       std::vector<Shortest_Path_Node> &children,

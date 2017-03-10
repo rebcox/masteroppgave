@@ -94,7 +94,7 @@ namespace Tug
     }
   }
 
-  const VisiLibity::Environment &Environment::visilibity_envrionment() const
+  const VisiLibity::Environment &Environment::visilibity_environment() const
   {
     if (environment_has_safety_margin)
     {
@@ -224,7 +224,9 @@ namespace Tug
       for (int j = 0; j < paths[i].size(); ++j)
       {
         //Point(paths[i][j], paths[i][j-1], paths[j+1]);
-        tug_points.push_back(Point(paths[i][j]));
+        //tug_points.push_back(Point(paths[i][j]));
+        tug_points.push_back(Point(paths[i][j], visilibity_environment()));
+
         //std::cout << tug_points.back() << std::endl;
       }
       int path_size = paths[i].size();
@@ -375,6 +377,7 @@ namespace Tug
     if (environment_has_safety_margin)
     {
       svg.AddPaths(paths_with_safety_margin_);
+      svg.AddPaths(paths_);
     }
     else
     {

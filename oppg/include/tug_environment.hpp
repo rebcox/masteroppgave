@@ -15,7 +15,7 @@ namespace Tug
     public:
       friend class Shortest_path;
       Environment(const std::string& filename, double scale, double epsilon);
-      const VisiLibity::Environment &visilibity_envrionment() const;
+      const VisiLibity::Environment &visilibity_environment() const;
       void add_constant_safety_margin(double margin); //, ClipperLib::Paths &solution);
       bool load_from_file(ClipperLib::Paths &ppg, const std::string& filename, double scale);
       VisiLibity::Polyline shortest_path(const Point &start, const Point &finish); //, double epsilon);

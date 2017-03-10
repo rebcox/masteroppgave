@@ -4,23 +4,15 @@
 namespace Tug
 {
   A_star_search::A_star_search(const Point &start,
-                              const Point &finish, //const VisiLibity::Visibility_Graph &visibility_graph,
-                              const VisiLibity::Visibility_Graph &visibility_graph,
-                              const VisiLibity::Visibility_Polygon &start_visibility_polygon,
-                              const VisiLibity::Visibility_Polygon &finish_visibility_polygon,
+                              const Point &finish, 
                               const std::vector<Point> &points,
-                              //const std::vector<bool> &points_to_remove,
                               VisiLibity::Polyline &shortest_path,
                               double epsilon)
   {
     epsilon_ = epsilon;
     shortest_path = best_first_search(start, 
                                       finish, 
-                                      visibility_graph,
-                                      start_visibility_polygon,
-                                      finish_visibility_polygon,
-                                      points); //,
-                                      //points_to_remove);
+                                      points);
   }
 
   double A_star_search::heurestic(const Point &point1, const Point &point2)
@@ -36,7 +28,6 @@ namespace Tug
 
   bool A_star_search::trivial_case(const Point &start,
                                   const Point &finish,
-                                  const VisiLibity::Visibility_Polygon &start_visibility_polygon,
                                   VisiLibity::Polyline &shortest_path_output)
   {
     if( heurestic(start,finish) <= epsilon_ )
@@ -44,7 +35,7 @@ namespace Tug
       shortest_path_output.push_back(start);
       return true;
     }
-    else if( finish.in(start_visibility_polygon, epsilon_) )
+    else if( start.is_visible(finish) )
     {
       shortest_path_output.push_back(start);
       shortest_path_output.push_back(finish);
@@ -53,62 +44,14 @@ namespace Tug
     return false;
   }
 
-  void A_star_search::attach_child(Shortest_Path_Node *child, Shortest_Path_Node *current_node, 
-                                  std::vector<Shortest_Path_Node> &children,
-                                  const VisiLibity::Environment &environment, 
-                                  const Point &finish,
-                                  int index)
-  {
-    /*
-      child.setBestParent(parent);
-      parent.children.add(child);
-      child.setG(parent.getG()+ child.getCost());
-      child.setH(calculteH(child));
-
-            child.vertex_index = index;
-            child.parent_search_tree_location = current_node.search_tree_location;
-            child.cost_to_come = heurestic( start , environment(index) );
-            child.estimated_cost_to_go = heurestic( environment(index) , finish );     
-            children.push_back( child );
-
-*/
-/*
-
-            child.vertex_index = i;
-              child.parent_search_tree_location = current_node.search_tree_location;
-              
-              child.cost_to_come = current_node.cost_to_come
-                + heurestic( environment(current_node.vertex_index), environment(i) );
-
-              child.estimated_cost_to_go = heurestic( environment(i) , finish );
-              
-              children.push_back( child );
-*/
-
-      //Shortest_Path_Node child;
-     /* child->vertex_index = index;
-      child->parent_search_tree_location = current_node->search_tree_location;
-
-      child->cost_to_come = current_node->cost_to_come +
-                           heurestic( points_in_environment[current_node->vertex_index], points_in_environment[index] );
-
-      child->estimated_cost_to_go = heurestic( points_in_environment[index] , finish );*/
-      //children.push_back( child );
-     // return child;
-  }
-
   VisiLibity::Polyline A_star_search::best_first_search(const Point &start,
                                                         const Point &finish,
-                                                        const VisiLibity::Visibility_Graph &visibility_graph,
-                                                        const VisiLibity::Visibility_Polygon &start_visibility_polygon,
-                                                        const VisiLibity::Visibility_Polygon &finish_visibility_polygon,
-                                                        const std::vector<Point> points_in_environment) //,
-                                                        //const std::vector<bool> &points_to_remove)
+                                                        const std::vector<Point> &points_in_environment)
   {
     
     VisiLibity::Polyline shortest_path_output;
 
-    if(trivial_case(start, finish, start_visibility_polygon, shortest_path_output))
+    if(trivial_case(start, finish, shortest_path_output))
     {
       return shortest_path_output;
     }
@@ -121,7 +64,8 @@ namespace Tug
     for(unsigned k=0; k<points_in_environment.size(); k++)
     {
       if( !points_in_environment[k].is_on_outer_boundary &&
-           points_in_environment[k].in( start_visibility_polygon , epsilon_ )  )
+           //points_in_environment[k].in( start_visibility_polygon , epsilon_ )  
+           start.is_visible(points_in_environment[k]))
       {
         start_visible[k] = true;        
       }
@@ -130,7 +74,8 @@ namespace Tug
         start_visible[k] = false;        
       }
       if( !points_in_environment[k].is_on_outer_boundary &&
-           points_in_environment[k].in( finish_visibility_polygon , epsilon_ )  )
+           //points_in_environment[k].in( finish_visibility_polygon , epsilon_ )  
+           finish.is_visible(points_in_environment[k]))
       {
         finish_visible[k] = true;        
       }
@@ -211,7 +156,7 @@ namespace Tug
         {
           if( current_node.vertex_index != i )
           {
-            if( visibility_graph( current_node.vertex_index , i ) && !points_in_environment[i].is_on_outer_boundary)//!points_to_remove[i] )
+            if( points_in_environment[current_node.vertex_index].is_visible(points_in_environment[i]) && !points_in_environment[i].is_on_outer_boundary)
             {
               //attach_child(&child, &current_node, children, environment, finish, i);
 

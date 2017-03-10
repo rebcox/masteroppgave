@@ -5,27 +5,14 @@
 #include <sstream>
 #include <string>
 #include "include/tug_point.hpp"
+#include "include/tug_all_pairs_shortest_path.hpp"
+
 
 int main(int argc, char **argv)
 {
-  //VisiLibity::Point start(1.0, 235);
-  //VisiLibity::Point finish(400, 400);
-  //VisiLibity::Point finish(235, 185);
- // VisiLibity::Point finish(220, 170);
- // VisiLibity::Point finish(40, 10);
 
-  //VisiLibity::Point finish(150.0, 150.0);
-
-  //Tug::Point start(30, 180);
-
-//  Tug::Point finish(347, 230);
-  
-  Tug::Point start(0, 320);
-
-  Tug::Point finish(347, 180);
-
- //Tug::Point finish(350, 350);
-
+ // Tug::Point start(1, 320);
+ // Tug::Point finish(325, 180);
 
 
   ClipperLib::Paths solution;
@@ -38,7 +25,12 @@ int main(int argc, char **argv)
 
   tug_environment.save_environment_as_svg("sol_without.svg", my_shortest_path_after_safety);
 
-  tug_environment.add_constant_safety_margin(40);
+  tug_environment.add_constant_safety_margin(43);
+
+
+  Tug::Point start(30, 180, tug_environment.visilibity_environment());
+  Tug::Point finish(347, 230, tug_environment.visilibity_environment());
+
 
   
   my_shortest_path_after_safety = tug_environment.shortest_path(start,finish); //,epsilon);
@@ -56,5 +48,11 @@ int main(int argc, char **argv)
     }
   }
   std::cout << "Shortest path: " << shortest_path_print.str().c_str() << std::endl;
+
+
+  Tug::Environment asps_env("/home/rebecca/GITHUB/mast/oppg/environments/apsp_env.txt", 1.0, epsilon);
+
+  Tug::All_pairs_shortest_path apsp(asps_env);
+
   return 0;
 }

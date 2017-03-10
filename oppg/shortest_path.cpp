@@ -33,43 +33,29 @@ namespace Tug
     }
 
     double epsilon = 0.001;
-    //std::vector<bool> points_to_remove;
-    //std::vector<Point> points = environment.points();
-    //points_to_remove = points_touching_outer_boundary(environment);
 
-    Point start_point_to_a_star;
-    Point finish_point_to_a_star;
+    const Point *start_point_to_a_star;
+    const Point *finish_point_to_a_star;
 
     if (index_start > 0)
     {
-      start_point_to_a_star = second_point;
+      start_point_to_a_star = &second_point;
     }
     else
     {
-      start_point_to_a_star = start;
+      start_point_to_a_star = &start;
     }
     if (index_finish > 0)
     {
-      finish_point_to_a_star = second_to_last_point;
+      finish_point_to_a_star = &second_to_last_point;
     }
     else
     {
-      finish_point_to_a_star = finish;
+      finish_point_to_a_star = &finish;
     }
     
-    VisiLibity::Visibility_Polygon start_visibility_polygon(start_point_to_a_star, 
-                                                            environment.visilibity_envrionment(), 
-                                                            epsilon);
-
-    VisiLibity::Visibility_Polygon finish_visibility_polygon(finish_point_to_a_star, 
-                                                              environment.visilibity_envrionment(), 
-                                                              epsilon);
-
-    A_star_search(start_point_to_a_star, 
-                  finish_point_to_a_star,
-                  environment.visibility_graph(),
-                  start_visibility_polygon,
-                  finish_visibility_polygon,
+    A_star_search(*start_point_to_a_star, 
+                  *finish_point_to_a_star,
                   environment.points(), 
                   shortest_path, 
                   epsilon);
@@ -188,7 +174,7 @@ namespace Tug
       }
 
     }
-
+    current_shortest.create_visibility_polygon(env.visilibity_environment());
     return current_shortest; //point_closest_to_line_segment(point, line_segments[shortest]);
   }
 
