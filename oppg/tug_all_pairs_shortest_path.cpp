@@ -4,8 +4,8 @@ namespace Tug
 {
   All_pairs_shortest_path::All_pairs_shortest_path(const Environment &environment)
   {
-    std::vector<std::vector<int>> apsh = find_optimal_path_from_all_points(environment);
-    write_to_file(apsh);
+    std::vector<std::vector<int>> apsp = find_optimal_path_from_all_points(environment);
+    write_to_file(apsp);
   }
 
   void All_pairs_shortest_path::write_to_file(const std::vector<std::vector<int>> &apsp)
@@ -48,7 +48,7 @@ namespace Tug
       optimal_vertex[i] = std::vector<int>(environment.n()-4);
     }
     //int optimal_vertex[environment.n()][environment.n()];
-    VisiLibity::Polyline shortest_path_temp;
+    Polyline shortest_path_temp;
 
       for (int i = 0; i < environment.n()-4; ++i)
       {
@@ -67,7 +67,7 @@ namespace Tug
                           epsilon_);
             if (shortest_path_temp.size() > 0)
             {
-              optimal_vertex[i][j] = get_point_number(shortest_path_temp[1], environment); 
+              optimal_vertex[i][j] = shortest_path_temp[1].id(); //get_point_number(shortest_path_temp[1], environment); 
             }
             else
             {

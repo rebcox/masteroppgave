@@ -3,6 +3,7 @@
 
 #include "clipper.hpp"  
 #include "visilibity.hpp"
+#include "tug_polyline.hpp"
 
 #include <cmath>
 #include <algorithm>
@@ -59,14 +60,14 @@ class SVGBuilder
 
 private:
   PolyInfoList polyInfos;
-  VisiLibity::Polyline polyline;
+  Tug::Polyline polyline;
 
 
 public:
   StyleInfo style;
 
   void AddPaths(ClipperLib::Paths& poly);
-  void AddPolyline(const VisiLibity::Polyline& polyline);
+  void AddPolyline(const Tug::Polyline& polyline);
 
   bool SaveToFile(const std::string& filename, double scale, int margin);
 }; //SVGBuilder

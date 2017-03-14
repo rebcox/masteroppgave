@@ -14,10 +14,10 @@ namespace Tug
     A_star_search(const Point &start,
                   const Point &finish,
                   const std::vector<Point> &points,
-                  VisiLibity::Polyline &shortest_path,
+                  Polyline &shortest_path,
                   double epsilon);
     ~A_star_search(){};
-    VisiLibity::Polyline best_first_search(const Point &start,
+    Polyline best_first_search(const Point &start,
                                           const Point &finish,
                                           const std::vector<Point> &points_in_environment);
   private:
@@ -26,13 +26,13 @@ namespace Tug
     double eucledian_distance(const Point &point1, const Point &point2);
     bool   trivial_case(const Point &start,
                         const Point &finish,
-                        VisiLibity::Polyline &shortest_path_output);
+                        Polyline &shortest_path_output);
     void attach_child(Shortest_Path_Node *child, Shortest_Path_Node *current_node, 
                       std::vector<Shortest_Path_Node> &children,
                       const VisiLibity::Environment &environment,
                       const Point &finish,
                       int index);
-    void reconstruct_path(VisiLibity::Polyline &shortest_path_output,
+    void reconstruct_path(Polyline &shortest_path_output,
                           Shortest_Path_Node &current_node,
                           const Point &start,
                           const Point &finish,

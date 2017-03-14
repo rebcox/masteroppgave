@@ -16,13 +16,13 @@ namespace Tug
   {
   public:
     Shortest_path(Tug::Environment &environment, const Point &start, 
-                  const Point &finish, VisiLibity::Polyline &shortest_path);
+                  const Point &finish, Polyline &shortest_path);
     std::vector<Waypoint> get_waypoints();
 
   private:
-   // VisiLibity::Polyline shortest_path_;
+   // Polyline shortest_path_;
     std::vector<Waypoint> waypoints_;
-    void set_waypoints(VisiLibity::Polyline &shortest_path);
+    void set_waypoints(Polyline &shortest_path);
     bool is_valid_start_and_end_points(const Point &start, const Point &finish, 
                                       const Tug::Environment &environment);
     int point_within_safety_margin(const Point &point, const Tug::Environment &environment);

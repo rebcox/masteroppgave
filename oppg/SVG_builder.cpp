@@ -39,7 +39,7 @@ const std::string poly_end [] =
     polyInfos.push_back(PolyInfo(poly, style));
   }
 
-  void SVGBuilder::AddPolyline(const VisiLibity::Polyline& polylinein)
+  void SVGBuilder::AddPolyline(const Tug::Polyline& polylinein)
   {
     polyline = polylinein;  
   }

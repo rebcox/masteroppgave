@@ -6,6 +6,7 @@
 #include "SVG_builder.hpp"
 #include <vector>
 #include "tug_point.hpp"
+#include "tug_polyline.hpp"
 //#include "a_star_search.h"
 
 namespace Tug
@@ -18,9 +19,9 @@ namespace Tug
       const VisiLibity::Environment &visilibity_environment() const;
       void add_constant_safety_margin(double margin); //, ClipperLib::Paths &solution);
       bool load_from_file(ClipperLib::Paths &ppg, const std::string& filename, double scale);
-      VisiLibity::Polyline shortest_path(const Point &start, const Point &finish); //, double epsilon);
+      Polyline shortest_path(const Point &start, const Point &finish); //, double epsilon);
       void save_environment_as_svg(const std::string filename);
-      void save_environment_as_svg(const std::string filename, const VisiLibity::Polyline &shortest_path);
+      void save_environment_as_svg(const std::string filename, const Polyline &shortest_path);
       bool has_safety_margin(){return environment_has_safety_margin;};
       unsigned n() const;
       const VisiLibity::Visibility_Graph &visibility_graph() const;

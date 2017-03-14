@@ -3,7 +3,7 @@
 namespace Tug
 {
   Shortest_path::Shortest_path(Tug::Environment &environment, const Point &start, 
-                              const Point &finish, VisiLibity::Polyline &shortest_path)
+                              const Point &finish, Polyline &shortest_path)
   {
 
     Point second_to_last_point;
@@ -184,7 +184,7 @@ namespace Tug
     return Point(pt);
   }
 
-  void Shortest_path::set_waypoints(VisiLibity::Polyline &shortest_path)
+  void Shortest_path::set_waypoints(Polyline &shortest_path)
   {
     for (int i = 0; i < shortest_path.size(); ++i)
     {

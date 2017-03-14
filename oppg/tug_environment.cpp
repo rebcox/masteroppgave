@@ -219,13 +219,25 @@ namespace Tug
     int k = 0;
     tug_points.clear();
 
+    int counter = 0;
     for (int i = 0; i < paths.size(); ++i)
     {
       for (int j = 0; j < paths[i].size(); ++j)
       {
         //Point(paths[i][j], paths[i][j-1], paths[j+1]);
         //tug_points.push_back(Point(paths[i][j]));
-        tug_points.push_back(Point(paths[i][j], visilibity_environment()));
+
+        if (i != 0) //not outer boundary
+        {
+          //pt.set_point_id(++counter);
+          tug_points.push_back(Point(paths[i][j], visilibity_environment(), ++counter));
+
+        }
+        else
+        {
+          tug_points.push_back(Point(paths[i][j], visilibity_environment()));
+
+        }
 
         //std::cout << tug_points.back() << std::endl;
       }
@@ -248,9 +260,9 @@ namespace Tug
     mark_points_touching_outer_boundary();
   }
 
-  VisiLibity::Polyline Environment::shortest_path(const Point &start, const Point &finish) //, double epsilon)
+  Polyline Environment::shortest_path(const Point &start, const Point &finish) //, double epsilon)
   {
-    VisiLibity::Polyline shortest_path;
+    Polyline shortest_path;
     std::vector<bool> points_to_remove;
 
     Shortest_path((*this), start,finish,shortest_path);
@@ -363,11 +375,11 @@ namespace Tug
 
   void Environment::save_environment_as_svg(const std::string filename)
   {
-    VisiLibity::Polyline dummy;
+    Polyline dummy;
     save_environment_as_svg(filename, dummy);
   }
 
-  void Environment::save_environment_as_svg(const std::string filename, const VisiLibity::Polyline &shortest_path)
+  void Environment::save_environment_as_svg(const std::string filename, const Polyline &shortest_path)
   {
     SVGBuilder svg;    
     svg.style.brushClr = 0x129C0000;

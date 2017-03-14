@@ -19,9 +19,11 @@ int main(int argc, char **argv)
   //double epsilon = 0.000000001;
   double epsilon = 0.001;
 
-  Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/ex1tug.txt", 1.0, epsilon);
+  //Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/ex1tug.txt", 1.0, epsilon);
+  Tug::Environment tug_environment("/Users/rebeccacox/GitHub/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
 
-  VisiLibity::Polyline my_shortest_path_after_safety;
+
+  Tug::Polyline my_shortest_path_after_safety;
 
   tug_environment.save_environment_as_svg("sol_without.svg", my_shortest_path_after_safety);
 
@@ -49,8 +51,9 @@ int main(int argc, char **argv)
   }
   std::cout << "Shortest path: " << shortest_path_print.str().c_str() << std::endl;
 
+//  Tug::Environment asps_env("/home/rebecca/GITHUB/mast/oppg/environments/apsp_env.txt", 1.0, epsilon);
 
-  Tug::Environment asps_env("/home/rebecca/GITHUB/mast/oppg/environments/apsp_env.txt", 1.0, epsilon);
+  Tug::Environment asps_env("/Users/rebeccacox/GitHub/mast/oppg/environments/apsp_env.txt", 1.0, epsilon);
 
   Tug::All_pairs_shortest_path apsp(asps_env);
 

@@ -6,13 +6,17 @@ namespace Tug
   A_star_search::A_star_search(const Point &start,
                               const Point &finish, 
                               const std::vector<Point> &points,
-                              VisiLibity::Polyline &shortest_path,
+                              Polyline &shortest_path,
                               double epsilon)
   {
     epsilon_ = epsilon;
     shortest_path = best_first_search(start, 
                                       finish, 
                                       points);
+    /*for (int i = 0; i < points.size(); ++i)
+    {
+      std::cout << points[i].id() << std::endl;
+    }*/
   }
 
   double A_star_search::heurestic(const Point &point1, const Point &point2)
@@ -28,7 +32,7 @@ namespace Tug
 
   bool A_star_search::trivial_case(const Point &start,
                                   const Point &finish,
-                                  VisiLibity::Polyline &shortest_path_output)
+                                  Polyline &shortest_path_output)
   {
     if( heurestic(start,finish) <= epsilon_ )
     {
@@ -44,12 +48,12 @@ namespace Tug
     return false;
   }
 
-  VisiLibity::Polyline A_star_search::best_first_search(const Point &start,
+  Polyline A_star_search::best_first_search(const Point &start,
                                                         const Point &finish,
                                                         const std::vector<Point> &points_in_environment)
   {
     
-    VisiLibity::Polyline shortest_path_output;
+    Polyline shortest_path_output;
 
     if(trivial_case(start, finish, shortest_path_output))
     {
@@ -253,7 +257,7 @@ namespace Tug
     return shortest_path_output;
   }
 
-  void A_star_search::reconstruct_path(VisiLibity::Polyline &shortest_path_output,
+  void A_star_search::reconstruct_path(Polyline &shortest_path_output,
                                       Shortest_Path_Node &current_node,
                                       const Point &start,
                                       const Point &finish,
@@ -279,7 +283,18 @@ namespace Tug
             and heurestic( shortest_path_output[ shortest_path_output.size()- 1 ],
               waypoint ) > epsilon_ )
         {
-          shortest_path_output.push_back( waypoint );          
+          if( backtrace_itr->vertex_index < points_in_environment.size() )
+          {
+           // waypoint = points_in_environment[ backtrace_itr->vertex_index ];
+            shortest_path_output.push_back( points_in_environment[ backtrace_itr->vertex_index ] );
+
+          }
+          else if( backtrace_itr->vertex_index == points_in_environment.size() )
+          {
+            shortest_path_output.push_back(start);
+            //waypoint = start;          
+          }
+
         }
         if( backtrace_itr->cost_to_come == 0 )
         {

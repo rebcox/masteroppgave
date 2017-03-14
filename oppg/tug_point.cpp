@@ -2,32 +2,47 @@
 
 namespace Tug
 {
-  Point::Point(const ClipperLib::IntPoint &point)
+  Point::Point(const ClipperLib::IntPoint &point,  int point_id)  : point_id_(point_id)
   {
     set_x((double)point.X);
     set_y((double)point.Y);
+
   }
 
-  Point::Point(double x_temp, double y_temp, const VisiLibity::Environment &environment)
+  Point::Point(double x_temp, double y_temp, const VisiLibity::Environment &environment,  int point_id)  : point_id_(point_id)
   {
     x_ = x_temp;
     y_ = y_temp;
     create_visibility_polygon(environment);
   }
 
-  Point::Point(const ClipperLib::IntPoint &point, const VisiLibity::Environment &environment)
+  Point::Point(const ClipperLib::IntPoint &point, const VisiLibity::Environment &environment, int point_id) : point_id_(point_id)
   {
     set_x((double)point.X);
     set_y((double)point.Y);
     create_visibility_polygon(environment);
   }
 
-  Point::Point(const Point &obj)
+  Point::Point(const Point &obj) : point_id_(obj.point_id_)
   {
     x_ = obj.x_;
     y_ = obj.y_;
     is_on_outer_boundary = obj.is_on_outer_boundary;
     visibility_polygon_ = obj.visibility_polygon_;
+  }
+
+  Point& Point::operator=(const Point &other)
+  {
+    if(&other == this)
+      return *this;
+
+    this->x_ = other.x();
+    this->y_ = other.y();
+    this->is_on_outer_boundary = other.is_on_outer_boundary;
+    this->visibility_polygon_ = other.visibility_polygon();
+    //this->point_id_=other.id();
+
+    return *this;
   }
 
   bool Point::is_visible(const Tug::Point &point) const
