@@ -92,6 +92,94 @@ namespace Tug
     return out;
   }*/
 
+  Shortest_path::Shortest_path(const std::string &all_pairs_shortest_path)
+  {
+    std::cout << "Reading file: " << all_pairs_shortest_path << std::endl;
+
+    if (!read_file(all_pairs_shortest_path))
+    {
+      std::cout << "Could not read file: " << all_pairs_shortest_path << std::endl;
+    }
+
+  }
+
+  void Shortest_path::calculate_shortest_path(int start_id, int finish_id, Polyline &shortest_path, Environment &environment)
+  {
+    bool valid_path = true;
+    std::vector<int> path;
+
+    path.push_back(start_id);
+    shortest_path.push_back(environment(start_id+3));
+
+    int next_vertex = apsp_[finish_id-1][start_id-1];
+    int last_vertex = 0;
+    //TODO: -1
+    while (next_vertex != last_vertex)
+    {
+      path.push_back(next_vertex);
+      shortest_path.push_back(environment(next_vertex+3));
+      last_vertex = next_vertex;
+      next_vertex = apsp_[finish_id-1][last_vertex-1];
+      if (next_vertex == -1)
+      {
+        path.clear();
+        shortest_path.clear();
+        valid_path = false;
+        break;
+      }
+    } 
+    if (valid_path)
+    {
+      shortest_path.push_back(environment(finish_id+3));
+      path.push_back(finish_id);
+    }
+
+
+    //return path;
+  }
+
+  bool Shortest_path::read_file(const std::string &filename)
+  {
+    std::ifstream ifs(filename);
+    if (!ifs) return false;
+    std::string line;
+    //std::vector<std::vector<int>> apsp;
+    apsp_.clear();
+
+    while (std::getline(ifs, line))
+    {
+      apsp_.push_back(std::vector<int>());
+      std::stringstream ss(line);
+      while (1)
+      {
+        char c = ss.peek();  
+        if (c == ' ') 
+        {
+          ss.read(&c, 2); 
+        }
+        int id;
+        if(!(ss >> id))
+        {
+          break;
+        }
+        apsp_.back().push_back(id);
+      }
+    }
+
+    ifs.close();
+
+    for (int i = 0; i < apsp_.size(); ++i)
+    {
+      for (int j = 0; j < apsp_[i].size(); ++j)
+      {
+        std::cout << apsp_[i][j] << "  ";
+      }
+      std::cout << std::endl;
+    }
+    return true;
+  }
+
+
   bool Shortest_path::point_is_on_outer_boundary(const Point &point, const Tug::Environment &env)
   {
     //outer 

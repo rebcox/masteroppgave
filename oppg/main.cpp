@@ -6,6 +6,7 @@
 #include <string>
 #include "include/tug_point.hpp"
 #include "include/tug_all_pairs_shortest_path.hpp"
+#include "include/shortest_path.h"
 
 
 int main(int argc, char **argv)
@@ -19,8 +20,16 @@ int main(int argc, char **argv)
   //double epsilon = 0.000000001;
   double epsilon = 0.001;
 
-  //Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/ex1tug.txt", 1.0, epsilon);
-  Tug::Environment tug_environment("/Users/rebeccacox/GitHub/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
+  Tug::Environment tug_env("/home/rebecca/GITHUB/mast/oppg/environments/ex1tug.txt", 1.0, epsilon);
+  Tug::Polyline shortest_p;
+  Tug::Point s(70,70,tug_env.visilibity_environment());
+  Tug::Point f(320,310,tug_env.visilibity_environment());
+
+  shortest_p = tug_env.shortest_path(s,f);
+  tug_env.save_environment_as_svg("test.svg", shortest_p);
+
+  Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/ex1tug.txt", 1.0, epsilon);
+  //Tug::Environment tug_environment("/Users/rebeccacox/GitHub/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
 
 
   Tug::Polyline my_shortest_path_after_safety;
@@ -51,11 +60,25 @@ int main(int argc, char **argv)
   }
   std::cout << "Shortest path: " << shortest_path_print.str().c_str() << std::endl;
 
-//  Tug::Environment asps_env("/home/rebecca/GITHUB/mast/oppg/environments/apsp_env.txt", 1.0, epsilon);
+  //Tug::Environment asps_env("/home/rebecca/GITHUB/mast/oppg/environments/apsp_env.txt", 1.0, epsilon);
+  Tug::Environment asps_env("/home/rebecca/GITHUB/mast/oppg/environments/ex1tug.txt", 1.0, epsilon);
 
-  Tug::Environment asps_env("/Users/rebeccacox/GitHub/mast/oppg/environments/apsp_env.txt", 1.0, epsilon);
+ // Tug::Environment asps_env("/Users/rebeccacox/GitHub/mast/oppg/environments/apsp_env.txt", 1.0, epsilon);
 
   Tug::All_pairs_shortest_path apsp(asps_env);
+
+  Tug::Shortest_path sp("/home/rebecca/GITHUB/mast/oppg/build/all_pairs_shortest_path.txt");
+
+  Tug::Polyline shortest_path_calculated;
+
+  sp.calculate_shortest_path(1, 13, shortest_path_calculated, tug_env);
+
+  std::cout << "Shortest path from 1 to 13: ";
+    for (int i = 0; i < shortest_path_calculated.size(); ++i)
+    {
+      std::cout << shortest_path_calculated[i] << "  ";
+    }
+    std::cout << std::endl;
 
   return 0;
 }

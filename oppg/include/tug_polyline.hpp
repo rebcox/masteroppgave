@@ -10,8 +10,8 @@ namespace Tug
   {
   public:
     Polyline(){};
-    Polyline(const std::vector<Point>& vertices_temp)
-    { vertices_ = vertices_temp; }
+    /*Polyline(const std::vector<Point>& vertices_temp)
+    { vertices_ = vertices_temp; }*/
     
     Point operator [] (unsigned i) const
     { return vertices_[i]; }
@@ -31,10 +31,10 @@ namespace Tug
     void pop_back()
     { vertices_.pop_back(); }
 
-    void set_vertices(const std::vector<Point>& vertices_temp)
-    { vertices_ = vertices_temp; }
+    /*void set_vertices(const std::vector<Point>& vertices_temp)
+    { vertices_ = vertices_temp; }*/
 
-    void reverse(){std::reverse( vertices_.begin() , vertices_.end() );}
+    void reverse(){std::reverse( std::begin(vertices_) , std::end(vertices_ ) );}
 
   private:
     std::vector<Point> vertices_;

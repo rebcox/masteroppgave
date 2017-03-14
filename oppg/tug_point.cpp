@@ -41,8 +41,8 @@ namespace Tug
     this->is_on_outer_boundary = other.is_on_outer_boundary;
     this->visibility_polygon_ = other.visibility_polygon();
     //this->point_id_=other.id();
-
     return *this;
+
   }
 
   bool Point::is_visible(const Tug::Point &point) const

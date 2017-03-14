@@ -20,11 +20,9 @@ namespace Tug
       }
       file_output << "\n";
     }
-
+    std::cout << "All pairs shortest path written to file\n";
     file_output.close();
   }
-
-
 
   int All_pairs_shortest_path::get_point_number(const VisiLibity::Point &point, const Environment &environment)
   {

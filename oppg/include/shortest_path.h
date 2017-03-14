@@ -17,11 +17,19 @@ namespace Tug
   public:
     Shortest_path(Tug::Environment &environment, const Point &start, 
                   const Point &finish, Polyline &shortest_path);
+    Shortest_path(const std::string &all_pairs_shortest_path);
+
+    //void calculate_shortest_path(const Point &start, const Point &finish, Polyline &shortest_path, Tug::Environment &environment);
+    void calculate_shortest_path(int start_id, int finish_id, Polyline &shortest_path, Environment &environment);
+
     std::vector<Waypoint> get_waypoints();
 
   private:
    // Polyline shortest_path_;
+    std::vector<std::vector<int>> apsp_;
+
     std::vector<Waypoint> waypoints_;
+    bool read_file(const std::string &filename);
     void set_waypoints(Polyline &shortest_path);
     bool is_valid_start_and_end_points(const Point &start, const Point &finish, 
                                       const Tug::Environment &environment);

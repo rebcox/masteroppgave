@@ -49,8 +49,8 @@ namespace Tug
   }
 
   Polyline A_star_search::best_first_search(const Point &start,
-                                                        const Point &finish,
-                                                        const std::vector<Point> &points_in_environment)
+                                            const Point &finish,
+                                            const std::vector<Point> &points_in_environment)
   {
     
     Polyline shortest_path_output;
@@ -266,24 +266,24 @@ namespace Tug
       shortest_path_output.push_back( finish );
       std::list<Shortest_Path_Node>::iterator backtrace_itr = current_node.parent_search_tree_location;
       
-      Point waypoint;
+      const Point *waypoint;
 
       while( true )
       {
         if( backtrace_itr->vertex_index < points_in_environment.size() )
         {
-          waypoint = points_in_environment[ backtrace_itr->vertex_index ];          
+          waypoint = &points_in_environment[ backtrace_itr->vertex_index ];          
         }
         else if( backtrace_itr->vertex_index == points_in_environment.size() )
         {
-          waypoint = start;          
+          waypoint = &start;          
         }
         //Add vertex if not redundant
         if( shortest_path_output.size() > 0
             and heurestic( shortest_path_output[ shortest_path_output.size()- 1 ],
-              waypoint ) > epsilon_ )
+              *waypoint ) > epsilon_ )
         {
-          if( backtrace_itr->vertex_index < points_in_environment.size() )
+          /*if( backtrace_itr->vertex_index < points_in_environment.size() )
           {
            // waypoint = points_in_environment[ backtrace_itr->vertex_index ];
             shortest_path_output.push_back( points_in_environment[ backtrace_itr->vertex_index ] );
@@ -293,7 +293,8 @@ namespace Tug
           {
             shortest_path_output.push_back(start);
             //waypoint = start;          
-          }
+          }*/
+         shortest_path_output.push_back(*waypoint);
 
         }
         if( backtrace_itr->cost_to_come == 0 )
