@@ -124,6 +124,27 @@ TEST(TugEnvironmentTest, PointsOnBoundaryMarkedCorrectly)
     }
   }
 }
+TEST(TugEnvironmentTest, AllPointsWithinOuterBoundary)
+{
+  Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/test_environment_out_of_boundary.txt", 1.0, 0.01);
+  //Tug::Environment tug_environment("/Users/rebeccacox/GitHub/mast/oppg/environments/test_environment_out_of_boundary.txt", 1.0, 0.01);
+
+  VisiLibity::Point pt4(350, 260); 
+  VisiLibity::Point pt5(320, 260); 
+  VisiLibity::Point pt6(320, 350); 
+  VisiLibity::Point pt7(350, 350); 
+
+  EXPECT_EQ(tug_environment(4).x(), pt4.x()); 
+  EXPECT_EQ(tug_environment(4).y(), pt4.y());
+  EXPECT_EQ(tug_environment(5).x(), pt5.x());
+  EXPECT_EQ(tug_environment(5).y(), pt5.y());
+  EXPECT_EQ(tug_environment(6).x(), pt6.x());
+  EXPECT_EQ(tug_environment(6).y(), pt6.y());
+  EXPECT_EQ(tug_environment(7).x(), pt7.x()); 
+  EXPECT_EQ(tug_environment(7).y(), pt7.y()); 
+
+
+}
 //TUG_ENVIRONMENT end
 
 int main(int argc, char **argv) 

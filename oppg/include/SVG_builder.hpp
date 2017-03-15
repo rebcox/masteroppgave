@@ -38,7 +38,7 @@ class SVGBuilder
       pft = ClipperLib::pftNonZero;
       brushClr = 0xFFFFFFCC;
       penClr = 0xFF000000;
-      penWidth = 0.8;
+      penWidth = 2.0;
       showCoords = false;
     }
   };

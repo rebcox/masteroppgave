@@ -47,6 +47,7 @@ namespace Tug
       VisiLibity::Visibility_Graph visibility_graph_;
       VisiLibity::Visibility_Graph visibility_graph_with_safety_margin_;
 
+      void clip_against_outer_boundary(ClipperLib::Paths &paths_in, ClipperLib::Paths &paths_out);
       void update_tug_point_list(const ClipperLib::Paths &paths, std::vector<Point> &tug_points);
       void offset_polygon(VisiLibity::Polygon &polygon, int margin);
       void convert_to_visilibity_environment(const ClipperLib::Paths &paths, VisiLibity::Environment &environment);

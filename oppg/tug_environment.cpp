@@ -9,7 +9,9 @@ namespace Tug
   Environment::Environment(const std::string& filename, double scale, double epsilon)
   {
     epsilon_ = epsilon;
-    bool ok = load_from_file(paths_, filename, scale);
+    ClipperLib::Paths temp_paths;
+    bool ok = load_from_file(temp_paths, filename, scale);
+    clip_against_outer_boundary(temp_paths, paths_);
     //std::cout << "Number of objects: " << paths_.size() << std::endl;
     if(!ok)
     {
@@ -70,6 +72,7 @@ namespace Tug
     }
   }
 
+
   unsigned Environment::n() const
   {
     if (environment_has_safety_margin)
@@ -105,11 +108,32 @@ namespace Tug
       return visilibity_environment_;
     }
   }
+      
+  void Environment::clip_against_outer_boundary(ClipperLib::Paths &paths_in, ClipperLib::Paths &paths_out)
+  {
+    ClipperLib::Clipper clipper;
+    clipper.AddPath(paths_in[0], ClipperLib::ptClip, true);
+
+    for (int i = 1; i < paths_in.size(); ++i)
+    {
+      clipper.AddPath(paths_in[i], ClipperLib::ptSubject, true);
+    }
+    ClipperLib::Paths temp_paths;
+    clipper.Execute(ClipperLib::ctIntersection, temp_paths, ClipperLib::pftEvenOdd);
+    paths_out.push_back(paths_in[0]);
+
+    for (int i = 0; i < temp_paths.size(); ++i)
+    {
+      reverse_path(temp_paths[i]);
+      paths_out.push_back(temp_paths[i]);
+    }
+    
+  }
 
   void Environment::add_constant_safety_margin(double margin)
   {
     ClipperLib::ClipperOffset co;
-
+    //Add safety margin
     for (int i = 1; i < paths_.size(); ++i)
     {
       co.AddPath(paths_[i], ClipperLib::jtMiter, ClipperLib::etClosedPolygon);
@@ -236,7 +260,6 @@ namespace Tug
         else
         {
           tug_points.push_back(Point(paths[i][j], visilibity_environment()));
-
         }
 
         //std::cout << tug_points.back() << std::endl;
