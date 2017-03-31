@@ -61,6 +61,22 @@ namespace Tug
       }
     };
 
+    bool operator==(const Polyline &p2) const
+    {
+      if (this->size() != p2.size())
+      {
+        return false;
+      }
+      for (int i = 0; i < this->size(); ++i)
+      {
+        if (this->vertices_[i] != p2[i])
+        {
+          return false;
+        }
+      }
+      return true;
+    }
+
   private:
     std::vector<Point> vertices_;
     double length_;

@@ -29,7 +29,7 @@ int main(int argc, char **argv)
   double epsilon = 0.001;
 
 
-  Tug::Environment tug_env("/Users/rebeccacox/GitHub/mast/oppg/environments/ex1tug.txt", 1.0, epsilon);
+  Tug::Environment tug_env("/home/rebecca/GITHUB/mast/oppg/environments/ex1tug.txt", 1.0, epsilon);
 
   Tug::Point s1(60, 60,tug_env.visilibity_environment());
   Tug::Point f1(320,320,tug_env.visilibity_environment());
@@ -43,18 +43,47 @@ int main(int argc, char **argv)
   Tug::Point s4(10, 10,tug_env.visilibity_environment());
   Tug::Point f4(20, 20,tug_env.visilibity_environment());
 
+
+  Tug::Point s5(58, 58, tug_env.visilibity_environment());
+  Tug::Point f5(320,320,tug_env.visilibity_environment());
+
   std::vector<Tug::Polyline> shortest_paths;
 
   shortest_paths.push_back(tug_env.shortest_path(s4,f4));
   shortest_paths.push_back(tug_env.shortest_path(s1,f1));
   shortest_paths.push_back(tug_env.shortest_path(s2,f2));
   shortest_paths.push_back(tug_env.shortest_path(s3,f3));
+  shortest_paths.push_back(tug_env.shortest_path(s5,f5));
 
   Tug::Scheduler tug_scheduler(shortest_paths, tug_env);
-  tug_scheduler.print_paths();
+  tug_scheduler.print_paths(shortest_paths);
+
+  for (int i = 0; i < shortest_paths.size(); ++i)
+  {
+    for (int j = 0; j < shortest_paths[i].size(); ++j)
+    {
+      std::cout << "id: " << shortest_paths[i][j].id() << " ";
+    }
+    std::cout << std::endl;
+  }
 
 
-
+  /*std::vector<int> schedule = shortest_paths[4][2].get_schedule();
+  for (int k = 0; k < schedule.size(); k++)
+    std::cout << schedule[k] << ", ";
+*/
+/*
+  for (int i = 0; i < shortest_paths.size(); ++i)
+  {
+    for (int j = 0; j < shortest_paths[i].size(); ++j)
+    {
+      std::vector<int> schedule = shortest_paths[i][j].get_schedule();
+      for (int k = 0; k < schedule.size(); k++)
+      std::cout << schedule[k] << ", ";
+    }
+    std::cout << std::endl;
+    
+  }*/
 
 
 /*

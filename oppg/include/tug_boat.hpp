@@ -12,9 +12,12 @@ namespace Tug
     Boat(double radius, const Point &position);
     double get_radius(){return radius_;};
     Point  get_position();
+    void set_id(int id){id_ = id;};
+    int id() const {return id_;};
   private:
     double radius_;
     Point position_;
+    int id_=-1;
   };
 }
 
