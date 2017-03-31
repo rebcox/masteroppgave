@@ -41,7 +41,7 @@ const std::string poly_end [] =
 
   void SVGBuilder::AddPolyline(const Tug::Polyline& polylinein)
   {
-    polyline = polylinein;  
+    polylines.push_back(polylinein);  
   }
 
   bool SVGBuilder::SaveToFile(const std::string& filename, double scale, int margin)
@@ -97,7 +97,7 @@ const std::string poly_end [] =
     setlocale(LC_NUMERIC, "C");
     file.precision(2);
 
-    for (PolyInfoList::size_type i = 0; i < polyInfos.size(); ++i)
+  for (PolyInfoList::size_type i = 0; i < polyInfos.size(); ++i)
   {
       file << " <path d=\"";
     for (ClipperLib::Paths::size_type j = 0; j < polyInfos[i].paths.size(); ++j)
@@ -140,17 +140,20 @@ const std::string poly_end [] =
       file << "</g>\n";
         }
     }
-    if (polyline.size() > 0)
+    
+    for (int i = 0; i < polylines.size(); i++)
     {
-      file << "<polyline points=\"";
-      for (int i = 0; i < polyline.size(); ++i)
+      if (polylines[i].size() > 0)
       {
-        file << (polyline[i].x()*scale + offsetX) << "," << (polyline[i].y()*scale + offsetY) << " ";
+        file << "<polyline points=\"";
+        for (int j = 0; j < polylines[i].size(); ++j)
+        {
+          file << (polylines[i][j].x()*scale + offsetX) << "," << (polylines[i][j].y()*scale + offsetY) << " ";
+        }
+        file << "\"\n";
+        file << "style=\"fill:none;stroke:black;stroke-width:3\" />\n\n";
       }
-      file << "\"\n";
-      file << "style=\"fill:none;stroke:black;stroke-width:3\" />\n\n";
     }
-
     file << "</svg>\n";
     file.close();
     setlocale(LC_NUMERIC, "");
