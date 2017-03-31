@@ -178,6 +178,16 @@ namespace Tug
     }
     return true;
   }
+  
+  bool Environment::point_is_within_outer_boundary(const Tug::Point point)
+  {
+    if (point.x() >= x_max-1 || point.x() <= x_min+1 || point.y() <= y_min+1 || point.y() >= y_max-1) 
+    {
+      return false;
+    }
+    return true;
+  }
+
 
   void Environment::reverse_path(ClipperLib::Path &path)
   {
@@ -286,7 +296,6 @@ namespace Tug
   Polyline Environment::shortest_path(const Point &start, const Point &finish) //, double epsilon)
   {
     Polyline shortest_path;
-    std::vector<bool> points_to_remove;
 
     Shortest_path((*this), start,finish,shortest_path);
     return shortest_path;
@@ -396,6 +405,15 @@ namespace Tug
     }
   }
 
+  void Environment::get_boundaries(int &x_min_out, int &x_max_out, int &y_min_out, int &y_max_out)
+  {
+    x_min_out = x_min+1;
+    x_max_out = x_max-1;
+    y_min_out = y_min+1;
+    y_max_out = y_max-1;
+  }
+
+
   void Environment::save_environment_as_svg(const std::string filename)
   {
     Polyline dummy;
@@ -421,6 +439,32 @@ namespace Tug
     if (shortest_path.size()>0)
     {
       svg.AddPolyline(shortest_path);
+    }
+    svg.SaveToFile(filename, 1,0);
+  }
+
+  void Environment::save_environment_as_svg(const std::string filename, const std::vector<Polyline> &shortest_paths)
+  {
+    SVGBuilder svg;    
+    svg.style.brushClr = 0x129C0000;
+    svg.style.penClr = 0xCCFFA07A;
+    svg.style.pft = ClipperLib::pftEvenOdd;
+
+    if (environment_has_safety_margin)
+    {
+      svg.AddPaths(paths_with_safety_margin_);
+      svg.AddPaths(paths_);
+    }
+    else
+    {
+      svg.AddPaths(paths_);
+    }
+    for (int i = 0; i < shortest_paths.size(); ++i)
+    {
+      if (shortest_paths[i].size()>0)
+      {
+        svg.AddPolyline(shortest_paths[i]);
+      }
     }
     svg.SaveToFile(filename, 1,0);
   }

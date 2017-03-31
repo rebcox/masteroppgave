@@ -11,9 +11,10 @@ namespace Tug
 
     if(!is_valid_start_and_end_points(start, finish, environment))
     {
-      std::cout << "Start and/or finish point within obstacle" << std::endl;
+      //std::cout << "Start and/or finish point within obstacle" << std::endl;
       return;
     }
+    
     int index_start = point_within_safety_margin(start,environment);
 
     if (index_start > 0)
@@ -222,6 +223,10 @@ namespace Tug
 
   int Shortest_path::point_within_safety_margin(const Point &point, const Tug::Environment &environment)
   {
+    if (environment.paths_with_safety_margin_.size() == 0)
+    {
+      return 0;
+    }
     ClipperLib::IntPoint point_clipperlib(round(point.x()), round(point.y()));
     for (int i = 1; i < environment.paths_with_safety_margin_.size(); ++i) //path_[0] is outer boundary
     {

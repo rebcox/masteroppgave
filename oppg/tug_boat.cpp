@@ -3,16 +3,20 @@
 
 namespace Tug
 {
-  Boat::Boat(double length, double width)
+  Boat::Boat(double radius, const Point &position)
   {
-    if (length >= 0 && width >= 0)
+    if (radius > 0)
     {
-      length_ = length;
-      width_ = width;
+      radius_ = radius;
+      position_ = position;
     }
     else
     {
       throw std::invalid_argument( "received negative value of length or width" );
     }
+  }
+  Point Boat::get_position()
+  {
+    return position_;
   }
 }

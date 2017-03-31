@@ -60,7 +60,7 @@ class SVGBuilder
 
 private:
   PolyInfoList polyInfos;
-  Tug::Polyline polyline;
+  std::vector<Tug::Polyline> polylines;
 
 
 public:

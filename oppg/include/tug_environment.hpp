@@ -22,12 +22,16 @@ namespace Tug
       Polyline shortest_path(const Point &start, const Point &finish); //, double epsilon);
       void save_environment_as_svg(const std::string filename);
       void save_environment_as_svg(const std::string filename, const Polyline &shortest_path);
+      void save_environment_as_svg(const std::string filename, const std::vector<Polyline> &shortest_paths);
+
       bool has_safety_margin(){return environment_has_safety_margin;};
       unsigned n() const;
       const VisiLibity::Visibility_Graph &visibility_graph() const;
       const Point &operator () (unsigned k) const;
       const std::vector<Point>& points() const;
       void mark_point_as_on_boundary(unsigned k);
+      void get_boundaries(int &x_min, int &x_max, int &y_min, int &y_max);
+      bool point_is_within_outer_boundary(const Tug::Point point);
 
     private:
       VisiLibity::Environment visilibity_environment_;

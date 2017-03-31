@@ -18,8 +18,8 @@ TEST(ConstructorTest, XAndYSetCorrectly)
 //SHORTEST_PATH start
 TEST(ShortestPathTest, NoSafetyMargin)
 {
-  Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
- // Tug::Environment tug_environment("/Users/rebeccacox/GitHub/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
+ // Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
+  Tug::Environment tug_environment("/Users/rebeccacox/GitHub/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
  
   Tug::Polyline shortest_path_test;
 
@@ -42,8 +42,8 @@ TEST(ShortestPathTest, NoSafetyMargin)
 
 TEST(ShortestPathTest, StartAndFinishWithinSafetyMargin)
 {
-  Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
-  //Tug::Environment tug_environment("/Users/rebeccacox/GitHub/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
+  //Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
+  Tug::Environment tug_environment("/Users/rebeccacox/GitHub/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
 
   tug_environment.add_constant_safety_margin(44);
 
@@ -71,8 +71,8 @@ TEST(ShortestPathTest, StartAndFinishWithinSafetyMargin)
 }
 TEST(ShortestPathTest, NoValidPath)
 {
-  Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
-  //Tug::Environment tug_environment("/Users/rebeccacox/GitHub/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
+  //Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
+  Tug::Environment tug_environment("/Users/rebeccacox/GitHub/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
 
   tug_environment.add_constant_safety_margin(54);
 
@@ -85,10 +85,28 @@ TEST(ShortestPathTest, NoValidPath)
   ASSERT_EQ(shortest_path_test.size(), 0);
 }
 
+TEST(ShortestPathTest, TrivialCase)
+{
+  //Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
+  Tug::Environment tug_environment("/Users/rebeccacox/GitHub/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
+
+  Tug::Polyline shortest_path_test;
+  Tug::Point start(30, 180, tug_environment.visilibity_environment());
+  Tug::Point finish(20, 180, tug_environment.visilibity_environment());
+
+  Tug::Shortest_path shortest_path_class(tug_environment, start, finish, shortest_path_test);
+
+  ASSERT_EQ(shortest_path_test[0].x(), start.x());
+  ASSERT_EQ(shortest_path_test[0].y(), start.y());
+  ASSERT_EQ(shortest_path_test[1].x(), finish.x());
+  ASSERT_EQ(shortest_path_test[1].y(), finish.y());
+
+}
+
 TEST(ShortestPathTest, StartPointInsideObstacle)
 {
-  Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
-  //Tug::Environment tug_environment("/Users/rebeccacox/GitHub/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
+  //Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
+  Tug::Environment tug_environment("/Users/rebeccacox/GitHub/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
 
   Tug::Polyline shortest_path_test;
   Tug::Point start(90, 150, tug_environment.visilibity_environment());
@@ -103,8 +121,8 @@ TEST(ShortestPathTest, StartPointInsideObstacle)
 //TUG_ENVIRONMENT start
 TEST(TugEnvironmentTest, PointsOnBoundaryMarkedCorrectly)
 {
-  Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
-  //Tug::Environment tug_environment("/Users/rebeccacox/GitHub/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
+  //Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
+  Tug::Environment tug_environment("/Users/rebeccacox/GitHub/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
 
   tug_environment.add_constant_safety_margin(50);
   std::vector<Tug::Point> points = tug_environment.points();
@@ -126,8 +144,8 @@ TEST(TugEnvironmentTest, PointsOnBoundaryMarkedCorrectly)
 }
 TEST(TugEnvironmentTest, AllPointsWithinOuterBoundary)
 {
-  Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/test_environment_out_of_boundary.txt", 1.0, 0.01);
-  //Tug::Environment tug_environment("/Users/rebeccacox/GitHub/mast/oppg/environments/test_environment_out_of_boundary.txt", 1.0, 0.01);
+  //Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/test_environment_out_of_boundary.txt", 1.0, 0.01);
+  Tug::Environment tug_environment("/Users/rebeccacox/GitHub/mast/oppg/environments/test_environment_out_of_boundary.txt", 1.0, 0.01);
 
   VisiLibity::Point pt4(350, 260); 
   VisiLibity::Point pt5(320, 260); 

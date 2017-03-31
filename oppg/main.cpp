@@ -8,7 +8,7 @@
 #include "include/tug_all_pairs_shortest_path.hpp"
 #include "include/shortest_path.h"
 #include <time.h>
-
+#include "include/tug_scheduler.hpp"
 
 int meter_to_pixels(double scale, double meter)
 {
@@ -28,6 +28,36 @@ int main(int argc, char **argv)
   //double epsilon = 0.000000001;
   double epsilon = 0.001;
 
+
+  Tug::Environment tug_env("/Users/rebeccacox/GitHub/mast/oppg/environments/ex1tug.txt", 1.0, epsilon);
+
+  Tug::Point s1(60, 60,tug_env.visilibity_environment());
+  Tug::Point f1(320,320,tug_env.visilibity_environment());
+
+  Tug::Point s2(40, 40,tug_env.visilibity_environment());
+  Tug::Point f2(40,240,tug_env.visilibity_environment());
+
+  Tug::Point s3(200, 200,tug_env.visilibity_environment());
+  Tug::Point f3(349, 1,tug_env.visilibity_environment());
+
+  Tug::Point s4(10, 10,tug_env.visilibity_environment());
+  Tug::Point f4(20, 20,tug_env.visilibity_environment());
+
+  std::vector<Tug::Polyline> shortest_paths;
+
+  shortest_paths.push_back(tug_env.shortest_path(s4,f4));
+  shortest_paths.push_back(tug_env.shortest_path(s1,f1));
+  shortest_paths.push_back(tug_env.shortest_path(s2,f2));
+  shortest_paths.push_back(tug_env.shortest_path(s3,f3));
+
+  Tug::Scheduler tug_scheduler(shortest_paths, tug_env);
+  tug_scheduler.print_paths();
+
+
+
+
+
+/*
   Tug::Environment tug_env_scaled("/home/rebecca/GITHUB/mast/oppg/environments/ex1tug.txt", 1.5, epsilon);
   tug_env_scaled.add_constant_safety_margin(43);
 
@@ -51,6 +81,8 @@ int main(int argc, char **argv)
   shortest_p = tug_env.shortest_path(s,f);
 
   tug_env.save_environment_as_svg("not_scaled_env.svg", shortest_p);
+
+  */
 
 
 /*
@@ -107,6 +139,7 @@ int main(int argc, char **argv)
     std::cout << std::endl;
 
 */
+    /*
   double env_pixel_width = 1076;
   double env_width = 2000;
   double scale = env_pixel_width/env_width;
@@ -137,7 +170,7 @@ int main(int argc, char **argv)
   std::cout << "Shortest path: " << shortest_p_for_big_tug_path_print.str().c_str() << std::endl;
 
   big_tug_env.save_environment_as_svg("big_test.svg", shortest_p_for_big_tug);
-
+*/
 
   return 0;
 }
