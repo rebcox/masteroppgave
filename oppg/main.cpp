@@ -29,7 +29,8 @@ int main(int argc, char **argv)
   double epsilon = 0.001;
 
 
-  Tug::Environment tug_env("/home/rebecca/GITHUB/mast/oppg/environments/ex1tug.txt", 1.0, epsilon);
+  Tug::Environment tug_env("/Users/rebeccacox/GitHub/mast/oppg/environments/ex1tug.txt", 1.0, epsilon);
+ // Tug::Environment tug_env("/home/rebecca/GITHUB/mast/oppg/environments/ex1tug.txt", 1.0, epsilon);
 
   Tug::Point s1(60, 60,tug_env.visilibity_environment());
   Tug::Point f1(320,320,tug_env.visilibity_environment());
@@ -43,20 +44,27 @@ int main(int argc, char **argv)
   Tug::Point s4(10, 10,tug_env.visilibity_environment());
   Tug::Point f4(20, 20,tug_env.visilibity_environment());
 
-
   Tug::Point s5(58, 58, tug_env.visilibity_environment());
   Tug::Point f5(320,320,tug_env.visilibity_environment());
 
-  std::vector<Tug::Polyline> shortest_paths;
+  Tug::Boat tug1(7.0, s1); tug1.set_path(tug_env.shortest_path(s1,f1)); tug1.set_id(1);
+  Tug::Boat tug2(7.0, s2); tug2.set_path(tug_env.shortest_path(s2,f2)); tug2.set_id(2);
+  Tug::Boat tug3(7.0, s3); tug3.set_path(tug_env.shortest_path(s3,f3)); tug3.set_id(3);
+  Tug::Boat tug4(7.0, s4); tug4.set_path(tug_env.shortest_path(s4,f4)); tug4.set_id(4);
+  Tug::Boat tug5(7.0, s5); tug5.set_path(tug_env.shortest_path(s5,f5)); tug5.set_id(5);
 
-  shortest_paths.push_back(tug_env.shortest_path(s4,f4));
+  std::vector<Tug::Polyline> shortest_paths;
+  std::vector<Tug::Boat> tugs {tug1, tug2, tug3, tug4, tug5};
+
+/*  shortest_paths.push_back(tug_env.shortest_path(s4,f4));
   shortest_paths.push_back(tug_env.shortest_path(s1,f1));
   shortest_paths.push_back(tug_env.shortest_path(s2,f2));
   shortest_paths.push_back(tug_env.shortest_path(s3,f3));
   shortest_paths.push_back(tug_env.shortest_path(s5,f5));
-
-  Tug::Scheduler tug_scheduler(shortest_paths, tug_env);
-  tug_scheduler.print_paths(shortest_paths);
+*/
+  Tug::Scheduler tug_scheduler(tugs, tug_env);
+  tug_scheduler.print_schedule();
+  tug_scheduler.print_paths(tugs);
 
   for (int i = 0; i < shortest_paths.size(); ++i)
   {

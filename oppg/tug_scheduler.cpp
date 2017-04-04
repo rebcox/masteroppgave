@@ -2,35 +2,41 @@
 
 namespace Tug
 {
-  Scheduler::Scheduler(std::vector<Polyline> &paths, const Environment &environment)
+  Scheduler::Scheduler(std::vector<Boat> &tugs, const Environment &environment)
   {
-    //paths = paths;
-    sort_on_increasing_shortest_path_length(paths);
-    std::vector<std::vector<int>> time_schedule;
-    make_time_schedule(time_schedule, paths,environment);
-    print_schedule(time_schedule);
+    sort_on_increasing_shortest_path_length(tugs);
+
+  /*  for (int i = 0; i < tugs.size(); ++i)
+    {
+      paths.push_back(tugs[i].get_path());
+    }*/
+    //sort_on_increasing_shortest_path_length(paths);
+    
+    make_time_schedule(time_schedule_, tugs, environment);
   }
 
-  void Scheduler::print_paths(std::vector<Polyline> &paths)
+  void Scheduler::print_paths(std::vector<Boat> &tugs)
   {
-    for (int i = 0; i < paths.size(); ++i)
+    for (int i = 0; i < tugs.size(); ++i)
     {
-     // std::cout << "length " << i << ": " << paths[i].length() << std::endl;
-      for (int j = 0; j < paths[i].size(); ++j)
+     // std::cout << "length " << i << ": " << tugs[i].length() << std::endl;
+      Polyline path = tugs[i].get_path();
+      for (int j = 0; j < path.size(); ++j)
       {
-        std::cout << paths[i][j] << " ";
+
+        std::cout << path[j] << " ";
       }
       std::cout << std::endl;
     }
   }
-  void Scheduler::print_schedule(std::vector<std::vector<int>> &time_schedule)
+  void Scheduler::print_schedule()
   {
-    for (int i = 0; i < time_schedule.size(); ++i)
+    for (int i = 0; i < time_schedule_.size(); ++i)
     {
       std::cout << "Point " << i << std::endl;
-      for (int j = 0; j < time_schedule[i].size(); ++j)
+      for (int j = 0; j < time_schedule_[i].size(); ++j)
       {
-        std::cout << time_schedule[i][j] << " ";
+        std::cout << time_schedule_[i][j] << " ";
       }
       std::cout << std::endl;
     }
@@ -40,8 +46,14 @@ namespace Tug
 
   void Scheduler::sort_on_increasing_shortest_path_length( std::vector<Polyline> &paths)
   {
-    std::vector<Polyline> result;
     std::sort( paths.begin(), paths.end(), sort_comparator);
+  }
+
+  bool sort_comparator1(Boat tug1, Boat tug2) {return tug1.get_path().length() < tug2.get_path().length();}
+
+  void Scheduler::sort_on_increasing_shortest_path_length( std::vector<Boat> &tugs)
+  {
+    std::sort( tugs.begin(), tugs.end(), sort_comparator1);
   }
 
   bool Scheduler::is_available(std::vector<int> &time_schedule_point, int t)
@@ -66,9 +78,10 @@ namespace Tug
 
 
 
-  void Scheduler::schedule(std::vector<std::vector<int>> &time_schedule, Polyline &path, const Boat &tug)
+  void Scheduler::schedule(std::vector<std::vector<int>> &time_schedule, const Boat &tug)
   {
     int t_tot = 0;
+    Polyline path = tug.get_path();
     for (int i = 0; i < path.size()-2; ++i) //last point has path.id = -1
     {
       int length = round(eucledian_distance(path[i], path[i+1]));
@@ -90,7 +103,8 @@ namespace Tug
     }
   }
     
-  void Scheduler::make_time_schedule(std::vector<std::vector<int>> &time_schedule, std::vector<Polyline> &paths, const Environment &environment)
+  void Scheduler::make_time_schedule(std::vector<std::vector<int>> &time_schedule,
+                                     std::vector<Boat> &tugs, const Environment &environment)
   {
     
     for (int i = 0; i < environment.n(); ++i)
@@ -98,12 +112,9 @@ namespace Tug
       time_schedule.push_back(std::vector<int>());
     }
 
-    for (int i = paths.size()-1; i >= 0; --i)
+    for (int i = tugs.size()-1; i >= 0; --i)
     {
-      Boat tug(7.0,Point(20,20,-1));
-      tug.set_id(i);
-
-      schedule(time_schedule, paths[i], tug);
+      schedule(time_schedule, tugs[i]);
     } 
   }
 
