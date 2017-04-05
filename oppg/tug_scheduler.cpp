@@ -80,6 +80,7 @@ namespace Tug
 
   void Scheduler::schedule(std::vector<std::vector<int>> &time_schedule, const Boat &tug)
   {
+    double speed = tug.get_top_speed();
     int t_tot = 0;
     Polyline path = tug.get_path();
     for (int i = 0; i < path.size()-2; ++i) //last point has path.id = -1
@@ -88,7 +89,7 @@ namespace Tug
       bool planned = false;
       while (!planned)
       {
-        int t = t_tot+length;
+        int t = t_tot+length/speed;
         //std::cout << path[i+1].id() << std::endl;
         if (!is_available(time_schedule[path[i+1].id()], t))
         {

@@ -22,6 +22,22 @@ namespace Tug
     Point& operator [] (unsigned i)
     { return vertices_[i]; }
 
+    bool operator==(const Polyline &p2)
+    {
+      if (this->size() != p2.size())
+      {
+        return false;
+      }
+      for (int i = 0; i < this->size(); ++i)
+      {
+        if (this->vertices_[i] != p2[i])
+        {
+          return false;
+        }
+      }
+      return true;
+    }
+
     void clear()
     { vertices_.clear(); polyline_edited_since_last_length_calculation = true;}
 

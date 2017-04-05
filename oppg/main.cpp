@@ -9,6 +9,11 @@
 #include "include/shortest_path.h"
 #include <time.h>
 #include "include/tug_scheduler.hpp"
+#include "include/hungarian.hpp"
+#include "include/munkres/munkres.h"
+#include "include/tug_assign_paths.hpp"
+
+//#include "include/munkres/adapters/boostmatrixadapter.h"
 
 int meter_to_pixels(double scale, double meter)
 {
@@ -32,66 +37,37 @@ int main(int argc, char **argv)
   Tug::Environment tug_env("/Users/rebeccacox/GitHub/mast/oppg/environments/ex1tug.txt", 1.0, epsilon);
  // Tug::Environment tug_env("/home/rebecca/GITHUB/mast/oppg/environments/ex1tug.txt", 1.0, epsilon);
 
-  Tug::Point s1(60, 60,tug_env.visilibity_environment());
-  Tug::Point f1(320,320,tug_env.visilibity_environment());
+  std::vector<Tug::Point> start_points;
+  start_points.push_back(Tug::Point(60, 60, tug_env.visilibity_environment()));
+  start_points.push_back(Tug::Point(40, 40, tug_env.visilibity_environment()));
+  start_points.push_back(Tug::Point(200, 200, tug_env.visilibity_environment()));
+  start_points.push_back(Tug::Point(10, 10, tug_env.visilibity_environment()));
+  start_points.push_back(Tug::Point(58, 58, tug_env.visilibity_environment()));
 
-  Tug::Point s2(40, 40,tug_env.visilibity_environment());
-  Tug::Point f2(40,240,tug_env.visilibity_environment());
+  std::vector<Tug::Point> finish_points;
+  finish_points.push_back(Tug::Point(320, 320, tug_env.visilibity_environment()));
+  finish_points.push_back(Tug::Point(40, 240, tug_env.visilibity_environment()));
+  finish_points.push_back(Tug::Point(349, 1, tug_env.visilibity_environment()));
+  finish_points.push_back(Tug::Point(20, 20, tug_env.visilibity_environment()));
+  finish_points.push_back(Tug::Point(320, 320, tug_env.visilibity_environment()));
 
-  Tug::Point s3(200, 200,tug_env.visilibity_environment());
-  Tug::Point f3(349, 1,tug_env.visilibity_environment());
+  std::vector<Tug::Boat> tugs;
 
-  Tug::Point s4(10, 10,tug_env.visilibity_environment());
-  Tug::Point f4(20, 20,tug_env.visilibity_environment());
+  for (int i = 0; i < start_points.size(); ++i)
+  {
+    Tug::Boat tug(7.0, start_points[i], &tug_env); 
+    tug.set_id(i+1);
+    tug.set_top_speed(1);
+    tugs.push_back(tug);
+  }
 
-  Tug::Point s5(58, 58, tug_env.visilibity_environment());
-  Tug::Point f5(320,320,tug_env.visilibity_environment());
+  Tug::Assign_paths assigner;
+  assigner.assign_on_combined_shortest_path(tugs, finish_points, tug_env);
 
-  Tug::Boat tug1(7.0, s1); tug1.set_path(tug_env.shortest_path(s1,f1)); tug1.set_id(1);
-  Tug::Boat tug2(7.0, s2); tug2.set_path(tug_env.shortest_path(s2,f2)); tug2.set_id(2);
-  Tug::Boat tug3(7.0, s3); tug3.set_path(tug_env.shortest_path(s3,f3)); tug3.set_id(3);
-  Tug::Boat tug4(7.0, s4); tug4.set_path(tug_env.shortest_path(s4,f4)); tug4.set_id(4);
-  Tug::Boat tug5(7.0, s5); tug5.set_path(tug_env.shortest_path(s5,f5)); tug5.set_id(5);
 
-  std::vector<Tug::Polyline> shortest_paths;
-  std::vector<Tug::Boat> tugs {tug1, tug2, tug3, tug4, tug5};
-
-/*  shortest_paths.push_back(tug_env.shortest_path(s4,f4));
-  shortest_paths.push_back(tug_env.shortest_path(s1,f1));
-  shortest_paths.push_back(tug_env.shortest_path(s2,f2));
-  shortest_paths.push_back(tug_env.shortest_path(s3,f3));
-  shortest_paths.push_back(tug_env.shortest_path(s5,f5));
-*/
   Tug::Scheduler tug_scheduler(tugs, tug_env);
   tug_scheduler.print_schedule();
   tug_scheduler.print_paths(tugs);
-
-  for (int i = 0; i < shortest_paths.size(); ++i)
-  {
-    for (int j = 0; j < shortest_paths[i].size(); ++j)
-    {
-      std::cout << "id: " << shortest_paths[i][j].id() << " ";
-    }
-    std::cout << std::endl;
-  }
-
-
-  /*std::vector<int> schedule = shortest_paths[4][2].get_schedule();
-  for (int k = 0; k < schedule.size(); k++)
-    std::cout << schedule[k] << ", ";
-*/
-/*
-  for (int i = 0; i < shortest_paths.size(); ++i)
-  {
-    for (int j = 0; j < shortest_paths[i].size(); ++j)
-    {
-      std::vector<int> schedule = shortest_paths[i][j].get_schedule();
-      for (int k = 0; k < schedule.size(); k++)
-      std::cout << schedule[k] << ", ";
-    }
-    std::cout << std::endl;
-    
-  }*/
 
 
 /*

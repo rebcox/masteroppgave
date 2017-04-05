@@ -5,6 +5,7 @@
 #include "include/shortest_path.h"
 #include "include/tug_scheduler.hpp"
 #include "include/tug_boat.hpp"
+#include "include/tug_assign_paths.hpp"
 #include <gtest/gtest.h>
 
 //TUG_POINT start
@@ -186,20 +187,54 @@ TEST(TugSchedulerTest, correctPrioritation)
   Tug::Point f4(20, 20,tug_env.visilibity_environment());
   Tug::Polyline sp4 = tug_env.shortest_path(s4,f4);
 
-  Tug::Boat tug1(7.0, s1); tug1.set_path(sp1); tug1.set_id(1);
-  Tug::Boat tug2(7.0, s2); tug2.set_path(sp2); tug2.set_id(2);
-  Tug::Boat tug3(7.0, s3); tug3.set_path(sp3); tug3.set_id(3);
-  Tug::Boat tug4(7.0, s4); tug4.set_path(sp4); tug4.set_id(4);
+  Tug::Boat tug1(7.0, s1, &tug_env); tug1.set_path(sp1); tug1.set_id(1);
+  Tug::Boat tug2(7.0, s2, &tug_env); tug2.set_path(sp2); tug2.set_id(2);
+  Tug::Boat tug3(7.0, s3, &tug_env); tug3.set_path(sp3); tug3.set_id(3);
+  Tug::Boat tug4(7.0, s4, &tug_env); tug4.set_path(sp4); tug4.set_id(4);
 
   std::vector<Tug::Polyline> shortest_paths;
 
   std::vector<Tug::Boat> tugs {tug1, tug2, tug3, tug4};
   Tug::Scheduler tug_scheduler(tugs, tug_env);
 
-    EXPECT_EQ(tugs[0].get_path(), sp4);
-    EXPECT_EQ(tugs[1].get_path(), sp2);
-    EXPECT_EQ(tugs[2].get_path(), sp3);
-    EXPECT_EQ(tugs[3].get_path(), sp1);
+  EXPECT_EQ(tugs[0].get_path(), sp4);
+  EXPECT_EQ(tugs[1].get_path(), sp2);
+  EXPECT_EQ(tugs[2].get_path(), sp3);
+  EXPECT_EQ(tugs[3].get_path(), sp1);
+}
+
+TEST(AssignPathsTest, hungarianAlgorithmTest)
+{
+  Tug::Environment tug_env("/Users/rebeccacox/GitHub/mast/oppg/environments/ex1tug.txt", 1.0, 0.01);
+  std::vector<Tug::Point> finish_points;
+  finish_points.push_back(Tug::Point(140,205,tug_env.visilibity_environment()));
+  finish_points.push_back(Tug::Point(330,10,tug_env.visilibity_environment()));
+  finish_points.push_back(Tug::Point(315,320,tug_env.visilibity_environment()));
+
+  std::vector<Tug::Point> start_points;
+  start_points.push_back(Tug::Point(105,45,tug_env.visilibity_environment())); //fp3
+  start_points.push_back(Tug::Point(270,45,tug_env.visilibity_environment())); //fp2
+  start_points.push_back(Tug::Point(18,25,tug_env.visilibity_environment())); //fp1
+
+  std::vector<Tug::Boat> tugs;
+
+  for (int i = 0; i < start_points.size(); ++i)
+  {
+    Tug::Boat tug(7.0, start_points[i], &tug_env); 
+    tug.set_id(i+1);
+    tugs.push_back(tug);
+  }
+
+  Tug::Assign_paths assigner;
+  assigner.assign_on_combined_shortest_path(tugs, finish_points, tug_env);
+
+  Tug::Polyline path1 = tug_env.shortest_path(tugs[0].get_position(), finish_points[2]);
+  Tug::Polyline path2 = tug_env.shortest_path(tugs[1].get_position(), finish_points[1]);
+  Tug::Polyline path3 = tug_env.shortest_path(tugs[2].get_position(), finish_points[0]);
+
+  EXPECT_EQ(tugs[0].get_path(), path1);
+  EXPECT_EQ(tugs[1].get_path(), path2);
+  EXPECT_EQ(tugs[2].get_path(), path3);
 
 
 }
