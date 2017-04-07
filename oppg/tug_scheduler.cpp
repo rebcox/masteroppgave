@@ -56,10 +56,21 @@ namespace Tug
     std::sort( tugs.begin(), tugs.end(), sort_comparator1);
   }
 
-  bool Scheduler::is_available(std::vector<int> &time_schedule_point, int t)
+  bool Scheduler::is_available(std::vector<std::vector<int>> &time_schedule, 
+                                std::vector<Waypoint> &waypoints,
+                                int id,
+                                int t)
   {
-    if (t >= time_schedule_point.size() || time_schedule_point[t] == 0)
+    if (t >= time_schedule[id].size() || time_schedule[id][t] == 0)
     {
+      for (int i = 0; i < waypoints[id].n_points_within_range(); ++i)
+      {
+        int point_id = waypoints[id].point_within_range(i)->id();
+        if (!(t >= time_schedule[point_id].size() || time_schedule[point_id][t] == 0))
+        {
+          return false;
+        }
+      }
       return true;
     }
     return false;
@@ -78,7 +89,7 @@ namespace Tug
 
 
 
-  void Scheduler::schedule(std::vector<std::vector<int>> &time_schedule, const Boat &tug)
+  void Scheduler::schedule(std::vector<std::vector<int>> &time_schedule, const Boat &tug, std::vector<Waypoint> &waypoints)
   {
     double speed = tug.get_top_speed();
     int t_tot = 0;
@@ -91,7 +102,7 @@ namespace Tug
       {
         int t = t_tot+length/speed;
         //std::cout << path[i+1].id() << std::endl;
-        if (!is_available(time_schedule[path[i+1].id()], t))
+        if (!is_available(time_schedule, waypoints, path[i+1].id(), t))
         {
           t_tot++;
         }
@@ -107,16 +118,20 @@ namespace Tug
   void Scheduler::make_time_schedule(std::vector<std::vector<int>> &time_schedule,
                                      std::vector<Boat> &tugs, const Environment &environment)
   {
-    
+    std::vector<Waypoint> waypoints;
     for (int i = 0; i < environment.n(); ++i)
     {
       time_schedule.push_back(std::vector<int>());
-    }
+      //waypoints.push_back(Waypoint(environment(i),7,environment,waypoints,i));
+      Point pt = environment(i);
+      waypoints.push_back(Waypoint(pt,i, 7,waypoints));
 
+      std::cout << "point " << i << " " << waypoints[i] << std::endl;
+    }
     for (int i = tugs.size()-1; i >= 0; --i)
     {
-      schedule(time_schedule, tugs[i]);
-    } 
+      schedule(time_schedule, tugs[i], waypoints);
+    }     
   }
 
 

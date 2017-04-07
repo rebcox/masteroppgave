@@ -71,26 +71,4 @@ namespace Tug
     out << "(" << pt.x() << ", " << pt.y() << ")";
     return out;
   }
-
-  bool Point::is_available(int t)
-  {
-    if (t >= schedule_.size() || schedule_[t] == 0)
-    {
-      return true;
-    }
-    return false;
-  }
-  void Point::set_tug(int id, int t)
-  {
-    if (t >= schedule_.size())
-    {
-      int no_extra_elements = t - schedule_.size() + 1;
-      std::vector<int> zeros(no_extra_elements, 0);
-      schedule_.insert(schedule_.end(), zeros.begin(), zeros.end());
-    }
-    schedule_[t] = id;
-  }
-
-
-
 }

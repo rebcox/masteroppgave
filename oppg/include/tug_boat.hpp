@@ -23,7 +23,7 @@ namespace Tug
     Polyline get_path() const {return path_;};
   private:
     double radius_;
-    double top_speed_; //pixels per time unit
+    double top_speed_ = 1; //pixels per time unit
     Point position_;
     Environment *environment_;
     int id_=-1;

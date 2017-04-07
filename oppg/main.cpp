@@ -43,13 +43,16 @@ int main(int argc, char **argv)
   start_points.push_back(Tug::Point(200, 200, tug_env.visilibity_environment()));
   start_points.push_back(Tug::Point(10, 10, tug_env.visilibity_environment()));
   start_points.push_back(Tug::Point(58, 58, tug_env.visilibity_environment()));
+  start_points.push_back(Tug::Point(56, 60, tug_env.visilibity_environment()));
 
   std::vector<Tug::Point> finish_points;
   finish_points.push_back(Tug::Point(320, 320, tug_env.visilibity_environment()));
   finish_points.push_back(Tug::Point(40, 240, tug_env.visilibity_environment()));
   finish_points.push_back(Tug::Point(349, 1, tug_env.visilibity_environment()));
   finish_points.push_back(Tug::Point(20, 20, tug_env.visilibity_environment()));
-  finish_points.push_back(Tug::Point(320, 320, tug_env.visilibity_environment()));
+  finish_points.push_back(Tug::Point(322, 322, tug_env.visilibity_environment()));
+  finish_points.push_back(Tug::Point(325, 325, tug_env.visilibity_environment()));
+
 
   std::vector<Tug::Boat> tugs;
 

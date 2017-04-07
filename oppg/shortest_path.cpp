@@ -279,10 +279,10 @@ namespace Tug
 
   void Shortest_path::set_waypoints(Polyline &shortest_path)
   {
-    for (int i = 0; i < shortest_path.size(); ++i)
+   /* for (int i = 0; i < shortest_path.size(); ++i)
     {
       waypoints_.push_back(shortest_path[i]);
-    }
+    }*/
   }
   
   std::vector<Waypoint> Shortest_path::get_waypoints()

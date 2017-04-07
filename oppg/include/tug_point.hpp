@@ -31,21 +31,17 @@ namespace Tug
    // Point *get_neighbor2(){return neighbor2_;};
     VisiLibity::Visibility_Polygon visibility_polygon() const{return visibility_polygon_;};
     void create_visibility_polygon(const VisiLibity::Environment &environment);
-    bool is_available(int t);
-    void set_tug(int id, int t);
     bool is_on_outer_boundary = false;
-    std::vector<int> &get_schedule(){return schedule_;};
-
+    
     /*void set_in_on_outer_boundary(bool b) {is_on_outer_boundary = b;};
     bool get_is_on_outer_boundary(){return is_on_outer_boundary;};*/
-  private:
+  protected:
     //void set_point_id(int point_id){point_id_ = point_id;}
 
     //Point *neighbor1_;
    // Point *neighbor2_;
     const int point_id_;
     VisiLibity::Visibility_Polygon visibility_polygon_;
-    std::vector<int> schedule_;
   };
 }
 

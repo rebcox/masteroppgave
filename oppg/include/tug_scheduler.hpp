@@ -3,6 +3,7 @@
 #include "tug_polyline.hpp"
 #include "tug_environment.hpp"
 #include "tug_boat.hpp"
+#include "waypoint.h"
 
 namespace Tug
 {
@@ -20,11 +21,14 @@ namespace Tug
     void sort_on_increasing_shortest_path_length(std::vector<Polyline> &paths);
     void sort_on_increasing_shortest_path_length( std::vector<Boat> &tugs);
 
-    void schedule(std::vector<std::vector<int>> &time_schedule, const Boat &tug);
+    void schedule(std::vector<std::vector<int>> &time_schedule, const Boat &tug, std::vector<Waypoint> &waypoints);
     void make_time_schedule(std::vector<std::vector<int>> &time_schedule,
                             std::vector<Boat> &tugs, const Environment &environment);
 
-    bool is_available(std::vector<int> &time_schedule_point, int t);
+    bool is_available(std::vector<std::vector<int>> &time_schedule, 
+                                std::vector<Waypoint> &waypoints,
+                                int id,
+                                int t);
     void set_tug(std::vector<int> &time_schedule_point, int id, int t);
 
     //Point position_at_time(time_t time, const Point &pt_now, const Polyline &path, float speed);
