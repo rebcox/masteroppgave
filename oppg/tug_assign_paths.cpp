@@ -10,11 +10,50 @@ namespace Tug
 
     int nrows = finish_points.size();
     int ncols = tugs.size();
-    if (nrows != ncols)
+
+    if (nrows > ncols)
     {
-      std::cout << "Not the same number of tugs and goals" << std::endl;
+      std::cout << "More goals than tugs" << std::endl;
       return false;
     }
+
+    if (nrows < ncols)
+    {
+      std::cout << "More tugs than goals. Choosing closest tugs" << std::endl;
+
+      double sum_x =0; double sum_y=0;
+      for (int i = 0; i < ncols; ++i)
+      {
+        sum_x += finish_points[i].x();
+        sum_y += finish_points[i].y();
+      }
+      Point mid_point(sum_x/ncols, sum_y/ncols);
+
+      double distances[nrows];
+
+      for (int i = 0; i < nrows; ++i)
+      {
+        distances[i] = euclidean_distance(tugs[i].get_position(), mid_point);
+      }
+
+      int n_tugs_to_remove = ncols-nrows;
+      std::vector<int> removable;
+
+      for(int i = 0; i < n_tugs_to_remove; i++)
+      {
+        double *max_dist = std::max_element(distances, distances+nrows);
+        int max_index = std::distance(distances, max_dist);
+        distances[max_index] = 0;
+        removable.push_back(max_index);
+      }
+      for (int i = removable.size()-1; i>=0; --i)
+      {
+        tugs.erase(tugs.begin()+removable[i]);
+      }
+      ncols = nrows;
+
+    }
+
     Matrix<double> cost_mat(nrows, ncols);
 
     for (int i = 0; i < nrows; ++i)
@@ -53,10 +92,10 @@ namespace Tug
         return false;        
       }
     }
-
     // Display solved matrix.
     for ( int row = 0 ; row < nrows ; row++ ) 
     {
+      bool tug_planned = false;
       for ( int col = 0 ; col < ncols ; col++ ) 
       {
         std::cout.width(2);
@@ -95,7 +134,7 @@ namespace Tug
     tug.set_path(goal);
   }
 
-  double Assign_paths::eucledian_distance(const Point &point1, const Point &point2)
+  double Assign_paths::euclidean_distance(const Point &point1, const Point &point2)
   {
     return sqrt(pow(point1.x() - point2.x(), 2) + pow(point1.y() - point2.y(), 2));
   }

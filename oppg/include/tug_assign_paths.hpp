@@ -17,7 +17,7 @@ namespace Tug
                                           Environment &environment);
 
   private:
-    double eucledian_distance(const Point &point1, const Point &point2);
+    double euclidean_distance(const Point &point1, const Point &point2);
     void assign_goal(Boat &tug, Point &goal);
 
 

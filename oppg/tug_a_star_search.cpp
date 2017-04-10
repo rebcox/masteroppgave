@@ -306,38 +306,3 @@ namespace Tug
       shortest_path_output.reverse(); 
   }
 }
-
-
-
-  /*PriorityQueue<Point, double> frontier;
-  unordered_map<Point, double> cost_so_far;
-  unordered_map<Point, Point> came_from;
-  frontier.put(start, 0);
-  */
-
-/*  came_from[start];
-  cost_so_far[start];
-
-  while(!frontier.empty())
-  {
-    auto current = frontier.get();
-
-    if (current == goal)
-    {
-      break;
-    }
-
-    for auto next : current.neighbors
-    {
-      double next_cost = cost_so_far[current] + eucidian_distance(current, next);
-
-      //next visited for the first time or the new cost is better than previous cost
-      if (!cost_so_far.count(next) || new_cost < cost_so_far[next]) 
-      {
-        cost_so_far[next] = new_cost;
-        double priority = new_cost + heuristic(next, goal);
-        frontier.put(next, priority);
-        came_from[next] = current;
-      }
-    }
-  }*/

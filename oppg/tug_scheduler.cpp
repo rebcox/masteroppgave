@@ -5,13 +5,6 @@ namespace Tug
   Scheduler::Scheduler(std::vector<Boat> &tugs, const Environment &environment)
   {
     sort_on_increasing_shortest_path_length(tugs);
-
-  /*  for (int i = 0; i < tugs.size(); ++i)
-    {
-      paths.push_back(tugs[i].get_path());
-    }*/
-    //sort_on_increasing_shortest_path_length(paths);
-    
     make_time_schedule(time_schedule_, tugs, environment);
   }
 
@@ -21,6 +14,7 @@ namespace Tug
     {
      // std::cout << "length " << i << ": " << tugs[i].length() << std::endl;
       Polyline path = tugs[i].get_path();
+      std::cout << "Tug " << tugs[i].id() << ": ";
       for (int j = 0; j < path.size(); ++j)
       {
 
@@ -56,17 +50,30 @@ namespace Tug
     std::sort( tugs.begin(), tugs.end(), sort_comparator1);
   }
 
+  bool Scheduler::time_schedule_is_zero(std::vector<int> &time_schedule, int t, int duration)
+  {
+    for (int i = t; i <= t+duration; ++i)
+    {
+      if (time_schedule[i] != 0)
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+
   bool Scheduler::is_available(std::vector<std::vector<int>> &time_schedule, 
                                 std::vector<Waypoint> &waypoints,
                                 int id,
-                                int t)
+                                int t,
+                                int duration)
   {
-    if (t >= time_schedule[id].size() || time_schedule[id][t] == 0)
+    if (t + duration >= time_schedule[id].size() || time_schedule_is_zero(time_schedule[id], t, duration)) // time_schedule[id][t] == 0)
     {
       for (int i = 0; i < waypoints[id].n_points_within_range(); ++i)
       {
         int point_id = waypoints[id].point_within_range(i)->id();
-        if (!(t >= time_schedule[point_id].size() || time_schedule[point_id][t] == 0))
+        if (!(t >= time_schedule[point_id].size() || time_schedule_is_zero(time_schedule[point_id], t, duration) ))//time_schedule[point_id][t] == 0))
         {
           return false;
         }
@@ -76,15 +83,19 @@ namespace Tug
     return false;
   }
 
-  void Scheduler::set_tug(std::vector<int> &time_schedule_point, int id, int t)
+  void Scheduler::set_tug(std::vector<int> &time_schedule_point, int id, int t, int duration)
   {
-    if (t >= time_schedule_point.size())
+    if (t+duration >= time_schedule_point.size())
     {
-      int no_extra_elements = t - time_schedule_point.size() + 1;
+      int no_extra_elements = t + duration - time_schedule_point.size();
       std::vector<int> zeros(no_extra_elements, 0);
       time_schedule_point.insert(time_schedule_point.end(), zeros.begin(), zeros.end());
     }
-    time_schedule_point[t] = id;
+    for (int i = 0; i < duration; ++i)
+    {
+      time_schedule_point[t+i] = id;
+    }
+    
   }
 
 
@@ -92,6 +103,7 @@ namespace Tug
   void Scheduler::schedule(std::vector<std::vector<int>> &time_schedule, const Boat &tug, std::vector<Waypoint> &waypoints)
   {
     double speed = tug.get_top_speed();
+    int duration_in_waypoint = 5;
     int t_tot = 0;
     Polyline path = tug.get_path();
     for (int i = 0; i < path.size()-2; ++i) //last point has path.id = -1
@@ -101,14 +113,13 @@ namespace Tug
       while (!planned)
       {
         int t = t_tot+length/speed;
-        //std::cout << path[i+1].id() << std::endl;
-        if (!is_available(time_schedule, waypoints, path[i+1].id(), t))
+        if (!is_available(time_schedule, waypoints, path[i+1].id(), t, duration_in_waypoint))
         {
           t_tot++;
         }
         else
         {
-          set_tug(time_schedule[path[i+1].id()], tug.id(), t);
+          set_tug(time_schedule[path[i+1].id()], tug.id(), t, duration_in_waypoint);
           planned = true;
         }
       }
@@ -124,10 +135,11 @@ namespace Tug
       time_schedule.push_back(std::vector<int>());
       //waypoints.push_back(Waypoint(environment(i),7,environment,waypoints,i));
       Point pt = environment(i);
-      waypoints.push_back(Waypoint(pt,i, 7,waypoints));
+      waypoints.push_back(Waypoint(pt,pt.id(), 7,waypoints));
 
-      std::cout << "point " << i << " " << waypoints[i] << std::endl;
+      std::cout << "point " << pt.id() << " " << waypoints[i] << std::endl;
     }
+
     for (int i = tugs.size()-1; i >= 0; --i)
     {
       schedule(time_schedule, tugs[i], waypoints);
@@ -135,30 +147,6 @@ namespace Tug
   }
 
 
-
-/*
-time_scheme[][]
-
-while !prioritization_queue.empty()
-  
-  tug = prioritization_queue.pop_front()
-
-  add_to_scheme(tug, time_scheme)
-
-
-
-
-function add_to_scheme(tug, time_scheme)
-  t = 0
-  for sub_path in tug.path
-    while 1
-      if sub_path(t).is_available(sub_path_length)
-        time_scheme[sub_path, t] = tug
-        break
-      */
-
-
-  
   /*Point Scheduler::position_at_time(time_t t, const Boat tug, const Polyline &path, float speed)
   { //speed [m/s] 
     time_t now = time(NULL);

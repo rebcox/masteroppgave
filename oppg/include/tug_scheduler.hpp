@@ -24,12 +24,14 @@ namespace Tug
     void schedule(std::vector<std::vector<int>> &time_schedule, const Boat &tug, std::vector<Waypoint> &waypoints);
     void make_time_schedule(std::vector<std::vector<int>> &time_schedule,
                             std::vector<Boat> &tugs, const Environment &environment);
+    bool time_schedule_is_zero(std::vector<int> &time_schedule, int t, int duration);
 
     bool is_available(std::vector<std::vector<int>> &time_schedule, 
                                 std::vector<Waypoint> &waypoints,
                                 int id,
-                                int t);
-    void set_tug(std::vector<int> &time_schedule_point, int id, int t);
+                                int t,
+                                int duration);
+    void set_tug(std::vector<int> &time_schedule_point, int id, int t, int duration);
 
     //Point position_at_time(time_t time, const Point &pt_now, const Polyline &path, float speed);
     double eucledian_distance(const Point &point1, const Point &point2);

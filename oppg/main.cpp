@@ -13,8 +13,6 @@
 #include "include/munkres/munkres.h"
 #include "include/tug_assign_paths.hpp"
 
-//#include "include/munkres/adapters/boostmatrixadapter.h"
-
 int meter_to_pixels(double scale, double meter)
 {
   return round(scale*meter);
@@ -40,18 +38,21 @@ int main(int argc, char **argv)
   std::vector<Tug::Point> start_points;
   start_points.push_back(Tug::Point(60, 60, tug_env.visilibity_environment()));
   start_points.push_back(Tug::Point(40, 40, tug_env.visilibity_environment()));
-  start_points.push_back(Tug::Point(200, 200, tug_env.visilibity_environment()));
+  start_points.push_back(Tug::Point(250, 200, tug_env.visilibity_environment()));
   start_points.push_back(Tug::Point(10, 10, tug_env.visilibity_environment()));
-  start_points.push_back(Tug::Point(58, 58, tug_env.visilibity_environment()));
-  start_points.push_back(Tug::Point(56, 60, tug_env.visilibity_environment()));
+  start_points.push_back(Tug::Point(50, 50, tug_env.visilibity_environment()));
+  start_points.push_back(Tug::Point(56, 30, tug_env.visilibity_environment()));
+  start_points.push_back(Tug::Point(15, 15, tug_env.visilibity_environment()));
+  start_points.push_back(Tug::Point(280, 200, tug_env.visilibity_environment()));
+
 
   std::vector<Tug::Point> finish_points;
-  finish_points.push_back(Tug::Point(320, 320, tug_env.visilibity_environment()));
+  finish_points.push_back(Tug::Point(318, 320, tug_env.visilibity_environment()));
   finish_points.push_back(Tug::Point(40, 240, tug_env.visilibity_environment()));
   finish_points.push_back(Tug::Point(349, 1, tug_env.visilibity_environment()));
   finish_points.push_back(Tug::Point(20, 20, tug_env.visilibity_environment()));
-  finish_points.push_back(Tug::Point(322, 322, tug_env.visilibity_environment()));
-  finish_points.push_back(Tug::Point(325, 325, tug_env.visilibity_environment()));
+  finish_points.push_back(Tug::Point(308, 322, tug_env.visilibity_environment()));
+  finish_points.push_back(Tug::Point(325 , 340, tug_env.visilibity_environment()));
 
 
   std::vector<Tug::Boat> tugs;
@@ -65,12 +66,22 @@ int main(int argc, char **argv)
   }
 
   Tug::Assign_paths assigner;
-  assigner.assign_on_combined_shortest_path(tugs, finish_points, tug_env);
+  bool ok = assigner.assign_on_combined_shortest_path(tugs, finish_points, tug_env);
+  if (!ok) return -1;
 
+  std::vector<Tug::Polyline> shortest_paths;
+  for (int i = 0; i < tugs.size(); ++i)
+  {
+    shortest_paths.push_back(tugs[i].get_path());
+  }
+
+  tug_env.save_environment_as_svg("tugs.svg", shortest_paths);
 
   Tug::Scheduler tug_scheduler(tugs, tug_env);
+
   tug_scheduler.print_schedule();
   tug_scheduler.print_paths(tugs);
+
 
 
 /*

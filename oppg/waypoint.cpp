@@ -13,7 +13,6 @@ namespace Tug
   Waypoint::Waypoint(Point &point, int point_id, int range, std::vector<Waypoint> &waypoints) 
    :Tug::Point(point.x(), point.y(), point_id)
   {
-     
     set_points_within_range(range,waypoints);
   }
 
