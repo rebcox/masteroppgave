@@ -130,14 +130,16 @@ namespace Tug
                                      std::vector<Boat> &tugs, const Environment &environment)
   {
     std::vector<Waypoint> waypoints;
-    for (int i = 0; i < environment.n(); ++i)
+    //for (int i = 0; i < environment.n(); ++i)
+    for (std::map<int,Point>::const_iterator i = environment.const_begin(); i != environment.const_end(); ++i)
+
     {
       time_schedule.push_back(std::vector<int>());
       //waypoints.push_back(Waypoint(environment(i),7,environment,waypoints,i));
-      Point pt = environment(i);
+      Point pt = i->second;
       waypoints.push_back(Waypoint(pt,pt.id(), 7,waypoints));
 
-      std::cout << "point " << pt.id() << " " << waypoints[i] << std::endl;
+      //std::cout << "point " << pt.id() << " " << waypoints[i] << std::endl;
     }
 
     for (int i = tugs.size()-1; i >= 0; --i)

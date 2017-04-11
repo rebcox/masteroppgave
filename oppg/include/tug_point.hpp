@@ -4,6 +4,7 @@
 #include "math.h"
 #include "clipper.hpp"
 #include "visilibity.hpp"
+#include "map"
 
 namespace Tug
 {
@@ -24,6 +25,8 @@ namespace Tug
 
     friend std::ostream& operator<<(std::ostream &out, Point const& pt);
     bool is_visible(const Tug::Point &point) const;
+    void add_shortest_path_cost(const Point &pt, double cost)
+      {shortest_path_costs_.insert(std::pair<int, double>(pt.id(),cost));}
 
     void set_neighbor1(Point &neighbor);
     void set_neighbor2(Point &neighbor);
@@ -32,6 +35,7 @@ namespace Tug
     VisiLibity::Visibility_Polygon visibility_polygon() const{return visibility_polygon_;};
     void create_visibility_polygon(const VisiLibity::Environment &environment);
     bool is_on_outer_boundary = false;
+    VisiLibity::Visibility_Polygon visibility_polygon(){return visibility_polygon_;};
     
     /*void set_in_on_outer_boundary(bool b) {is_on_outer_boundary = b;};
     bool get_is_on_outer_boundary(){return is_on_outer_boundary;};*/
@@ -40,6 +44,7 @@ namespace Tug
 
     //Point *neighbor1_;
    // Point *neighbor2_;
+    std::map<int, double> shortest_path_costs_;
     const int point_id_;
     VisiLibity::Visibility_Polygon visibility_polygon_;
   };

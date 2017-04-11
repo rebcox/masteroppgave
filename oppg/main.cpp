@@ -82,7 +82,9 @@ int main(int argc, char **argv)
   tug_scheduler.print_schedule();
   tug_scheduler.print_paths(tugs);
 
+  Tug::Environment asps_env("/Users/rebeccacox/GitHub/mast/oppg/environments/apsp_env.txt", 1.0, epsilon);
 
+  Tug::All_pairs_shortest_path apsp(asps_env);
 
 /*
   Tug::Environment tug_env_scaled("/home/rebecca/GITHUB/mast/oppg/environments/ex1tug.txt", 1.5, epsilon);

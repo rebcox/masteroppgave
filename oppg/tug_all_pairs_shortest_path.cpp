@@ -2,13 +2,13 @@
 #include "fstream"
 namespace Tug
 {
-  All_pairs_shortest_path::All_pairs_shortest_path(const Environment &environment)
+  All_pairs_shortest_path::All_pairs_shortest_path( Environment &environment)
   {
-    std::vector<std::vector<int>> apsp = find_optimal_path_from_all_points(environment);
-    write_to_file(apsp);
+    apsp_ = find_optimal_path_from_all_points(environment);
+    write_to_file(apsp_);
   }
 
-  void All_pairs_shortest_path::write_to_file(const std::vector<std::vector<int>> &apsp)
+  void All_pairs_shortest_path::write_to_file( std::vector<std::vector<int>> &apsp)
   {
     std::ofstream file_output;
     file_output.open ("all_pairs_shortest_path.txt");
@@ -24,55 +24,53 @@ namespace Tug
     file_output.close();
   }
 
-  int All_pairs_shortest_path::get_point_number(const VisiLibity::Point &point, const Environment &environment)
+  //std::vector<Point> All_pairs_shortest_path::find_optimal_path_from_all_points( Point &goal,  Environment &environment)
+  std::vector<std::vector<int>> All_pairs_shortest_path::find_optimal_path_from_all_points( Environment &environment)
   {
+    //std::vector<std::vector<double>> shortest_path_cost(environment.n()-4);
+    std::vector<std::vector<int>> optimal_vertex(environment.n());
     for (int i = 0; i < environment.n(); ++i)
     {
-      if (point == environment(i))
-      {
-        return i+1-4;
-      }
-    }
-    return -1;
-  }
-
-  //std::vector<Point> All_pairs_shortest_path::find_optimal_path_from_all_points(const Point &goal, const Environment &environment)
-  std::vector<std::vector<int>> All_pairs_shortest_path::find_optimal_path_from_all_points(const Environment &environment)
-  {
-
-    std::vector<std::vector<int>> optimal_vertex(environment.n()-4);
-    for (int i = 0; i < environment.n()-4; ++i)
-    {
-      optimal_vertex[i] = std::vector<int>(environment.n()-4);
+      optimal_vertex[i] = std::vector<int>(environment.n());
+      //shortest_path_cost[i] = std::vector<double>(environment.n()-4);
     }
     //int optimal_vertex[environment.n()][environment.n()];
     Polyline shortest_path_temp;
 
-      for (int i = 0; i < environment.n()-4; ++i)
+//      for (int i = 0; i < environment.n(); ++i)
+    int a=0;
+      for (std::map<int,Point>::const_iterator i = environment.const_begin(); i != environment.const_end(); ++i)
       {
-        for (int j = 0; j < environment.n()-4; ++j)
+        int b =0;
+
+        for (std::map<int,Point>::const_iterator j = environment.const_begin(); j != environment.const_end(); ++j)
+       // for (int j = 0; j < environment.n(); ++j)
         {
-          if (i==j)
+          if (a==b)
           {
-            optimal_vertex[i][j] = 0;
+            optimal_vertex[a][b] = 0;
           }
           else
           {
-            A_star_search(environment(i+4), //start
-                          environment(j+4), //finish
+            A_star_search(i->second, //start
+                          j->second, //finish
                           environment.points(),
                           shortest_path_temp,
                           epsilon_);
             if (shortest_path_temp.size() > 0)
             {
-              optimal_vertex[i][j] = shortest_path_temp[1].id(); //get_point_number(shortest_path_temp[1], environment); 
+              //environment(i+4).add_shortest_path_cost(environment(j+4), shortest_path_temp.length());
+              optimal_vertex[a][b] = shortest_path_temp[1].id(); //get_point_number(shortest_path_temp[1], environment); 
+              //shortest_path_cost[i][j] = shortest_path_temp.length();
             }
             else
             {
-              optimal_vertex[i][j] = -1;
+              optimal_vertex[a][b] = -1;
             }
           }
+          b++;
         }
+        a++;
       }
       return optimal_vertex;
 

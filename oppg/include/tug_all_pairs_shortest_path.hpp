@@ -10,15 +10,17 @@ namespace Tug
 	class All_pairs_shortest_path
 	{
 	public:
-		All_pairs_shortest_path(const Environment &environment);
-    void write_to_file(const std::vector<std::vector<int>> &apsp);
+		All_pairs_shortest_path( Environment &environment);
+    void write_to_file( std::vector<std::vector<int>> &apsp);
+
+    std::vector<std::vector<int>> get_apsp_matrix() const {return apsp_;};
+
 	private:
-    int get_point_number(const VisiLibity::Point &point, const Environment &environment);
 		std::vector<std::vector<Point>> optimal_paths;
 		double epsilon_ = 0.001;
-   //std::vector<Point> find_optimal_path_from_all_points(const Point &goal, const Environment &environment);
-  std::vector<std::vector<int>> find_optimal_path_from_all_points(const Environment &environment);
-
+   //std::vector<Point> find_optimal_path_from_all_points( Point &goal,  Environment &environment);
+    std::vector<std::vector<int>> find_optimal_path_from_all_points( Environment &environment);
+    std::vector<std::vector<int>> apsp_;
 	};
 }
 #endif

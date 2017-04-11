@@ -7,7 +7,7 @@
 #include <vector>
 #include "tug_point.hpp"
 #include "tug_polyline.hpp"
-//#include "a_star_search.h"
+#include "map"
 
 namespace Tug
 {
@@ -26,33 +26,39 @@ namespace Tug
 
       bool has_safety_margin(){return environment_has_safety_margin;};
       unsigned n() const;
-      const VisiLibity::Visibility_Graph &visibility_graph() const;
       const Point &operator () (unsigned k) const;
-      const std::vector<Point>& points() const;
-      void mark_point_as_on_boundary(unsigned k);
-      void get_boundaries(int &x_min, int &x_max, int &y_min, int &y_max);
+      std::vector<Point> points();
+      //void mark_point_as_on_boundary(unsigned k);
+      void get_boundaries(int &x_min, int &x_max, int &y_min, int &y_max) const;
       bool point_is_within_outer_boundary(const Tug::Point point);
+      bool point_is_on_outer_boundary(const VisiLibity::Point &point) const;
+
+      std::map<int, Point>::const_iterator const_begin() const;
+      std::map<int, Point>::const_iterator const_end() const;
 
     private:
-      VisiLibity::Environment visilibity_environment_;
-      VisiLibity::Environment visilibity_environment_with_safety_margin_;
+
       bool environment_has_safety_margin = false;
-      //VisiLibity::Polygon outer_boundary_;
-      //ClipperLib::cInt x_min, x_max, y_min, y_max; //of outer boundary
-      int x_min, x_max, y_min, y_max; //of outer boundary
+      int x_min_, x_max_, y_min_, y_max_; //of outer boundary
       double epsilon_;
 
+      VisiLibity::Environment visilibity_environment_;
+      VisiLibity::Environment visilibity_environment_with_safety_margin_;
+
+      //obstacles
       ClipperLib::Paths paths_;
       ClipperLib::Paths paths_with_safety_margin_;
 
-      std::vector<Point> points_in_environment_;
-      std::vector<Point> points_in_environment_with_safety_margin_;
+      std::map<int, Point> points_in_environment_;
+      std::map<int, Point> points_in_environment_with_safety_margin_;
 
-      VisiLibity::Visibility_Graph visibility_graph_;
-      VisiLibity::Visibility_Graph visibility_graph_with_safety_margin_;
+      //std::vector<Point> points_in_environment_;
+      //std::vector<Point> points_in_environment_with_safety_margin_;
+      std::map<int, Point>::iterator begin();
+      std::map<int, Point>::iterator end();
 
       void clip_against_outer_boundary(ClipperLib::Paths &paths_in, ClipperLib::Paths &paths_out);
-      void update_tug_point_list(const ClipperLib::Paths &paths, std::vector<Point> &tug_points);
+      void update_tug_point_list(const ClipperLib::Paths &paths, std::map<int, Point> &tug_points);
       void offset_polygon(VisiLibity::Polygon &polygon, int margin);
       void convert_to_visilibity_environment(const ClipperLib::Paths &paths, VisiLibity::Environment &environment);
       void reverse_path(ClipperLib::Path &path);
@@ -61,7 +67,6 @@ namespace Tug
       void find_max_and_min_in_path(const ClipperLib::Path &path, char coordinate, int &max_val, int &min_val);
       void set_outer_boundary(const ClipperLib::Path &outer_boundary, VisiLibity::Environment &environment);
       void mark_points_touching_outer_boundary();
-      bool point_is_on_outer_boundary(const VisiLibity::Point &point);
   };
 }
 

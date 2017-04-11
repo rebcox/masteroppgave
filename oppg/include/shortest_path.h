@@ -15,12 +15,13 @@ namespace Tug
   class Shortest_path
   {
   public:
-    Shortest_path(Tug::Environment &environment, const Point &start, 
+    Shortest_path(Environment &environment, const Point &start, 
                   const Point &finish, Polyline &shortest_path);
-    Shortest_path(const std::string &all_pairs_shortest_path);
+    Shortest_path(const std::string &all_pairs_shortest_path, Environment &environment);
 
     //void calculate_shortest_path(const Point &start, const Point &finish, Polyline &shortest_path, Tug::Environment &environment);
-    void calculate_shortest_path(int start_id, int finish_id, Polyline &shortest_path, Environment &environment);
+    bool calculate_shortest_path(int start_id, int finish_id, Polyline &shortest_path, Environment &environment);
+    bool calculate_shortest_path(const Point &start, const Point &end, Polyline &shortest_path, Environment &environment);
 
     std::vector<Waypoint> get_waypoints();
 
@@ -36,12 +37,7 @@ namespace Tug
     int point_within_safety_margin(const Point &point, const Tug::Environment &environment);
     Point point_closest_to_line_segment(const Point &point, const VisiLibity::Line_Segment &line);
     Point calculate_point_on_boundary(const Point &point, const VisiLibity::Polygon &hole, const Tug::Environment &env);
-    //Point calculate_point_on_boundary(const Point &point, const VisiLibity::Polygon &hole);
 
-   // std::vector<bool> remove_points_touching_outer_boundary(VisiLibity::Environment &environment);
-    //std::vector<bool> points_touching_outer_boundary(Tug::Environment &environment);
-    bool point_is_on_outer_boundary(const Point &point, const Tug::Environment &env);
-    bool point_is_on_outer_boundary(const VisiLibity::Point &point, const Tug::Environment &env);
 
   };
 

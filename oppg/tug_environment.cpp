@@ -12,7 +12,7 @@ namespace Tug
     ClipperLib::Paths temp_paths;
     bool ok = load_from_file(temp_paths, filename, scale);
     clip_against_outer_boundary(temp_paths, paths_);
-    //std::cout << "Number of objects: " << paths_.size() << std::endl;
+
     if(!ok)
     {
       std::cout << "Could not read environment file" << std::endl;
@@ -23,42 +23,81 @@ namespace Tug
     {
       std::cout << "Environment is not valid" << std::endl;
     }
-    visibility_graph_ = VisiLibity::Visibility_Graph(visilibity_environment_, epsilon);
     
     update_tug_point_list(paths_, points_in_environment_);
-
-    /*for (int i = 0; i < points_in_environment_.size(); ++i)
-    {
-      std::cout << "point: " << points_in_environment_[i] << std::endl;
-      std::cout << "neighbor 1: " << *points_in_environment_[i].get_neighbor1() << std::endl;
-      std::cout << "neighbor 2: " << *points_in_environment_[i].get_neighbor2() << std::endl;
-      std::cout << "\n";
-    }*/
-
   }
-  
-  const std::vector<Point> &Environment::points() const
+
+
+  std::map<int, Point>::iterator Environment::begin()
   {
     if (environment_has_safety_margin)
     {
-      return points_in_environment_with_safety_margin_;
+      return points_in_environment_with_safety_margin_.begin();
     }
     else
     {
-      return points_in_environment_;
+      return points_in_environment_.begin();
     }
   }
-  void Environment::mark_point_as_on_boundary(unsigned k)
+
+  std::map<int, Point>::iterator Environment::end()
   {
     if (environment_has_safety_margin)
     {
-      points_in_environment_with_safety_margin_[k].is_on_outer_boundary = true;
+      return points_in_environment_with_safety_margin_.end();
     }
     else
     {
-      points_in_environment_[k].is_on_outer_boundary = true;
+      return points_in_environment_.end();
     }
   }
+
+  std::map<int, Point>::const_iterator Environment::const_begin() const
+  {
+    if (environment_has_safety_margin)
+    {
+      return points_in_environment_with_safety_margin_.begin();
+    }
+    else
+    {
+      return points_in_environment_.begin();
+    }
+  }
+
+  std::map<int, Point>::const_iterator Environment::const_end() const
+  {
+    if (environment_has_safety_margin)
+    {
+      return points_in_environment_with_safety_margin_.end();
+    }
+    else
+    {
+      return points_in_environment_.end();
+    }
+  }
+
+
+  std::vector<Point> Environment::points()
+  {
+    std::vector<Point> dummy_points;
+    for (std::map<int,Point>::iterator pt = begin(); pt != end(); ++pt)
+    {
+      dummy_points.push_back(pt->second);
+    }
+    return dummy_points;
+  }
+
+ /* void Environment::mark_point_as_on_boundary(unsigned k)
+  {
+    if (environment_has_safety_margin)
+    {
+      points_in_environment_with_safety_margin_.at(k).is_on_outer_boundary = true;
+    }
+    else
+    {
+      points_in_environment_.at(k).is_on_outer_boundary = true;
+    }
+  }*/
 
   const Point &Environment::operator() (unsigned k) const
   {
@@ -73,27 +112,18 @@ namespace Tug
   }
 
 
+
   unsigned Environment::n() const
   {
     if (environment_has_safety_margin)
     {
-      return visilibity_environment_with_safety_margin_.n();
+      return points_in_environment_with_safety_margin_.size();
+      //return visilibity_environment_with_safety_margin_.n();
     }
     else
     {
-      return visilibity_environment_.n();
-    }
-  }
-
-  const VisiLibity::Visibility_Graph &Environment::visibility_graph() const
-  {
-    if (environment_has_safety_margin)
-    {
-      return visibility_graph_with_safety_margin_;
-    }
-    else
-    {
-      return visibility_graph_;
+      return points_in_environment_.size();
+      //return visilibity_environment_.n();
     }
   }
 
@@ -164,15 +194,13 @@ namespace Tug
     
     visilibity_environment_with_safety_margin_.is_valid(epsilon_);
 
-    visibility_graph_with_safety_margin_ = VisiLibity::Visibility_Graph(visilibity_environment_with_safety_margin_, epsilon_);
-
     environment_has_safety_margin = true;
     update_tug_point_list(paths_with_safety_margin_, points_in_environment_with_safety_margin_);
   }
 
   bool Environment::point_is_within_outer_boundary(const ClipperLib::IntPoint point)
   {
-    if (point.X >= x_max-1 || point.X <= x_min+1 || point.Y <= y_min+1 || point.Y >= y_max-1) 
+    if (point.X >= x_max_-1 || point.X <= x_min_+1 || point.Y <= y_min_+1 || point.Y >= y_max_-1) 
     {
       return false;
     }
@@ -181,7 +209,7 @@ namespace Tug
   
   bool Environment::point_is_within_outer_boundary(const Tug::Point point)
   {
-    if (point.x() >= x_max-1 || point.x() <= x_min+1 || point.y() <= y_min+1 || point.y() >= y_max-1) 
+    if (point.x() >= x_max_-1 || point.x() <= x_min_+1 || point.y() <= y_min_+1 || point.y() >= y_max_-1) 
     {
       return false;
     }
@@ -206,37 +234,37 @@ namespace Tug
 
   void Environment::convert_to_visilibity_environment(const ClipperLib::Paths &paths, VisiLibity::Environment &environment)
   {
-    find_max_and_min_in_path(paths[0], 'X', x_max, x_min);
-    find_max_and_min_in_path(paths[0], 'Y', y_max, y_min);
+    find_max_and_min_in_path(paths[0], 'X', x_max_, x_min_);
+    find_max_and_min_in_path(paths[0], 'Y', y_max_, y_min_);
 
     int x_min_cur, x_max_cur, y_min_cur, y_max_cur;
 
     for (int i = 1; i < paths.size(); ++i)
     {
       find_max_and_min_in_path(paths[i], 'X', x_max_cur, x_min_cur);
-      if (x_max_cur >= x_max)
+      if (x_max_cur >= x_max_)
       {
-        x_max = x_max_cur +1 ;
+        x_max_ = x_max_cur +1 ;
       }
-      if (x_min_cur <= x_min)
+      if (x_min_cur <= x_min_)
       {
-        x_min = x_min_cur -1 ;
+        x_min_ = x_min_cur -1 ;
       }
       find_max_and_min_in_path(paths[i], 'Y', y_max_cur, y_min_cur);
-      if (y_max_cur >= y_max)
+      if (y_max_cur >= y_max_)
       {
-        y_max = y_max_cur + 1 ;
+        y_max_ = y_max_cur + 1 ;
       }
-      if (y_min_cur <= y_min)
+      if (y_min_cur <= y_min_)
       {
-        y_min = y_min_cur -1 ;
+        y_min_ = y_min_cur -1 ;
       }
     }
     ClipperLib::Path path_temp;
-    path_temp.push_back(ClipperLib::IntPoint(x_min, y_min));
-    path_temp.push_back(ClipperLib::IntPoint(x_max, y_min));
-    path_temp.push_back(ClipperLib::IntPoint(x_max, y_max));
-    path_temp.push_back(ClipperLib::IntPoint(x_min, y_max));
+    path_temp.push_back(ClipperLib::IntPoint(x_min_, y_min_));
+    path_temp.push_back(ClipperLib::IntPoint(x_max_, y_min_));
+    path_temp.push_back(ClipperLib::IntPoint(x_max_, y_max_));
+    path_temp.push_back(ClipperLib::IntPoint(x_min_, y_max_));
 
     set_outer_boundary(path_temp, environment);
 
@@ -248,47 +276,20 @@ namespace Tug
     }
   }
 
-  void Environment::update_tug_point_list(const ClipperLib::Paths &paths, std::vector<Point> &tug_points)
+  void Environment::update_tug_point_list(const ClipperLib::Paths &paths, std::map<int, Point> &tug_points)
   {
     int k = 0;
     tug_points.clear();
 
-    int counter = 0;
-    for (int i = 0; i < paths.size(); ++i)
+    int counter = 1;
+    for (int i = 1; i < paths.size(); ++i)
     {
       for (int j = 0; j < paths[i].size(); ++j)
       {
-        //Point(paths[i][j], paths[i][j-1], paths[j+1]);
-        //tug_points.push_back(Point(paths[i][j]));
-
-        if (i != 0) //not outer boundary
-        {
-          //pt.set_point_id(++counter);
-          tug_points.push_back(Point(paths[i][j], visilibity_environment(), ++counter));
-
-        }
-        else
-        {
-          tug_points.push_back(Point(paths[i][j], visilibity_environment()));
-        }
-
-        //std::cout << tug_points.back() << std::endl;
+        //counter++;
+        int id = counter++;
+        tug_points.insert(std::pair<int,Point>(id, Point(paths[i][j], visilibity_environment(), id)));
       }
-      int path_size = paths[i].size();
-
-      tug_points[k].set_neighbor1(tug_points[k+path_size-1]);
-      tug_points[k].set_neighbor2(tug_points[k+1]);
-      
-      for (int j = 1; j < path_size-1; ++j)
-      {
-        tug_points[k+j].set_neighbor1(tug_points[k+j-1]);
-        tug_points[k+j].set_neighbor2(tug_points[k+j+1]);
-      }  
-
-      tug_points[k+path_size-1].set_neighbor1(tug_points[k+path_size-2]);
-      tug_points[k+path_size-1].set_neighbor2(tug_points[k]);
-
-      k+=path_size;
     }
     mark_points_touching_outer_boundary();
   }
@@ -297,14 +298,14 @@ namespace Tug
   {
     Polyline shortest_path;
 
-    Shortest_path((*this), start,finish,shortest_path);
+    Shortest_path((*this), start, finish, shortest_path);
     return shortest_path;
   }
 
   void Environment::set_outer_boundary(const ClipperLib::Path &outer_boundary, VisiLibity::Environment &environment)
   {
-    find_max_and_min_in_path(outer_boundary, 'X', x_max, x_min);
-    find_max_and_min_in_path(outer_boundary, 'Y', y_max, y_min);
+    find_max_and_min_in_path(outer_boundary, 'X', x_max_, x_min_);
+    find_max_and_min_in_path(outer_boundary, 'Y', y_max_, y_min_);
 
     VisiLibity::Polygon outer_boundary_polygon;
     path_to_hole(outer_boundary, outer_boundary_polygon);
@@ -314,23 +315,36 @@ namespace Tug
   void Environment::mark_points_touching_outer_boundary() 
   {
     std::vector<bool> out;
-    for (int i = 0; i < n(); ++i)
+
+    //for (int i = 0; i < n(); ++i)
+    for (std::map<int,Point>::iterator pt = begin(); pt != end(); ++pt)
     {
-      if (environment_has_safety_margin and point_is_on_outer_boundary(points_in_environment_with_safety_margin_[i]))
+      if (environment_has_safety_margin and point_is_on_outer_boundary(pt->second))
       {
-        points_in_environment_with_safety_margin_[i].is_on_outer_boundary = true;
+        pt->second.is_on_outer_boundary = true;
       }
-      else if (!environment_has_safety_margin and point_is_on_outer_boundary(points_in_environment_[i]))
+      else if(!environment_has_safety_margin and point_is_on_outer_boundary(pt->second))
       {
-        points_in_environment_[i].is_on_outer_boundary = true;
+        pt->second.is_on_outer_boundary = true;        
       }
-    }
+    } 
+
+    /*{
+      if (environment_has_safety_margin and point_is_on_outer_boundary(points_in_environment_with_safety_margin_.at(i)))
+      {
+        points_in_environment_with_safety_margin_.at(i).is_on_outer_boundary = true;
+      }
+      else if (!environment_has_safety_margin and point_is_on_outer_boundary(points_in_environment_.at(i)))
+      {
+        points_in_environment_.at(i).is_on_outer_boundary = true;
+      }
+    }*/
   }
 
-  bool Environment::point_is_on_outer_boundary(const VisiLibity::Point &point)
+  bool Environment::point_is_on_outer_boundary(const VisiLibity::Point &point) const
   {
     //outer boundary is 1 unit smaller
-    if (point.x() == x_max-1 || point.x() == x_min+1 || point.y() == y_min+1 || point.y() == y_max-1)
+    if (point.x() == x_max_-1 || point.x() == x_min_+1 || point.y() == y_min_+1 || point.y() == y_max_-1)
     {
       return true;
     }
@@ -373,7 +387,7 @@ namespace Tug
   }
 
 
-  void Environment::find_max_and_min_in_path(const ClipperLib::Path &path, char coordinate, int &max_val, int &min_val) //, ClipperLib::cInt &y_max, ClipperLib::cInt &y_min)
+  void Environment::find_max_and_min_in_path(const ClipperLib::Path &path, char coordinate, int &max_val, int &min_val) 
   {
     if (!(coordinate == 'X' || coordinate == 'Y'))
     {
@@ -405,12 +419,12 @@ namespace Tug
     }
   }
 
-  void Environment::get_boundaries(int &x_min_out, int &x_max_out, int &y_min_out, int &y_max_out)
+  void Environment::get_boundaries(int &x_min_out, int &x_max_out, int &y_min_out, int &y_max_out) const
   {
-    x_min_out = x_min+1;
-    x_max_out = x_max-1;
-    y_min_out = y_min+1;
-    y_max_out = y_max-1;
+    x_min_out = x_min_+1;
+    x_max_out = x_max_-1;
+    y_min_out = y_min_+1;
+    y_max_out = y_max_-1;
   }
 
 
@@ -422,25 +436,9 @@ namespace Tug
 
   void Environment::save_environment_as_svg(const std::string filename, const Polyline &shortest_path)
   {
-    SVGBuilder svg;    
-    svg.style.brushClr = 0x129C0000;
-    svg.style.penClr = 0xCCFFA07A;
-    svg.style.pft = ClipperLib::pftEvenOdd;
-
-    if (environment_has_safety_margin)
-    {
-      svg.AddPaths(paths_with_safety_margin_);
-      svg.AddPaths(paths_);
-    }
-    else
-    {
-      svg.AddPaths(paths_);
-    }
-    if (shortest_path.size()>0)
-    {
-      svg.AddPolyline(shortest_path);
-    }
-    svg.SaveToFile(filename, 1,0);
+    std::vector<Polyline> shortest_paths;
+    shortest_paths.push_back(shortest_path);
+    save_environment_as_svg(filename, shortest_paths);
   }
 
   void Environment::save_environment_as_svg(const std::string filename, const std::vector<Polyline> &shortest_paths)

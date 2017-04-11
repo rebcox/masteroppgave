@@ -6,6 +6,7 @@
 #include "include/tug_scheduler.hpp"
 #include "include/tug_boat.hpp"
 #include "include/tug_assign_paths.hpp"
+#include "include/tug_all_pairs_shortest_path.hpp"
 #include <gtest/gtest.h>
 
 //TUG_POINT start
@@ -27,6 +28,7 @@ TEST(ShortestPathTest, NoSafetyMargin)
 
   Tug::Point start(30, 180, tug_environment.visilibity_environment());
   Tug::Point finish(190, 87, tug_environment.visilibity_environment());
+
   Tug::Shortest_path shortest_path_class(tug_environment, start, finish, shortest_path_test);
 
   VisiLibity::Polyline shortest_path_solution;
@@ -34,6 +36,8 @@ TEST(ShortestPathTest, NoSafetyMargin)
   shortest_path_solution.push_back(VisiLibity::Point(120,190));
   shortest_path_solution.push_back(VisiLibity::Point(170,170));
   shortest_path_solution.push_back(VisiLibity::Point(190,87));
+
+  ASSERT_EQ(shortest_path_test.size(), shortest_path_solution.size());
 
   for (int i = 0; i < shortest_path_solution.size(); ++i)
   {
@@ -63,6 +67,8 @@ TEST(ShortestPathTest, StartAndFinishWithinSafetyMargin)
   shortest_path_solution.push_back(VisiLibity::Point(176, 216));
   shortest_path_solution.push_back(VisiLibity::Point(347, 216));
   shortest_path_solution.push_back(VisiLibity::Point(347, 230));
+
+  ASSERT_EQ(shortest_path_test.size(), shortest_path_solution.size());
 
   for (int i = 0; i < shortest_path_solution.size(); ++i)
   {
@@ -130,7 +136,7 @@ TEST(TugEnvironmentTest, PointsOnBoundaryMarkedCorrectly)
   std::vector<Tug::Point> points = tug_environment.points();
 
   //These are manually checked that they are on boundary
-  bool on_boundary[] = {1,1,1,1,1,1,0,0,0,0,1,1,1,0,0,0,0,1,1,0,0};
+  bool on_boundary[] = {1,1,0,0,0,0,1,1,1,0,0,0,0,1,1,0,0};
 
   for (int i = 0; i < points.size(); ++i)
   {
@@ -149,19 +155,15 @@ TEST(TugEnvironmentTest, AllPointsWithinOuterBoundary)
   //Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/test_environment_out_of_boundary.txt", 1.0, 0.01);
   Tug::Environment tug_environment("/Users/rebeccacox/GitHub/mast/oppg/environments/test_environment_out_of_boundary.txt", 1.0, 0.01);
 
-  VisiLibity::Point pt4(350, 260); 
-  VisiLibity::Point pt5(320, 260); 
-  VisiLibity::Point pt6(320, 350); 
-  VisiLibity::Point pt7(350, 350); 
+  VisiLibity::Point pt0(350, 260); 
+  VisiLibity::Point pt1(320, 260); 
+  VisiLibity::Point pt2(320, 350); 
+  VisiLibity::Point pt3(350, 350); 
 
-  EXPECT_EQ(tug_environment(4).x(), pt4.x()); 
-  EXPECT_EQ(tug_environment(4).y(), pt4.y());
-  EXPECT_EQ(tug_environment(5).x(), pt5.x());
-  EXPECT_EQ(tug_environment(5).y(), pt5.y());
-  EXPECT_EQ(tug_environment(6).x(), pt6.x());
-  EXPECT_EQ(tug_environment(6).y(), pt6.y());
-  EXPECT_EQ(tug_environment(7).x(), pt7.x()); 
-  EXPECT_EQ(tug_environment(7).y(), pt7.y()); 
+  EXPECT_EQ(tug_environment(1), pt0); 
+  EXPECT_EQ(tug_environment(2), pt1);
+  EXPECT_EQ(tug_environment(3), pt2);
+  EXPECT_EQ(tug_environment(4), pt3); 
 }
 //TUG_ENVIRONMENT end
 
@@ -235,9 +237,97 @@ TEST(AssignPathsTest, hungarianAlgorithmTest)
   EXPECT_EQ(tugs[0].get_path(), path1);
   EXPECT_EQ(tugs[1].get_path(), path2);
   EXPECT_EQ(tugs[2].get_path(), path3);
+}
 
+TEST(AllPairsShortestPath, correctMatrix)
+{
+  /*int solution[8][8] = 
+  { {0, 2, 2, 4, 5, 6, 8, 8}, 
+    {2, 2, 0, 4, 5, 5, 8, 8},  
+    {1, 1, 3, 0, 1, 1, 8, 3},  
+    {1, 2, 3, 1, 0, 6, 6, 8},  
+    {1, 5, 5, 1, 5, 0, 7, 5},  
+    {8, 8, 8, 3, 6, 6, 0, 8},  
+    {1, 2, 3, 3, 5, 5, 7, 0} };*/
+
+/*0  2  2  4  8  6  7  8  
+1  0  3  1  6  6  7  8  
+2  2  0  4  6  6  2  2  
+1  1  3  0  1  1  1  1  
+8  6  6  8  0  6  6  8  
+1  2  3  1  5  0  7  5  
+1  2  2  1  6  6  0  8  
+1  2  2  1  5  5  7  0  */
+
+
+  int solution[8][8] = 
+    { {0, 2, 2, 4, 8, 6, 7, 8},  
+      {1, 0, 3, 1, 6, 6, 7, 8},  
+      {2, 2, 0, 4, 6, 6, 2, 2},  
+      {1, 1, 3, 0, 8, 1, 1, 1},  
+      {8, 6, 6, 1, 0, 6, 6, 8},  
+      {1, 2, 3, 1, 5, 0, 7, 5},  
+      {1, 2, 2, 1, 6, 6, 0, 8},  
+      {1, 2, 2, 1, 5, 5, 7, 0} };
+
+  Tug::Environment apsp_env("/Users/rebeccacox/GitHub/mast/oppg/environments/apsp_env.txt", 1.0, 0.01);
+
+  Tug::All_pairs_shortest_path apsp(apsp_env);
+  std::vector<std::vector<int>> apsp_matrix = apsp.get_apsp_matrix();
+
+  EXPECT_EQ(apsp_matrix.size(), 8);
+  EXPECT_EQ(apsp_matrix.at(0).size(), 8);
+
+  for (int i = 0; i < 8; ++i)
+  {
+    for (int j = 0; j < 8; ++j)
+    {
+      EXPECT_EQ(solution[i][j], apsp_matrix.at(i).at(j));
+    }
+  }
 
 }
+
+
+TEST(AllPairsShortestPath, correctMatrixBig)
+{
+
+  int solution[14][14] = 
+{ {0 , 2  ,2 , 4,  10,  5,  8,  8,  9,  10,  14,  12 , 13,  14} , 
+{1 , 0  ,3 , 1,  10,  7,  7,  8,  9,  10,  12,  12 , 13  ,14 } ,
+{2 , 2  ,0 , 4,  10,  7,  7,  8,  9,  10,  12,  12 , 2 , 2  },
+{1 , 1  ,3 , 0,  10,  5,  3,  3,  1,  1 , 14 , 1 , 1 , 1  },
+{10, 10, 10, 1 , 0 , 6 , 6 , 7 , 10 , 10 , 11 , 10,  12,  11},  
+{10,  7 , 7,  1,  5,  0,  7,  7,  8,  5 , 5  ,10  ,12 , 11  },
+{8 , 2  ,3 , 3,  6 , 6 , 0 , 8 , 8 , 5  ,12  ,9 , 9 , 9  },
+{1 , 2  ,3 , 3,  6 , 7 , 7 , 0 , 9 , 9  ,12  ,9  ,9 , 9  },
+{1 , 2  ,3 , 1,  10,  5,  8,  8,  0,  10,  12,  12 , 13 , 14},  
+{1 , 2  ,3 , 1,  5 , 5 , 6 , 9 , 9 , 0  ,11  ,12  ,12 , 11  },
+{14, 12, 12,  1 , 5 , 5 , 8 , 9 , 12 ,10 , 0  ,12  ,12 , 14  },
+{1 , 2  ,3 , 1,  10,  5,  8,  9,  9,  10,  11,  0  ,13 , 11  },
+{1 , 2  ,2 , 1,  10,  5,  8,  9,  9,  12,  12,  12  ,0  ,14  },
+{1 , 2  ,2 , 1,  11,  5,  8,  9,  9,  11,  11,  11 , 13 , 0  } };
+
+  Tug::Environment apsp_env("/Users/rebeccacox/GitHub/mast/oppg/environments/ex1tug.txt", 1.0, 0.01);
+
+  Tug::All_pairs_shortest_path apsp(apsp_env);
+  std::vector<std::vector<int>> apsp_matrix = apsp.get_apsp_matrix();
+
+  EXPECT_EQ(apsp_matrix.size(), 14);
+  EXPECT_EQ(apsp_matrix[0].size(), 14);
+
+  for (int i = 0; i < 14; ++i)
+  {
+    for (int j = 0; j < 14; ++j)
+    {
+      EXPECT_EQ(solution[i][j], apsp_matrix.at(i).at(j));
+    }
+  }
+
+}
+
+
+
 
 int main(int argc, char **argv) 
 {
