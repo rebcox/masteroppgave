@@ -4,19 +4,19 @@
 namespace Tug
 {
   Shortest_path::Shortest_path(Tug::Environment &environment, const Point &start, 
-                              const Point &finish, Polyline &shortest_path)
+                              const Point &end, Polyline &shortest_path)
   {
     Point second_to_last_point;
     Point second_point;
 
-    if(!start_and_end_points_are_valid(start, finish, environment))
+    if(!start_and_end_points_are_valid(start, end, environment))
     {
-      //std::cout << "Start and/or finish point within obstacle" << std::endl;
+      //std::cout << "Start and/or end point within obstacle" << std::endl;
       return;
     }
     
-    const Point *start_point_to_a_star;
-    const Point *finish_point_to_a_star;
+    std::shared_ptr<Point> start_point_to_a_star;
+    std::shared_ptr<Point> end_point_to_a_star;
 
     int index_start = point_within_safety_margin(start,environment);
 
@@ -27,43 +27,43 @@ namespace Tug
         environment.visilibity_environment_with_safety_margin_[index_start], environment); //todo: maybe one off
     }
 
-    int index_finish = point_within_safety_margin(finish,environment);
-    if (index_finish > 0)
+    int index_end = point_within_safety_margin(end,environment);
+    if (index_end > 0)
     {
-      std::cout << "Finish point within safety margin of obstacle " << index_finish << std::endl;
-      second_to_last_point = calculate_point_on_boundary(finish, 
-        environment.visilibity_environment_with_safety_margin_[index_finish], environment); //todo: maybe one off
+      std::cout << "end point within safety margin of obstacle " << index_end << std::endl;
+      second_to_last_point = calculate_point_on_boundary(end, 
+        environment.visilibity_environment_with_safety_margin_[index_end], environment); //todo: maybe one off
       std::cout << second_to_last_point << std::endl;
     }
 
     double epsilon = 0.001;
-
     if (index_start > 0)
     {
-      start_point_to_a_star = &second_point;
+      start_point_to_a_star = std::make_shared<Point>(second_point);
     }
     else
     {
-      start_point_to_a_star = &start;
+      start_point_to_a_star = std::make_shared<Point>(start);
+
     }
-    if (index_finish > 0)
+    if (index_end > 0)
     {
-      finish_point_to_a_star = &second_to_last_point;
+      end_point_to_a_star = std::make_shared<Point>(second_to_last_point);
     }
     else
     {
-      finish_point_to_a_star = &finish;
+      end_point_to_a_star = std::make_shared<Point>(end);
     }
     
    A_star_search(*start_point_to_a_star, 
-                *finish_point_to_a_star,
+                *end_point_to_a_star,
                 environment.points(), 
                 shortest_path, 
                 epsilon);
 
-    if (shortest_path.size() > 0 and shortest_path[shortest_path.size()-1] != finish)
+    if (shortest_path.size() > 0 and shortest_path[shortest_path.size()-1] != end)
     {
-      shortest_path.push_back(finish);
+      shortest_path.push_back(end);
     }
 
     if (shortest_path.size() > 0 and shortest_path[0] != start)
@@ -101,8 +101,11 @@ namespace Tug
       return false;
     }
     
-    const Point *start_point_outside_safety_margin;
-    const Point *end_point_outside_margin;
+    //const Point *start_point_outside_safety_margin;
+    //const Point *end_point_outside_margin;
+    std::shared_ptr<Point> start_point_outside_safety_margin;
+    std::shared_ptr<Point> end_point_outside_margin;
+
 
     Point second_to_last_point;
     Point second_point;
@@ -127,19 +130,19 @@ namespace Tug
 
     if (index_start > 0)
     {
-      start_point_outside_safety_margin = &second_point;
+      start_point_outside_safety_margin = std::make_shared<Point>(second_point);
     }
     else
     {
-      start_point_outside_safety_margin = &start;
+      start_point_outside_safety_margin = std::make_shared<Point>(start);
     }
     if (index_end > 0)
     {
-      end_point_outside_margin = &second_to_last_point;
+      end_point_outside_margin = std::make_shared<Point>(second_to_last_point);
     }
     else
     {
-      end_point_outside_margin = &end;
+      end_point_outside_margin = std::make_shared<Point>(end);
     }
 
     bool ok = calculate_shortest_path_outside_safety_margin(*start_point_outside_safety_margin, 
@@ -230,6 +233,7 @@ namespace Tug
       }
     }
 
+    //If a path is found
     if (best_start > -1 and best_end > -1)
     {
       shortest_path.push_back(start);
