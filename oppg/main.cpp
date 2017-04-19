@@ -36,23 +36,23 @@ int main(int argc, char **argv)
  // Tug::Environment tug_env("/home/rebecca/GITHUB/mast/oppg/environments/ex1tug.txt", 1.0, epsilon);
 
   std::vector<Tug::Point> start_points;
-  start_points.push_back(Tug::Point(60, 60, tug_env.visilibity_environment()));
-  start_points.push_back(Tug::Point(40, 40, tug_env.visilibity_environment()));
-  start_points.push_back(Tug::Point(250, 200, tug_env.visilibity_environment()));
-  start_points.push_back(Tug::Point(10, 10, tug_env.visilibity_environment()));
-  start_points.push_back(Tug::Point(50, 50, tug_env.visilibity_environment()));
-  start_points.push_back(Tug::Point(56, 30, tug_env.visilibity_environment()));
-  start_points.push_back(Tug::Point(15, 15, tug_env.visilibity_environment()));
-  start_points.push_back(Tug::Point(280, 200, tug_env.visilibity_environment()));
+  start_points.push_back(Tug::Point(60, 60, tug_env));
+  start_points.push_back(Tug::Point(40, 40, tug_env));
+  start_points.push_back(Tug::Point(250, 200, tug_env));
+  start_points.push_back(Tug::Point(10, 10, tug_env));
+  start_points.push_back(Tug::Point(50, 50, tug_env));
+  start_points.push_back(Tug::Point(56, 30, tug_env));
+  start_points.push_back(Tug::Point(15, 15, tug_env));
+  start_points.push_back(Tug::Point(280, 200, tug_env));
 
 
   std::vector<Tug::Point> finish_points;
-  finish_points.push_back(Tug::Point(318, 320, tug_env.visilibity_environment()));
-  finish_points.push_back(Tug::Point(40, 240, tug_env.visilibity_environment()));
-  finish_points.push_back(Tug::Point(349, 1, tug_env.visilibity_environment()));
-  finish_points.push_back(Tug::Point(20, 20, tug_env.visilibity_environment()));
-  finish_points.push_back(Tug::Point(308, 322, tug_env.visilibity_environment()));
-  finish_points.push_back(Tug::Point(325 , 340, tug_env.visilibity_environment()));
+  finish_points.push_back(Tug::Point(318, 320, tug_env));
+  finish_points.push_back(Tug::Point(40, 240, tug_env));
+  finish_points.push_back(Tug::Point(349, 1, tug_env));
+  finish_points.push_back(Tug::Point(20, 20, tug_env));
+  finish_points.push_back(Tug::Point(308, 322, tug_env));
+  finish_points.push_back(Tug::Point(325 , 340, tug_env));
 
 
   std::vector<Tug::Boat> tugs;

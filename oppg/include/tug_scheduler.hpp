@@ -3,7 +3,7 @@
 #include "tug_polyline.hpp"
 #include "tug_environment.hpp"
 #include "tug_boat.hpp"
-#include "waypoint.h"
+#include "tug_waypoint.hpp"
 
 namespace Tug
 {
@@ -12,7 +12,6 @@ namespace Tug
   public:
     Scheduler(std::vector<Boat> &tugs, const Environment &environment);
     void print_paths(std::vector<Boat> &tugs);
-    //std::vector<Polyline> get_paths(){return paths_;};
     void print_schedule();
     std::vector<std::vector<int>> get_time_schedule(){return time_schedule_;};
 
@@ -33,9 +32,6 @@ namespace Tug
                                 int duration);
     void set_tug(std::vector<int> &time_schedule_point, int id, int t, int duration);
 
-    //Point position_at_time(time_t time, const Point &pt_now, const Polyline &path, float speed);
     double eucledian_distance(const Point &point1, const Point &point2);
-
-    //std::vector<Tug::Polyline> paths_;
   };
 }

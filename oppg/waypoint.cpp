@@ -1,21 +1,15 @@
 
-#include "include/waypoint.h"
+#include "include/tug_waypoint.hpp"
 #include <cassert>
 
 namespace Tug
 { 
-  /*Waypoint::Waypoint(const Point &point, float range, const Environment &environment, std::vector<Waypoint> &waypoints, int id)
-  {
-   // set_x(point.x());
-    //set_y(point.y());
-    id_ = id;
-  }*/
+
   Waypoint::Waypoint(Point &point, int point_id, int range, std::vector<Waypoint> &waypoints) 
    :Tug::Point(point.x(), point.y(), point_id)
   {
     set_points_within_range(range,waypoints);
   }
-
 
   void Waypoint::set_points_within_range(float range, std::vector<Waypoint> &waypoints)
   {

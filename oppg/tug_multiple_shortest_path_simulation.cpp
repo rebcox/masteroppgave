@@ -79,7 +79,7 @@ Point generate_random_point_within_boundaries(int x_min, int x_max, int y_min, i
   int x = rand() % (x_max-x_min-1) + x_min + 1;
   int y = rand() % (y_max-y_min-1) + y_min + 1;
 
-  return Point((double)x,(double)y, tug_environment.visilibity_environment());
+  return Point((double)x,(double)y, tug_environment);
 }
 
 double distance(Point point1, Point point2)
