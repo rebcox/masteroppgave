@@ -86,7 +86,7 @@ namespace Tug
 
     for (auto i = environment.const_begin(); i != environment.const_end(); ++i)
     {
-      if (i->second.in(visibility_polygon_, 0.01) and !i->second.is_on_outer_boundary)
+      if (i->second.in(visibility_polygon_, 0.001) and !i->second.is_on_outer_boundary)
       {
         visible_vertices_.push_back(i->first);
         //std::cout << *this << " pushed back " << i->first << " " << i->second << std::endl;

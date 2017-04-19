@@ -1,7 +1,7 @@
 #include "include/tug_environment.hpp"
 #include <sstream>
 #include <limits>
-#include "include/shortest_path.h"
+#include "include/tug_shortest_path.hpp"
 
 
 namespace Tug
@@ -261,12 +261,8 @@ namespace Tug
       {
         int id = ++id_counter_;
         tug_points.insert(std::pair<int,Point>(id, Point(paths[i][j], *this, id)));
-        coordinate_to_id.insert(
-            std::pair<std::pair<double,double>,int>
-            (std::make_pair(paths[i][j].X, paths[i][j].Y), id));
-
-        //point_and_id_.insert()
-       // std::cout << "Point " << id << ": " << tug_points[id]<< std::endl;
+        coordinate_to_id.insert(std::pair<std::pair<double,double>,int>
+                              (std::make_pair(paths[i][j].X, paths[i][j].Y), id));
       }
     }
     mark_points_touching_outer_boundary();
@@ -401,15 +397,6 @@ namespace Tug
 
   int Environment::find_id(const VisiLibity::Point &point) const
   {
-   /*for (std::map<int, Point>::const_iterator i = const_begin(); i != const_end(); ++i)
-    {
-      if (point.x() == i->second.x() and point.y() == i->second.y())
-      {
-        return i->first;
-      }
-    }
-    return -1;*/
-
     try
     {
       return coordinate_to_id.at(std::make_pair(point.x(),point.y()));

@@ -6,7 +6,7 @@
 #include <string>
 #include "include/tug_point.hpp"
 #include "include/tug_all_pairs_shortest_path.hpp"
-#include "include/shortest_path.h"
+#include "include/tug_shortest_path.hpp"
 #include <time.h>
 #include "include/tug_scheduler.hpp"
 #include "include/hungarian.hpp"

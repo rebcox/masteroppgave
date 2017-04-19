@@ -1,22 +1,23 @@
-#include "include/shortest_path.h"
+#include "include/tug_shortest_path.hpp"
 #include "limits"
 
 namespace Tug
 {
-  /*
   Shortest_path::Shortest_path(Tug::Environment &environment, const Point &start, 
                               const Point &finish, Polyline &shortest_path)
   {
-
     Point second_to_last_point;
     Point second_point;
 
-    if(!is_valid_start_and_end_points(start, finish, environment))
+    if(!start_and_end_points_are_valid(start, finish, environment))
     {
       //std::cout << "Start and/or finish point within obstacle" << std::endl;
       return;
     }
     
+    const Point *start_point_to_a_star;
+    const Point *finish_point_to_a_star;
+
     int index_start = point_within_safety_margin(start,environment);
 
     if (index_start > 0)
@@ -37,9 +38,6 @@ namespace Tug
 
     double epsilon = 0.001;
 
-    const Point *start_point_to_a_star;
-    const Point *finish_point_to_a_star;
-
     if (index_start > 0)
     {
       start_point_to_a_star = &second_point;
@@ -57,11 +55,11 @@ namespace Tug
       finish_point_to_a_star = &finish;
     }
     
-    A_star_search(*start_point_to_a_star, 
-                  *finish_point_to_a_star,
-                  environment.points(), 
-                  shortest_path, 
-                  epsilon);
+   A_star_search(*start_point_to_a_star, 
+                *finish_point_to_a_star,
+                environment.points(), 
+                shortest_path, 
+                epsilon);
 
     if (shortest_path.size() > 0 and shortest_path[shortest_path.size()-1] != finish)
     {
@@ -74,122 +72,6 @@ namespace Tug
       shortest_path.push_back(start);
       shortest_path.reverse();
     }
-    set_waypoints(shortest_path);
-  }
-*/
-
-  Shortest_path::Shortest_path(Tug::Environment &environment, const Point &start, 
-                              const Point &finish, Polyline &shortest_path)
-  {
-    All_pairs_shortest_path all_pairs_shortest_path(environment);
-    apsp_ = all_pairs_shortest_path.get_apsp_matrix();
-    apsp2_ = all_pairs_shortest_path.get_apsp_matrix_2();
-
-    Point second_to_last_point;
-    Point second_point;
-
-    if(!is_valid_start_and_end_points(start, finish, environment))
-    {
-      //std::cout << "Start and/or finish point within obstacle" << std::endl;
-      return;
-    }
-    
-    const Point *start_point_to_a_star;
-    const Point *finish_point_to_a_star;
-
-    int index_start = point_within_safety_margin(start,environment);
-
-    if (index_start > 0)
-    {
-      std::cout << "Start point within safety margin of obstacle " << index_start<< std::endl;
-      second_point = calculate_point_on_boundary(start, 
-        environment.visilibity_environment_with_safety_margin_[index_start], environment); //todo: maybe one off
-      std::cout << "new point " << second_point << std::endl;
-     // second_point.create_visibility_polygon(environment);
-      std::cout << "size vector " << second_point.visible_vertices().size() << std::endl;
-      std::cout << "size polygon " << second_point.visibility_polygon().n() << std::endl;
-      VisiLibity::Polygon vp = second_point.visibility_polygon();
-      for (int i = 0; i < vp.n(); ++i)
-      {
-        std::cout << "vispoly: " << vp[i] << std::endl;
-      }
-      std::vector<int> sec_p = second_point.visible_vertices();
-
-      for (int i = 0; i < sec_p.size(); ++i)
-      {
-        std::cout << "vis: " << environment(sec_p[i]) << std::endl;
-      }
-    }
-
-    int index_finish = point_within_safety_margin(finish,environment);
-    if (index_finish > 0)
-    {
-      std::cout << "Finish point within safety margin of obstacle " << index_finish << std::endl;
-      second_to_last_point = calculate_point_on_boundary(finish, 
-        environment.visilibity_environment_with_safety_margin_[index_finish], environment); //todo: maybe one off
-      std::cout << second_to_last_point << std::endl;
-    }
-
-    double epsilon = 0.001;
-
-
-    if (index_start > 0)
-    {
-      start_point_to_a_star = &second_point;
-    }
-    else
-    {
-      start_point_to_a_star = &start;
-    }
-    if (index_finish > 0)
-    {
-      finish_point_to_a_star = &second_to_last_point;
-    }
-    else
-    {
-      finish_point_to_a_star = &finish;
-    }
-    
-   /*A_star_search(*start_point_to_a_star, 
-                  *finish_point_to_a_star,
-                  environment.points(), 
-                  shortest_path, 
-                  epsilon);*/
-
-    /*Point pt1(start_point_to_a_star->x(), start_point_to_a_star->y(), environment);
-    Point pt2(finish_point_to_a_star->x(), finish_point_to_a_star->y(), environment);
-
-    std::cout << "pt1 " << pt1.visible_vertices_.size() << std::endl;
-
-    bool ok = calculate_shortest_path(pt1, 
-                                      pt2,
-                                      shortest_path,
-                                      environment);*/
-
-    bool ok = calculate_shortest_path(*start_point_to_a_star, 
-                                      *finish_point_to_a_star,
-                                      shortest_path,
-                                      environment);
-
-    if (shortest_path.size() > 0 and shortest_path[shortest_path.size()-1] != finish)
-    {
-      shortest_path.push_back(finish);
-    }
-
-    if (shortest_path.size() > 0 and shortest_path[0] != start)
-    {
-      shortest_path.reverse();
-      shortest_path.push_back(start);
-      shortest_path.reverse();
-    }
-
-    /*for (int i = 0; i < shortest_path.size(); ++i)
-    {
-      std::cout << shortest_path[i] << std::endl;
-    }*/
-
-    //delete start_point_to_a_star;
-    //delete finish_point_to_a_star;
   }
 
   Shortest_path::Shortest_path(Environment &environment)
@@ -197,6 +79,7 @@ namespace Tug
     All_pairs_shortest_path all_pairs_shortest_path(environment);
     apsp_ = all_pairs_shortest_path.get_apsp_matrix();
     apsp2_ = all_pairs_shortest_path.get_apsp_matrix_2();
+    apsp_costs_ = all_pairs_shortest_path.get_apsp_costs();
   }
 
 
@@ -210,12 +93,80 @@ namespace Tug
     }
   }
 
+  bool Shortest_path::calculate_shortest_path(const Point &start, const Point &end, Polyline &shortest_path, Environment &environment)
+  {
+    if(!start_and_end_points_are_valid(start, end, environment))
+    {
+      //std::cout << "Start and/or end point within obstacle" << std::endl;
+      return false;
+    }
+    
+    const Point *start_point_outside_safety_margin;
+    const Point *end_point_outside_margin;
+
+    Point second_to_last_point;
+    Point second_point;
+
+    int index_start = point_within_safety_margin(start,environment);
+
+    if (index_start > 0)
+    {
+      second_point = calculate_point_on_boundary(start, 
+        environment.visilibity_environment_with_safety_margin_[index_start], environment); //todo: maybe one off
+    }
+
+    int index_end = point_within_safety_margin(end,environment);
+    if (index_end > 0)
+    {
+      second_to_last_point = calculate_point_on_boundary(end, 
+      environment.visilibity_environment_with_safety_margin_[index_end], environment); //todo: maybe one off
+      std::cout << second_to_last_point << std::endl;
+    }
+
+    double epsilon = 0.001;
+
+    if (index_start > 0)
+    {
+      start_point_outside_safety_margin = &second_point;
+    }
+    else
+    {
+      start_point_outside_safety_margin = &start;
+    }
+    if (index_end > 0)
+    {
+      end_point_outside_margin = &second_to_last_point;
+    }
+    else
+    {
+      end_point_outside_margin = &end;
+    }
+
+    bool ok = calculate_shortest_path_outside_safety_margin(*start_point_outside_safety_margin, 
+                                                            *end_point_outside_margin,
+                                                            shortest_path,
+                                                            environment);
+
+    if (shortest_path.size() > 0 and shortest_path[shortest_path.size()-1] != end)
+    {
+      shortest_path.push_back(end);
+    }
+
+    if (shortest_path.size() > 0 and shortest_path[0] != start)
+    {
+      shortest_path.reverse();
+      shortest_path.push_back(start);
+      shortest_path.reverse();
+    }
+    return ok;
+  }
+
   double cost(const Point &pt1, const Point &pt2)
   {
     return sqrt(pow(pt1.x() - pt2.x(), 2) + pow(pt1.y() - pt2.y(), 2));
   }
 
-  bool Shortest_path::calculate_shortest_path(const Point &start, const Point &end, Polyline &shortest_path, Environment &environment)
+  bool Shortest_path::calculate_shortest_path_outside_safety_margin(const Point &start, const Point &end, Polyline &shortest_path, Environment &environment)
   {
     bool valid_path = true;
 
@@ -223,7 +174,6 @@ namespace Tug
     shortest_path.clear();
     std::vector<int> visible_vertices_start = start.visible_vertices();
     std::vector<int> visible_vertices_end = end.visible_vertices();
-
 
     if (start.is_visible(end))
     {
@@ -235,7 +185,7 @@ namespace Tug
     std::vector<std::pair<int, double>> costs_from_start;
     std::vector<std::pair<int, double>> costs_from_end;
 
-    //calculate cost from start and finish points to all points in their respectively visibility polygon
+    //calculate cost from start and end points to all points in their respectively visibility polygon
     for (int i = 0; i < visible_vertices_start.size(); ++i)
     {
       int id = visible_vertices_start[i];
@@ -254,20 +204,22 @@ namespace Tug
     for (int i = 0; i < costs_from_start.size(); ++i) //Loop through all points seen by start
     {
       int start_id = costs_from_start[i].first;
-
-      //Find shortest path from current point seen from start to all points seen by finish
+      //Find shortest path from current point seen from start to all points seen by end
       for (int j = 0; j < costs_from_end.size(); ++j) 
       {
         int end_id = costs_from_end[j].first;
         
         Polyline shortest_path_internal;
 
-        bool path_found = calculate_shortest_path(start_id, end_id, shortest_path_internal, environment);
+        bool path_found = extract_shortest_path(start_id, end_id, shortest_path_internal, environment);
 
         if (path_found)
         {
-         // if ((costs_from_start[i].second + environment(start_id).get_cost_to(end_id) + costs_from_end[j].second) < lowest_cost)
-          double current_cost = costs_from_start[i].second + shortest_path_internal.length() + costs_from_end[j].second;
+          //double current_cost = costs_from_start[i].second + shortest_path_internal.length() + costs_from_end[j].second;          
+          double current_cost = costs_from_start[i].second
+                                + apsp_costs_.at(std::make_pair(start_id, end_id))
+                                + costs_from_end[j].second;
+
           if (current_cost < lowest_cost)
           {
             best_start = start_id;
@@ -282,7 +234,7 @@ namespace Tug
     {
       shortest_path.push_back(start);
       Polyline shortest_path_internal;
-      calculate_shortest_path(best_start, best_end, shortest_path_internal, environment);
+      extract_shortest_path(best_start, best_end, shortest_path_internal, environment);
 
       for (int i = 0; i < shortest_path_internal.size(); ++i)
       {
@@ -343,7 +295,7 @@ namespace Tug
 
   }
 
-  bool Shortest_path::calculate_shortest_path(int start_id, int finish_id, Polyline &shortest_path, Environment &environment)
+  bool Shortest_path::extract_shortest_path(int start_id, int finish_id, Polyline &shortest_path, Environment &environment)
   {
     /*bool valid_path = true;
    // std::vector<int> path;
@@ -449,7 +401,7 @@ namespace Tug
     return true;
   }
 
-  bool Shortest_path::is_valid_start_and_end_points(const Point &start, const Point &finish,
+  bool Shortest_path::start_and_end_points_are_valid(const Point &start, const Point &finish,
                                                     const Tug::Environment &environment)
   {
     ClipperLib::IntPoint start_clipperlib(round(start.x()), round(start.y())); //todo: round good enough?
@@ -515,13 +467,9 @@ namespace Tug
       }
 
     }
-   std::cout << "fra her: "  << std::endl;
-   Point pt(current_shortest.x(), current_shortest.y(), env);
+   Point return_pt(current_shortest.x(), current_shortest.y(), env);
 
-   // current_shortest.create_visibility_polygon(env);
-   std::cout << "til her "  << std::endl;
-
-    return pt; //current_shortest; //point_closest_to_line_segment(point, line_segments[shortest]);
+    return return_pt; //current_shortest; //point_closest_to_line_segment(point, line_segments[shortest]);
   }
 
   Point Shortest_path::point_closest_to_line_segment(const Point &point, const VisiLibity::Line_Segment &line)

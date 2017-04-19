@@ -125,7 +125,9 @@ namespace Tug
       }
     }
   }
-    
+  //TODO: take care of straight paths
+  //suggestion: if paths only have to points, check how close the line is to all(?) other points.
+  //if they are within Y units, add to points_within_range list
   void Scheduler::make_time_schedule(std::vector<std::vector<int>> &time_schedule,
                                      std::vector<Boat> &tugs, const Environment &environment)
   {
