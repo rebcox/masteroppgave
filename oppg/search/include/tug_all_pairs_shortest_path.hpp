@@ -1,7 +1,7 @@
 #ifndef TUG_ALL_PAIRS_SHORTEST_PATH_H
 #define TUG_ALL_PAIRS_SHORTEST_PATH_H
 
-#include "tug_environment.hpp"
+#include "../../geometry/include/tug_environment.hpp"
 #include "tug_a_star_search.hpp"
 #include "vector"
 #include "map"

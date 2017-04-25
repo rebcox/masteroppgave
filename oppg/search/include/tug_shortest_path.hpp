@@ -1,10 +1,10 @@
 #ifndef TUG_SHORTEST_PATH_H
 #define TUG_SHORTEST_PATH_H
 
-#include "visilibity.hpp"
-#include "tug_environment.hpp"
-#include "clipper.hpp"
-#include "tug_point.hpp"
+#include "../../external/src/visilibity.hpp"
+#include "../../geometry/include/tug_environment.hpp"
+#include "../../external/src/clipper.hpp"
+#include "../../geometry/include/tug_point.hpp"
 #include "tug_a_star_search.hpp"
 #include "tug_all_pairs_shortest_path.hpp"
 #include "math.h"

@@ -1,5 +1,5 @@
 
-#include "include/tug_waypoint.hpp"
+#include "../include/tug_waypoint.hpp"
 #include <cassert>
 
 namespace Tug

@@ -2,8 +2,8 @@
 #define TUG_POINT_H
 
 #include "math.h"
-#include "clipper.hpp"
-#include "visilibity.hpp"
+#include "../../external/src/clipper.hpp"
+#include "../../external/src/visilibity.hpp"
 #include "map"
 
 namespace Tug

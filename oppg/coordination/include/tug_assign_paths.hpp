@@ -1,11 +1,11 @@
 #ifndef TUG_ASSIGN_PATHS
 #define TUG_ASSIGN_PATHS
 
-#include "tug_polyline.hpp"
-#include "tug_environment.hpp"
-#include "tug_boat.hpp"
+#include "../../geometry/include/tug_polyline.hpp"
+#include "../../geometry/include/tug_environment.hpp"
+#include "../../geometry/include/tug_boat.hpp"
 
-#include "munkres/munkres.h"
+#include "../../external/src/munkres.h"
 
 namespace Tug
 {

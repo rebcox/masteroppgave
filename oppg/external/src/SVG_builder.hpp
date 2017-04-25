@@ -3,7 +3,7 @@
 
 #include "clipper.hpp"  
 #include "visilibity.hpp"
-#include "tug_polyline.hpp"
+#include "../../geometry/include/tug_polyline.hpp"
 
 #include <cmath>
 #include <algorithm>

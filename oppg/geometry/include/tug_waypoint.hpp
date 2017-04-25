@@ -1,7 +1,6 @@
 #ifndef WAYPOINT_H
 #define WAYPOINT_H
 
-#include "visilibity.hpp"
 #include "tug_point.hpp"
 #include "tug_environment.hpp"
 

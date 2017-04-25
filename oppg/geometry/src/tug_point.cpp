@@ -1,5 +1,5 @@
-#include "include/tug_point.hpp"
-#include "include/tug_environment.hpp"
+#include "../include/tug_point.hpp"
+#include "../include/tug_environment.hpp"
 
 namespace Tug
 {

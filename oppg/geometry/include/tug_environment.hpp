@@ -1,12 +1,12 @@
 #ifndef TUG_ENVIRONMENT_H
 #define TUG_ENVIRONMENT_H
 
-#include "visilibity.hpp"
-#include "clipper.hpp"
-#include "SVG_builder.hpp"
+#include "../../external/src/visilibity.hpp"
+#include "../../external/src/clipper.hpp"
+#include "../../external/src/SVG_builder.hpp"
 #include <vector>
-#include "tug_point.hpp"
-#include "tug_polyline.hpp"
+#include "../../geometry/include/tug_point.hpp"
+#include "../../geometry/include/tug_polyline.hpp"
 #include "map"
 
 namespace Tug

@@ -1,4 +1,4 @@
-#include "include/tug_a_star_search.hpp"
+#include "../include/tug_a_star_search.hpp"
 #include <cmath>
 
 namespace Tug

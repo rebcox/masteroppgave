@@ -1,7 +1,7 @@
-#include "include/tug_environment.hpp"
+#include "../include/tug_environment.hpp"
 #include <sstream>
 #include <limits>
-#include "include/tug_shortest_path.hpp"
+#include "../../search/include/tug_shortest_path.hpp"
 
 
 namespace Tug

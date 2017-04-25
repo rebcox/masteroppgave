@@ -1,10 +1,9 @@
 #ifndef TUG_A_STAR_SEARCH_H
 #define TUG_A_STAR_SEARCH_H
 
-#include "tug_environment.hpp"
+#include "../../geometry/include/tug_environment.hpp"
 #include "shortest_path_node.hpp"
-#include "tug_point.hpp"
-//#include "visilibity.hpp"
+#include "../../geometry/include/tug_point.hpp"
 
 namespace Tug
 {
