@@ -1,0 +1,44 @@
+cmake_minimum_required(VERSION 2.8.3)
+project(coordination)
+add_definitions(-std=c++11)
+
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  geometry
+  search
+  external
+)
+
+catkin_package(
+ # DEPENDS #geometry search
+  INCLUDE_DIRS include
+  LIBRARIES ${PROJECT_NAME}
+  CATKIN_DEPENDS roscpp
+)
+
+include_directories(
+	include/${PROJECT_NAME}
+  ${catkin_INCLUDE_DIRS}
+)
+
+add_library(${PROJECT_NAME} src/tug_assign_paths.cpp src/tug_scheduler.cpp)
+add_dependencies(${PROJECT_NAME} geometry search )
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
+
+if (CATKIN_ENABLE_TESTING)
+  find_package(catkin REQUIRED COMPONENTS geometry search coordination)
+  catkin_add_gtest(uTestCoordination test/test.cpp)
+  target_link_libraries(uTestCoordination ${catkin_LIBRARIES})
+endif()
+
+install(TARGETS ${PROJECT_NAME} 
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(DIRECTORY include/${PROJECT_NAME}
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
+  PATTERN ".svn" EXCLUDE
+)
