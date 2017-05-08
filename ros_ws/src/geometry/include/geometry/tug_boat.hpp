@@ -16,7 +16,7 @@ namespace Tug
     Boat(){};
     void set_top_speed(double top_speed){top_speed_ = top_speed;}
     double get_top_speed() const{return top_speed_;}
-    void set_path(Polyline path){path_ = path; current_waypoint_index_=0;};
+    void set_path(const Polyline &path){path_ = path; current_waypoint_index_=0;};
     double get_radius(){return radius_;};
     Point  get_position();
     void update_position(Point &position, bool &waypoint_updated_flag);
@@ -24,6 +24,8 @@ namespace Tug
     int id() const {return id_;};
     Polyline get_path() const {return path_;}
     Point *get_current_waypoint();
+    Point *get_previous_waypoint();
+
     void create_switchingpoint_decision();
   private:
     double radius_;

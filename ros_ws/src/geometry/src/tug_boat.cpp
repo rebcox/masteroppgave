@@ -59,6 +59,19 @@ namespace Tug
       return nullptr;
     }
   }
+
+  Point *Boat::get_previous_waypoint()
+  {
+    try
+    {
+      return &path_[current_waypoint_index_-1];
+    }
+    catch(...)
+    {
+      return nullptr;
+    }
+  }
+
   void Boat::set_switchingpoint_decision(Point &pt1, Point &pt2)
   {
     Switching_point_decision spd(pt1, pt2);

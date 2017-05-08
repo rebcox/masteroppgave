@@ -45,6 +45,7 @@ namespace Tug
       std::map<int, Point>::const_iterator const_end() const;
 
       void print_coordinates_and_id() const;
+      void mark_points_within_range(float range);
 
 
     private:

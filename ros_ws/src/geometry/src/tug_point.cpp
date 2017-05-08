@@ -51,6 +51,15 @@ namespace Tug
     return *this;
   }
 
+  bool Point::operator==(const Point &other) const 
+  {
+    if (this->x() == other.x() && this->y() == other.y())
+    {
+      return true;
+    }
+    else return false;
+  }
+
   bool Point::is_visible(const Tug::Point &point) const
   {
     //assertion error if visibility_polygon_ is empty
@@ -94,6 +103,15 @@ namespace Tug
     }
   
   }
+
+  void Point::add_close_point(Point *pt)
+  {
+    if (pt != this)
+    {
+      close_points.push_back(pt);
+    }
+  }
+
 
   std::ostream& operator<<(std::ostream &out, Point const &pt)
   {

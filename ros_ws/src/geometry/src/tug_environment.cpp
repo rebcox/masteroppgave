@@ -417,6 +417,28 @@ namespace Tug
     y_max_out = y_max_-1;
   }
 
+  float eucledian_distance(const Point &point1, const Point &point2)
+  {
+    return sqrt(pow(point1.x() - point2.x(), 2) + pow(point1.y() - point2.y(), 2));
+  }
+
+  void Environment::mark_points_within_range(float range)
+  {
+    for (std::map<int,Point>::iterator i = begin(); i != end(); ++i)
+    {
+      for (std::map<int,Point>::iterator j = begin(); j != end(); ++j)
+      {
+        if (i != j)
+        {
+          if (eucledian_distance(i->second, j->second) < range)
+          {
+            i->second.add_close_point(&j->second);
+          }
+        }    
+      }
+    }
+  }
+
   void Environment::save_environment_as_svg(const std::string filename)
   {
     Polyline dummy;

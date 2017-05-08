@@ -23,6 +23,8 @@ namespace Tug
     Point(const Point &obj);
 
     Point &operator=(const Point &other);
+    bool operator==(const Point &other) const; 
+
     int id() const {return point_id_;}
 
 
@@ -37,6 +39,8 @@ namespace Tug
     void create_visibility_polygon(const Environment &environment);
     bool is_on_outer_boundary = false;
     std::vector<int> visible_vertices_;
+
+    void add_close_point(Point *pt);
     
   protected:
     std::map<int, double> shortest_path_costs_;
@@ -44,6 +48,7 @@ namespace Tug
    // std::vector<int> visible_vertices_;
     const int point_id_;
     VisiLibity::Visibility_Polygon visibility_polygon_;
+    std::vector<Point*> close_points; 
   };
 }
 
