@@ -15,7 +15,7 @@ int main( int argc, char** argv )
   {
     visualization_msgs::Marker marker;
     // Set the frame ID and timestamp.  See the TF tutorials for information on these.
-    marker.header.frame_id = "/my_frame";
+    marker.header.frame_id = "/move_base";
     marker.header.stamp = ros::Time::now();
 
     // Set the namespace and id for this marker.  This serves to create a unique ID
@@ -30,18 +30,18 @@ int main( int argc, char** argv )
     marker.action = visualization_msgs::Marker::ADD;
 
     // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
-    if (counter%2 == 0)
-    {
+    //if (counter%2 == 0)
+    //{
       counter++;
       marker.pose.position.x = counter;
       marker.pose.position.y = counter;
-    }
-    else
+    //}
+    /*else
     {
       counter--;
       marker.pose.position.x = counter;
       marker.pose.position.y = counter;
-    }
+    }*/
 
     marker.pose.position.z = 0;
 

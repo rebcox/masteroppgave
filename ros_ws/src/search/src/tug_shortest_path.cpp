@@ -150,7 +150,6 @@ namespace Tug
                                                             *end_point_outside_margin,
                                                             shortest_path,
                                                             environment);
-
     if (shortest_path.size() > 0 and shortest_path[shortest_path.size()-1] != end)
     {
       shortest_path.push_back(end);

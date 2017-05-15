@@ -63,16 +63,15 @@ namespace Tug
   bool Point::is_visible(const Tug::Point &point) const
   {
     //assertion error if visibility_polygon_ is empty
-    return point.in(visibility_polygon_, 0.01);
-    //Does not work. Probably cause the points are just copies, and does not have id
-    /*for (int i = 0; i < visible_polygons_.size(); ++i)
+    //try
+   // {
+      return point.in(visibility_polygon_, 0.01);
+    /*}
+    catch
     {
-      if (visible_polygons_[i] == point.id())
-      {
-        return true;
-      }
-    }
-    return false;*/
+
+    }*/
+
   }
 
   void Point::create_visibility_polygon(const Environment &environment)

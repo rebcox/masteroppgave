@@ -15,7 +15,9 @@ namespace Tug
   private:
     double angle_;
     double distance_between_points_;
-    Point start_pt_;
+    Point *start_pt_;
+    Point *finish_pt_;
+
 
     double along_track_distance(const Point &position, const Point &pt1, double angle);
     double angle(Point &pt1, Point &pt2);

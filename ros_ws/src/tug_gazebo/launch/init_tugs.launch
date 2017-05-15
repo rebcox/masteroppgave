@@ -1,0 +1,20 @@
+<launch>
+  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find tug_gazebo)/worlds/tug.world"/>
+    <!-- more default parameters can be changed here -->
+  </include>
+  
+  <node name="spawn_tug1" pkg="gazebo_ros" type="spawn_model" args="-file $(find tug_description)/urdf/tug.urdf -urdf -x 0 -y 0 -z 1 -model tug1" />
+
+  <node name="spawn_tug2" pkg="gazebo_ros" type="spawn_model" args="-file $(find tug_description)/urdf/tug.urdf -urdf -x 5 -y 0 -z 1 -model tug2" />
+
+  <node pkg="tug_gazebo" type="tug_state_publisher"
+      args="tug1 1" name="tug1_state_publisher" output="screen"/>
+
+  <node pkg="tug_gazebo" type="tug_state_publisher"
+      args="tug2 2" name="tug2_state_publisher" output="screen"/>
+  
+
+
+</launch>

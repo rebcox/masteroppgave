@@ -1,5 +1,5 @@
 #include "tug_assign_paths.hpp"
-
+#include "ros/ros.h"
 namespace Tug
 {
 
@@ -15,6 +15,25 @@ namespace Tug
     {
       std::cout << "More goals than tugs" << std::endl;
       return false;
+    }
+
+    if (finish_points.size() == 1 && tugs.size()>0)
+    {
+      Boat *closest = &tugs[0];
+      double closest_distance = euclidean_distance(tugs[0].get_position(), finish_points[0]);
+      for (std::vector<Boat>::iterator tug = tugs.begin(); tug != tugs.end(); ++tug)
+      {
+        if (euclidean_distance(tug->get_position(), finish_points[0]) < closest_distance)
+        {
+          closest = &*tug;
+        }
+      }
+
+      Shortest_path shortest_path_node(environment);
+      Polyline sp;
+      shortest_path_node.calculate_shortest_path(closest->get_position(), finish_points[0], sp, environment);
+      closest->set_path(sp);
+      return true;
     }
 
     if (nrows < ncols)

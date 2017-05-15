@@ -5,7 +5,7 @@
 #include "tug_point.hpp"
 #include "tug_polyline.hpp"
 #include "tug_environment.hpp"
-#include "tug_switching_point_decision.hpp"
+//#include "tug_switching_point_decision.hpp"
 
 namespace Tug
 {
@@ -16,10 +16,10 @@ namespace Tug
     Boat(){};
     void set_top_speed(double top_speed){top_speed_ = top_speed;}
     double get_top_speed() const{return top_speed_;}
-    void set_path(const Polyline &path){path_ = path; current_waypoint_index_=0;};
+    void set_path(const Polyline &path);
     double get_radius(){return radius_;};
     Point  get_position();
-    void update_position(Point &position, bool &waypoint_updated_flag);
+    void update_position(Point &position, bool &waypoint_updated_flag, double radius);
     void set_id(int id){id_ = id;};
     int id() const {return id_;};
     Polyline get_path() const {return path_;}
@@ -35,8 +35,8 @@ namespace Tug
     int id_=-1;
     Polyline path_;
     int current_waypoint_index_ = 0; 
-    Switching_point_decision *switching_point_decision_;
-    void set_switchingpoint_decision(Point &pt1, Point &pt2);
+    //Switching_point_decision *switching_point_decision_;
+    //void set_switchingpoint_decision(Point &pt1, Point &pt2);
 
     bool go_to_next_waypoint();
   };

@@ -11,6 +11,8 @@
 #include <sstream>
 #include <string>
 
+void publish_new_waypoint(const Tug::Point *pt_cur, int tug_id);
+
 namespace
 {
   std::map<int, Tug::Boat> tugs_;
@@ -19,18 +21,16 @@ namespace
   ros::Publisher pub;
   std::map<int, Tug::Point> current_waypoints_; //int is for tug_id
   std::map<int, std::vector<int>> tugs_holding_other_tugs_;
-  //std::vector<master::BoatPose> position_msgs_(11);
 }
-
 
 float eucledian_distance(const Tug::Point &point1, const Tug::Point &point2)
 {
   return sqrt(pow(point1.x() - point2.x(), 2) + pow(point1.y() - point2.y(), 2));
 }
 
-void print_path(Tug::Polyline &path)
+void print_path(Tug::Polyline path)
 {
-  ROS_INFO("length of path: %f", path.length());
+  //ROS_INFO("length of path: %f", path.length());
   std::stringstream path_string;
   for (int i = 0; i < path.size(); ++i)
   {
@@ -43,22 +43,18 @@ void print_path(Tug::Polyline &path)
   ROS_INFO("Shortest path: %s", path_string.str().c_str());
 }
 
-/*void update_tug_positions()
+void add_end_point_to_planner(const Tug::Point &pt)
 {
-  for (std::map<int, Tug::Boat>::iterator i = tugs_.begin(); i != tugs_.end(); ++i)
-  {
-    master::BoatPose msg = position_msgs_.at(i->first); //i->first = id
-    Tug::Point pt(msg.x, msg.y, environment_);
-    i->second.set_position(pt);
-  }
-}*/
-
-void add_end_point_to_planner(Tug::Point &pt)
-{
+  ROS_INFO("end point set to (%f, %f)", pt.x(), pt.y());
   end_points_.push_back(pt);
   Tug::Assign_paths assigner;
   //update_tug_positions();
+
   assigner.assign_on_combined_shortest_path(tugs_, end_points_, environment_); 
+  for (std::map<int, Tug::Boat>::iterator tug = tugs_.begin(); tug != tugs_.end(); ++tug)
+  {
+    print_path(tug->second.get_path());
+  }
 }
 
 void remove_end_point_from_planner(Tug::Point &pt)
@@ -76,96 +72,154 @@ void remove_end_point_from_planner(Tug::Point &pt)
 
 void publish_new_waypoint(const Tug::Point *pt_cur, int tug_id)
 {
+  ROS_ERROR("YO");
+
   master::Waypoint waypoint;
   waypoint.ID = tug_id;
   waypoint.x = pt_cur->x();
   waypoint.y = pt_cur->y();
-  waypoint.v = 1;
+  waypoint.v = 3;
 
-  bool tug_in_the_way = false;
+  bool another_tug_in_the_way = false;
 
   //Check for tugs in the way of point
-  for (int i = 0; i < current_waypoints_.size(); ++i)
+  for (std::map<int, Tug::Point>::iterator pt = current_waypoints_.begin(); pt != current_waypoints_.end(); ++pt)
   {
-    if (tug_id == i)
-    {
-      continue;
-    }
-    if (current_waypoints_[i] == *pt_cur || eucledian_distance(current_waypoints_[i],*pt_cur) < 10) //TODO: hardkoda range
-    {
-      waypoint.v = 0;
-      tugs_holding_other_tugs_.at(i).push_back(tug_id);
-      tug_in_the_way = true;
-    }  
+    if (pt->first == tug_id)
+     {
+       continue;
+     } 
+     //if a current waypoint is within a certain range of the point to be published, publish it with v=0
+     if (pt->second == *pt_cur ||  eucledian_distance(pt->second, *pt_cur) < 0.1) //TODO: hardkoda range
+     {
+        waypoint.v = 0;
+        ROS_INFO("tug %d is held by tug %d", tug_id, pt->first);
+        tugs_holding_other_tugs_.at(pt->first).push_back(tug_id);
+        another_tug_in_the_way = true;
+     }
   }
+
+  ROS_INFO("Published new point (%f, %f)", pt_cur->x(), pt_cur->y());
 
   pub.publish(waypoint);
   
-  //if new point with speed > 0 will be published
-  //check if the tug had other tug dependent
-  if (!tug_in_the_way)
+  //if new point with speed > 0 will be published,
+  //check if the tug had other tugs dependent on it
+  if (!another_tug_in_the_way)
   {
+    //set current_waypoints_
     current_waypoints_.at(tug_id) = *pt_cur;
-   // for (int i = 0; i < tugs_holding_other_tugs_.at(tug_id).size(); ++i)
-    for (std::vector<int>::iterator i = tugs_holding_other_tugs_.at(tug_id).begin(); i != tugs_holding_other_tugs_.at(tug_id).end(); ++i)
+    //Looping through all tugs the new published point were holding
+    for (std::vector<int>::iterator i = tugs_holding_other_tugs_.at(tug_id).begin();
+           i != tugs_holding_other_tugs_.at(tug_id).end(); 
+              ++i)
     {
       //int tug = tugs_holding_other_tugs_.at(tug_id).at(i);
-      int tug = *i;
       tugs_holding_other_tugs_.at(tug_id).erase(i);
-      publish_new_waypoint(tugs_.at(tug).get_current_waypoint(), tug);
+      publish_new_waypoint(tugs_.at(*i).get_current_waypoint(), *i);
     }
     //tugs_holding_other_tugs_.at(tug_id).clear();
   }
 }
 
-void callback_waypoint(const master::Waypoint::ConstPtr& msg)
+bool is_new(const Tug::Point &end_point)
 {
-  //Add waypoint
+  for (std::vector<Tug::Point>::iterator pt = end_points_.begin(); pt != end_points_.end(); ++pt)
+  {
+    if (*pt == end_point)
+    {
+      return false;
+    }
+  }
+  return true;
+}
+
+void callback_waypoint(const master::Waypoint::ConstPtr& msg)
+{  
   Tug::Point pt(msg->x, msg->y, environment_);
-  add_end_point_to_planner(pt);
+
+  if (is_new(pt))
+  {
+    ROS_INFO("Call to add_end_point_to_planner");
+    add_end_point_to_planner(pt);
+  } 
 }
 
 void callback_boat_pose(const master::BoatPose::ConstPtr& msg)
 {
+  ROS_ERROR("callback_boat_pose kalt");
+  if (end_points_.size() == 0)
+  {
+    return;
+  }
+
   int id = msg->ID;
-  //position_msgs_.at(id) = *msg;
   Tug::Point pt(msg->x, msg->y, environment_);
   bool new_waypoint_set;
-  tugs_.at(id).update_position(pt, new_waypoint_set);
+
+  tugs_.at(id).update_position(pt, new_waypoint_set, 0.5);
+
+  Tug::Point* pt_cur = tugs_.at(id).get_current_waypoint();
+  if (!pt_cur)
+  {
+    return;
+  }
+  //ROS_INFO("current wp (%f, %f)", pt_cur->x(), pt_cur->y());
 
   if (new_waypoint_set)
   {
-    Tug::Point* pt_cur = tugs_.at(id).get_current_waypoint();
     publish_new_waypoint(pt_cur, id);
   }
+  else
+  {
+
+    master::Waypoint waypoint;
+    waypoint.ID = id;
+    waypoint.x = pt_cur->x();
+    waypoint.y = pt_cur->y();
+    waypoint.v = 3;
+    //ROS_INFO("Published point (%f, %f)", pt_cur->x(), pt_cur->y());
+
+    pub.publish(waypoint);
+  }
+
 }
 
-
-/*subscribe på Sondres "få tug hit"
-hver gang det dukker opp en ny
-  for alle båter som ikke har nådd sin destinasjon
-    - rekalkuler munkres og scheduler*/
-
+void add_new_tug(Tug::Boat &tug, int id)
+{
+  tug.set_id(id);
+  tugs_.insert(std::pair<int, Tug::Boat>(id, tug));
+  current_waypoints_.insert(std::pair<int, Tug::Point>(id, tug.get_position()));
+  tugs_holding_other_tugs_.insert(std::pair<int, std::vector<int>>(id, std::vector<int>()));
+}
 
 int main(int argc, char **argv)
 {
 
-  ros::init(argc, argv, "main_node");
-  ros::NodeHandle n;
-  pub = n.advertise<master::Waypoint>("goTo", 1000);
+  ros::init(argc, argv, "master_node");
+  ros::NodeHandle node;
+  pub = node.advertise<master::Waypoint>("goTo", 1000);
 
-  std::string filename = "/home/rebecca/GITHUB/mast/oppg/environments/test_environment.txt";
+  //std::string filename = "/home/rebecca/GITHUB/mast/oppg/environments/test_environment.txt";
+  std::string filename = "/home/rebecca/GITHUB/mast/ros_ws/mini_environment.txt";
+
   environment_ = Tug::Environment(filename, 1.0, 0.01);
-  environment_.mark_points_within_range(10.0);
+  environment_.mark_points_within_range(1.5);
 
   //TODO: Add tugs to tugs_
+  Tug::Point pt1(0.0,0.0, environment_);
+  Tug::Boat tug1(1, pt1 , &environment_);
+  add_new_tug(tug1, 1);
+
+  Tug::Point pt2(5.0, 0.0, environment_);
+  Tug::Boat tug2(1, pt2 , &environment_);
+  add_new_tug(tug2, 2);
 
 
-  ros::Subscriber sub_goal = n.subscribe("sondres_goal_points", 1000, callback_waypoint);
-  ros::Subscriber sub_tug_locations = n.subscribe("sondres_tug_locations", 1000, callback_boat_pose);
+  ros::Subscriber sub_goal = node.subscribe("goal_points", 1000, callback_waypoint);
+  ros::Subscriber sub_tug_locations = node.subscribe("tug_locations", 1000, callback_boat_pose);
 
-  ros::spinOnce();
-  ros::shutdown();
+  ros::spin();
 
   return 0;
 }
