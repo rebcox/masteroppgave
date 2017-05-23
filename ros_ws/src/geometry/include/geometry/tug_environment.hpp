@@ -47,6 +47,8 @@ namespace Tug
       void print_coordinates_and_id() const;
       void mark_points_within_range(float range);
 
+     // void place_ship(Point &pt1, Point &pt2, Point &pt3, Point &pt4);
+
 
     private:
       int id_counter_ = 0;
@@ -54,6 +56,8 @@ namespace Tug
       bool environment_has_safety_margin = false;
       int x_min_, x_max_, y_min_, y_max_; //of outer boundary
       double epsilon_;
+
+      //VisiLibity::Polygon ship;
 
       VisiLibity::Environment visilibity_environment_;
       VisiLibity::Environment visilibity_environment_with_safety_margin_;

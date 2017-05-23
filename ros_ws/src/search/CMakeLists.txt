@@ -7,19 +7,23 @@ find_package(catkin REQUIRED COMPONENTS
   geometry
   external
 )
+find_package(cmake_modules REQUIRED)
+find_package(Eigen REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS roscpp
+  DEPENDS Eigen
 )
 
 include_directories(
   include/${PROJECT_NAME}
   ${catkin_INCLUDE_DIRS}
+  ${Eigen_INCLUDE_DIRS}
 )
 
-add_library(${PROJECT_NAME} src/tug_a_star_search.cpp src/tug_all_pairs_shortest_path.cpp src/tug_shortest_path.cpp)
+add_library(${PROJECT_NAME} src/tug_a_star_search.cpp src/tug_all_pairs_shortest_path.cpp src/tug_shortest_path.cpp src/tug_route_around_ship.cpp)
 add_dependencies(${PROJECT_NAME} external geometry )
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 

@@ -1,7 +1,9 @@
 // tests.cpp
 #include "geometry/tug_environment.hpp"
 #include "tug_shortest_path.hpp"
+#include "tug_route_around_ship.hpp"
 #include <gtest/gtest.h>
+#include <math.h>
 
 
 //SHORTEST_PATH start
@@ -147,6 +149,26 @@ TEST(ShortestPathTest, AllPairsShortestPathNoValidPath)
   ASSERT_EQ(shortest_path_test.size(), 0);
 }
 //SHORTEST_PATH end
+
+TEST(RouteAroundShipTest, correctPlacement)
+{
+
+  Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
+
+  Tug::Point mid_pt(10, 10, tug_environment);
+  Tug::Route_around_ship route_around_ship(mid_pt, M_PI/2, 2, 4);
+
+  Tug::Point start(14, 10, tug_environment);
+  Tug::Point finish(7, 9, tug_environment);
+
+  Tug::Polyline solution = route_around_ship.best_route(start, finish, tug_environment);
+
+  std::cout << "solution: ";
+  for (int i = 0; i < solution.size(); ++i)
+  {
+    std::cout << solution[i] << std::endl;
+  }
+}
 
 int main(int argc, char **argv) 
 {

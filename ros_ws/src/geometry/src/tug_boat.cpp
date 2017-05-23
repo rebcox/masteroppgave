@@ -22,24 +22,34 @@ namespace Tug
     return position_;
   }
 
-  void Boat::update_position(Point &position, bool &waypoint_updated_flag, double radius)
+  void Boat::update_position(Point &position, bool &waypoint_updated_flag, bool &arrived_at_goal_flag, double radius)
   {
     position_ = position;
 
     waypoint_updated_flag = false;
-    //if(switching_point_decision_->accept(position, radius))
+    arrived_at_goal_flag = false;
     try
     {
-      Point *finish;
+      Point *current_wp;
       if (current_waypoint_index_ >= path_.size())
       {
         return;
       }
-      finish = &path_[current_waypoint_index_];
+      current_wp = &path_[current_waypoint_index_];
 
-      if(sqrt(pow(position.x() - finish->x(), 2) + pow(position.y() - finish->y(), 2)) < radius)
+      //if (current_waypoint_index_ == 0 || (sqrt(pow(position.x() - current_wp->x(), 2) + pow(position.y() - current_wp->y(), 2)) < radius))
+      //{
+        //waypoint_updated_flag = true;
+      //}
+
+      //Check if position is within radius of current waypoint
+      if(sqrt(pow(position.x() - current_wp->x(), 2) + pow(position.y() - current_wp->y(), 2)) < radius)
       {
         waypoint_updated_flag = go_to_next_waypoint();
+        if (!waypoint_updated_flag)
+        {
+          arrived_at_goal_flag = true;
+        }
       }
     }
     catch(...)
@@ -53,9 +63,10 @@ namespace Tug
 
   void Boat::set_path(const Polyline &path)
   {
+    path_.clear();
     path_ = path;
     current_waypoint_index_= 0;
-    go_to_next_waypoint();    
+    //go_to_next_waypoint();    
   }
 
   bool Boat::go_to_next_waypoint()
@@ -68,42 +79,96 @@ namespace Tug
     }
     else
     {
-      //set_switchingpoint_decision(path_[current_waypoint_index_-1], path_[current_waypoint_index_]);
       return true;
     }
   }
 
-  Point *Boat::get_current_waypoint()
+  //std::shared_ptr<Point> Boat::get_current_waypoint()
+  Point Boat::get_current_waypoint()
   {
-    try
+    //shared_ptr<Song> p1(song1);
+
+    if(current_waypoint_index_ <= path_.size())
     {
-      return &path_[current_waypoint_index_];
+
+      //std::shared_ptr<Point> ptr(&path_[current_waypoint_index_]);
+      //return ptr;
+      return path_[current_waypoint_index_];
     }
-    catch(...)
+    else
     {
-      return nullptr;
+      return Point(-1,-1,-1);
+      //return nullptr;
     }
   }
 
-  Point *Boat::get_previous_waypoint()
+  bool Boat::remove_tug_holding_this(int id)
   {
-    try
+    for (std::vector<int>::iterator tug = is_held_by_.begin(); tug != is_held_by_.end(); ++tug)
     {
-      return &path_[current_waypoint_index_-1];
+      if (*tug == id)
+      {
+        is_held_by_.erase(tug);
+        return true;
+      }
     }
-    catch(...)
+    return false;
+  }
+  
+  bool Boat::remove_tug_held_by_this(int id)
+  {
+    for (std::vector<int>::iterator tug = is_holding_.begin(); tug != is_holding_.end(); ++tug)
     {
-      return nullptr;
+      if (*tug == id)
+      {
+        is_holding_.erase(tug);
+        return true;
+      }
     }
+    return false;
   }
 
-  /*void Boat::set_switchingpoint_decision(Point &pt1, Point &pt2)
+  bool Boat::set_tug_holding_this(int id)
   {
-    ROS_ERROR("Switching_point_decision satt: (%f, %f) og (%f, %f)", pt1.x(), pt1.y(), pt2.x(), pt2.y());
-    Switching_point_decision spd(pt1, pt2);
-    switching_point_decision_ = &spd;
-  }*/
+    for (int i = 0; i < is_held_by_.size(); ++i)
+    {
+      if (is_held_by_[i] == id)
+      {
+        return false;
+      }
+    }
+    is_held_by_.push_back(id);
+    return true;
+  }
 
 
+  bool Boat::set_tug_held_by_this(int id)
+  {
+    for (int i = 0; i < is_holding_.size(); ++i)
+    {
+      if (is_holding_[i] == id)
+      {
+        return false;
+      }
+    }
+    is_holding_.push_back(id);
+    return true;
+  }
+  
+  bool Boat::is_free_to_move()
+  {
+    if (is_held_by_.size() == 0)
+    {
+      return true;
+    }
+    return false;
+  }
+
+  void Boat::clear_tug()
+  {
+    current_waypoint_index_ = 0;
+    is_held_by_.clear();
+    is_holding_.clear();
+  }
 
 }

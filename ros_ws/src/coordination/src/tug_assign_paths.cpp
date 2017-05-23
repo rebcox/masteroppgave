@@ -2,12 +2,11 @@
 #include "ros/ros.h"
 namespace Tug
 {
-
-  bool Assign_paths::assign_on_combined_shortest_path(std::vector<Boat> &tugs, 
-                                                      const std::vector<Point> &finish_points, 
-                                                      Environment &environment)
+  //OBS: This function removes tugs from vector if they are not used.
+  bool Assign_paths::assign(std::vector<Boat> &tugs, 
+                            const std::vector<Point> &finish_points, 
+                            Environment &environment)
   {
-
     int nrows = finish_points.size();
     int ncols = tugs.size();
 
@@ -147,12 +146,24 @@ namespace Tug
     {
       temp_tugs.push_back(i->second);
     }
-    bool ok = assign_on_combined_shortest_path(temp_tugs, finish_points, environment);
+    bool ok = assign(temp_tugs, finish_points, environment);
     for (std::vector<Boat>::iterator i = temp_tugs.begin(); i != temp_tugs.end(); ++i)
     {
       tugs[i->id()].set_path(i->get_path());
     }
     return ok;
+  }
+
+  bool Assign_paths::assign_on_combined_shortest_path(std::vector<Boat> &tugs, 
+                                        std::map<int, Point> &finish_points, 
+                                        Environment &environment)
+  {
+    std::vector<Point> end_points;
+    for (std::map<int,Point>::iterator i = finish_points.begin(); i != finish_points.end(); ++i)
+    {
+      end_points.push_back(i->second);
+    }
+    assign(tugs, end_points, environment);
   }
 
 /*

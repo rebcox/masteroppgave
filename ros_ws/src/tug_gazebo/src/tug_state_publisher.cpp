@@ -115,7 +115,7 @@ int main(int argc, char** argv){
   pose_srv = node.serviceClient<gazebo_msgs::GetModelState>("/gazebo/get_model_state");
  // update_tug_pose();
  // sleep(5);
-  ros::Subscriber sub_goal = node.subscribe<master::Waypoint>("goTo", 1000, callback_waypoint);
+  ros::Subscriber sub_goal = node.subscribe<master::Waypoint>("waypoint", 20, callback_waypoint);
 
   state_pub = node.advertise<gazebo_msgs::ModelState>("/gazebo/set_model_state", 100);
 

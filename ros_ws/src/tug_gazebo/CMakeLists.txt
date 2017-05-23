@@ -24,3 +24,6 @@ target_link_libraries(goal_point_generator ${catkin_LIBRARIES})
 
 add_executable(tug_location_publisher src/tug_location_publisher.cpp)
 target_link_libraries(tug_location_publisher ${catkin_LIBRARIES})
+
+add_executable(waypTugs_publisher src/waypTugs_publisher.cpp)
+target_link_libraries(waypTugs_publisher ${catkin_LIBRARIES})

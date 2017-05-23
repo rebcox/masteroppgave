@@ -439,6 +439,28 @@ namespace Tug
     }
   }
 
+ /* bool Environement::place_ship(const Point &pt1, const Point &pt2, const Point &pt3, const Point &pt4, double margin)
+  {
+    if (!is_listed_clockwise(pt1, pt2, pt3, pt4))
+      return false;
+
+    ClipperLib::Path ship;
+    ClipperLib::ClipperOffset co;
+    //Add safety margin
+    co.AddPath(ship, ClipperLib::jtMiter, ClipperLib::etClosedPolygon);
+    
+    VisiLibity::Polygon hole;
+    ClipperLib::Paths paths;
+    co.Execute(tpaths, margin);
+
+    if(paths.size() > 0)
+    {
+      reverse_path(paths[0]);
+      path_to_hole(paths[0], hole);
+    }
+  }*/
+
+
   void Environment::save_environment_as_svg(const std::string filename)
   {
     Polyline dummy;

@@ -22,11 +22,16 @@ namespace Tug
     bool assign_on_combined_shortest_path(std::map<int, Boat> &tugs, 
                                           const std::vector<Point> &finish_points, 
                                           Environment &environment);
+    bool assign_on_combined_shortest_path(std::vector<Boat> &tugs, 
+                                          std::map<int, Point> &finish_points, 
+                                          Environment &environment);
   private:
     double euclidean_distance(const Point &point1, const Point &point2);
-        bool assign_on_combined_shortest_path(std::vector<Boat> &tugs, 
-                                          const std::vector<Point> &finish_points, 
-                                          Environment &environment);
+
+    bool assign(std::vector<Boat> &tugs, 
+                const std::vector<Point> &finish_points, 
+                Environment &environment);
+
   };
 }
 

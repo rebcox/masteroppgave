@@ -18,6 +18,7 @@ add_message_files(
   FILES 
   Waypoint.msg
   BoatPose.msg
+  ClearWaypoint.msg
 )
 
 generate_messages(

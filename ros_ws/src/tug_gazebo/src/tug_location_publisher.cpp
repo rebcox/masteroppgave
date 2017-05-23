@@ -56,7 +56,7 @@ int main(int argc, char **argv)
   }
 
   ros::NodeHandle node;
-  pub = node.advertise<master::BoatPose>("tug_locations", 1000);
+  pub = node.advertise<master::BoatPose>("pose", 20);
   pose_srv = node.serviceClient<gazebo_msgs::GetModelState>("/gazebo/get_model_state");
 
   ros::Rate loop_rate(4);

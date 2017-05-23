@@ -42,8 +42,13 @@ namespace Tug
     { Point point_copy(point_temp);
       vertices_.push_back(point_copy); polyline_edited_since_last_length_calculation = true;}
 
+    void push_front( Point point)
+    {reverse(); push_back(point); reverse();}
+
     void pop_back()
     { vertices_.pop_back(); polyline_edited_since_last_length_calculation = true;}
+
+    Point back(){return vertices_.back();}
 
     void reverse(){std::reverse( std::begin(vertices_) , std::end(vertices_ ) );}
 
