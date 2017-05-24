@@ -34,7 +34,6 @@ namespace Tug
     Point calculate_point_on_boundary(const Point &point, const VisiLibity::Polygon &hole, const Tug::Environment &env);
     std::map<std::pair<int,int>, double> apsp_costs_;
   };
-
 }
 
 #endif //TUG_SHORTEST_PATH_H

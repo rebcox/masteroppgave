@@ -5,8 +5,7 @@ namespace Tug
 	Route_around_ship::Route_around_ship(double orientation, double width, double length)
 	{
     orientation_ = 0;
-    //TODOOOOOOOOOOOOOOOOOO: kan ikke være dette
-    position_ = Point(-10,-10,-1);
+    position_ = Point(-1000,-1000,-1);
     ship_mat_ = Eigen::Matrix<double,2,4>(2,4);
 
     calculate_corners(position_, orientation, width, length, ship_mat_);
@@ -24,6 +23,12 @@ namespace Tug
     
   void Route_around_ship::move(const Point &mid_pt, double orientation)
   {
+    if (!ship_placed_)
+    {
+      position_ = Point(0,0,-1);
+      ship_placed_ = true;
+    }
+
     Eigen::Translation2d transl(mid_pt.x() - position_.x(), mid_pt.y() - position_.y());
     Eigen::Affine2d af(transl);
     position_ = mid_pt;

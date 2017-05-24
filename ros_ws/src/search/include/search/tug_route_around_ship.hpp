@@ -12,6 +12,7 @@ class Route_around_ship
   {
   public:
   	Route_around_ship(double orientation, double width, double length);
+    Route_around_ship(){};
    // Route_around_ship(){Route_around_ship(0, 0,0);}; //{position_ = Point(0,0); orientation_ = 0; };
     void move(const Point &mid_pt, double orientation);
     Polyline best_route(Point start, Point finish, const Environment &env);
@@ -23,6 +24,7 @@ class Route_around_ship
     double dist(const Point &point1, const Point &point2);
     int min_element_index(double list[4]);
 
+    bool ship_placed_ = false;
     Eigen::Matrix<double,2,4> ship_mat_;
     double ship_corners_[4][2];
     Point position_;

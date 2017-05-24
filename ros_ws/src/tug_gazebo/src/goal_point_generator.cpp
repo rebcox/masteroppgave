@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 
   ros::Subscriber sub_arrived = n.subscribe("clearWaypoint", 20, callback_clear_waypoint);
 
-  master::Waypoint pt1;
+ /* master::Waypoint pt1;
   pt1.ID = 11;
   pt1.x = 7;
   pt1.y = 10;
@@ -45,7 +45,17 @@ int main(int argc, char **argv)
   pt2.ID = 22;
   pt2.x = 8.5;
   pt2.y = 10;
-  pt2.v = 3;
+  pt2.v = 3;*/
+
+  master::Waypoint pt1;
+  pt1.ID = 11;
+  pt1.x = 2;
+  pt1.y = 1.625;
+
+  master::Waypoint pt2;
+  pt2.ID = 22;
+  pt2.x = 2.5;
+  pt2.y = 1.75;
 
   waypoints.insert(std::pair<int, master::Waypoint>(pt1.ID, pt1));
   waypoints.insert(std::pair<int, master::Waypoint>(pt2.ID, pt2));
