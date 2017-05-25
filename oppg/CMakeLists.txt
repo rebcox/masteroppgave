@@ -23,8 +23,8 @@ target_link_libraries(tests ${CMAKE_THREAD_LIBS_INIT}) #pthread?
 target_link_libraries(tests ${GTEST_LIBRARIES})
 add_test(NAME tests COMMAND tests)
 
-#add_executable(main main.cpp ${SOURCE_FILES})
-#target_link_libraries(main)
+add_executable(main main.cpp ${SOURCE_FILES})
+target_link_libraries(main)
 
 #add_executable(demo demo1603.cpp ${SOURCE_FILES})
 #target_link_libraries(demo)

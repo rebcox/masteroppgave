@@ -13,7 +13,7 @@ namespace Tug
 	public:
 		All_pairs_shortest_path( Environment &environment);
     void write_to_file( std::vector<std::vector<int>> &apsp);
-
+    void write_to_file(std::map<std::pair<int,int>, int> &apsp);
     std::vector<std::vector<int>> get_apsp_matrix() const {return apsp_;};
     std::map<std::pair<int,int>, int> get_apsp_matrix_2() const {return apsp2_;};
     std::map<std::pair<int,int>, double> get_apsp_costs() const {return apsp_costs_;};

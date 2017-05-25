@@ -13,10 +13,6 @@ namespace Tug
     shortest_path = best_first_search(start, 
                                       finish, 
                                       points);
-    /*for (int i = 0; i < points.size(); ++i)
-    {
-      std::cout << points[i].id() << std::endl;
-    }*/
   }
 
   double A_star_search::heurestic(const Point &point1, const Point &point2)

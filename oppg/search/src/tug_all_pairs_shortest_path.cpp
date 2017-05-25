@@ -9,6 +9,8 @@ namespace Tug
     apsp_ = find_optimal_path_from_all_points(environment);
     find_optimal_path_from_all_points_2(environment, apsp2_);
     //write_to_file(apsp_);
+    write_to_file(apsp2_);
+
   }
 
   void All_pairs_shortest_path::write_to_file( std::vector<std::vector<int>> &apsp)
@@ -22,6 +24,19 @@ namespace Tug
         file_output << apsp[i][j] << "  ";
       }
       file_output << "\n";
+    }
+    std::cout << "All pairs shortest path written to file\n";
+    file_output.close();
+  }
+
+  void All_pairs_shortest_path::write_to_file(std::map<std::pair<int,int>, int> &apsp)
+  {
+    std::ofstream file_output;
+    file_output.open ("all_pairs_shortest_path2.txt");
+
+    for (std::map<std::pair<int,int>, int>::iterator i = apsp.begin(); i != apsp.end(); ++i)
+    {
+      file_output << "(" << i->first.first << " to " << i->first.second << ") go via " << i->second << "\n";
     }
     std::cout << "All pairs shortest path written to file\n";
     file_output.close();
@@ -76,9 +91,12 @@ namespace Tug
     // map<pair<from, to>, go_via>>
     Polyline shortest_path_temp;
     apsp.clear();
+    std::vector<Point> points = environment.points();
 
       for (std::map<int,Point>::iterator i = environment.begin(); i != environment.end(); ++i)
       {
+       // std::cout << i->first << ": " << i->second << std::endl;
+
         for (std::map<int,Point>::iterator j = environment.begin(); j != environment.end(); ++j)
         {
           std::pair<int,int> pair_of_points(i->first, j->first);
@@ -89,13 +107,20 @@ namespace Tug
           }
           else
           {
+            shortest_path_temp.clear();
+
             A_star_search(i->second, //start point
                           j->second, //end point
-                          environment.points(),
+                          points,
                           shortest_path_temp,
                           epsilon_);
             if (shortest_path_temp.size() > 0)
             {
+              /*for (int i = 0; i < shortest_path_temp.size(); ++i)
+              {
+                std::cout << shortest_path_temp[i] << ", ";
+              }*/
+              //std::cout << "inserted: " << shortest_path_temp[1].id() << " which is " << shortest_path_temp[1] << std::endl;
               apsp.insert(std::pair<std::pair<int,int>,int>(pair_of_points, shortest_path_temp[1].id()));
               apsp_costs_.insert(std::pair<std::pair<int,int>,double>(pair_of_points, shortest_path_temp.length()));
             }

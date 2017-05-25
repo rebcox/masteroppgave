@@ -39,13 +39,32 @@ namespace Tug
     { vertices_.clear(); polyline_edited_since_last_length_calculation = true;}
 
     void push_back(const Point& point_temp)
-    { Point point_copy(point_temp);
-      vertices_.push_back(point_copy); polyline_edited_since_last_length_calculation = true;}
+    { 
+      //Point point_copy(point_temp);
+      //vertices_.push_back(point_copy); 
+      vertices_.push_back(point_temp);
+      polyline_edited_since_last_length_calculation = true;}
 
     void pop_back()
     { vertices_.pop_back(); polyline_edited_since_last_length_calculation = true;}
 
-    void reverse(){std::reverse( std::begin(vertices_) , std::end(vertices_ ) );}
+    void reverse()
+    {
+      std::vector<int> ids;
+      std::vector<Point> pts;
+      //Environement environment = pts.en
+      for (int i = 0; i < vertices_.size(); ++i)
+      {
+        ids.push_back(vertices_[i].id());
+        pts.push_back(vertices_[i]);
+      }
+      vertices_.clear();
+      for (int i = pts.size()-1; i >= 0; --i)
+      {
+        vertices_.push_back(Point(pts[i].x(), pts[i].y(), ids[i]));
+      }
+      //std::reverse( std::begin(vertices_) , std::end(vertices_ ) );
+    }
 
     double length()
     {

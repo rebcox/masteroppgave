@@ -96,6 +96,9 @@ namespace Tug
 
   bool Shortest_path::calculate_shortest_path(const Point &start, const Point &end, Polyline &shortest_path, Environment &environment)
   {
+    Point second_to_last_point;
+    Point second_point;
+    
     if(!start_and_end_points_are_valid(start, end, environment))
     {
       //std::cout << "Start and/or end point within obstacle" << std::endl;
@@ -107,9 +110,6 @@ namespace Tug
     std::shared_ptr<Point> start_point_outside_safety_margin;
     std::shared_ptr<Point> end_point_outside_margin;
 
-
-    Point second_to_last_point;
-    Point second_point;
 
     int index_start = point_within_safety_margin(start,environment);
 
@@ -341,7 +341,7 @@ namespace Tug
     shortest_path.push_back(environment(start_id));
 
     //First vertex to visit. If it is equal to start_id, than there are not more points to traverse
-    int next_vertex = apsp2_[std::make_pair(finish_id, start_id)];
+    int next_vertex = apsp2_[std::make_pair(start_id, finish_id)];
 
     if (next_vertex == -1)
     {
@@ -350,12 +350,12 @@ namespace Tug
     }
     int prev_vertex = 0;
 
-    while (next_vertex != prev_vertex) 
+    while (next_vertex != 0) // prev_vertex) 
     {
       shortest_path.push_back(environment(next_vertex));
 
       prev_vertex = next_vertex;
-      next_vertex = apsp2_[std::make_pair(finish_id, prev_vertex)];
+      next_vertex = apsp2_[std::make_pair(prev_vertex, finish_id)];
 
       if (next_vertex == -1)
       {

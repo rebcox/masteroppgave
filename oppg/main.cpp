@@ -1,17 +1,17 @@
-#include "include/clipper.hpp"
-#include "include/SVG_builder.hpp"
-#include "include/visilibity.hpp" 
-#include "include/tug_environment.hpp"
+#include "external/src/clipper.hpp"
+#include "external/src/SVG_builder.hpp"
+#include "external/src/visilibity.hpp" 
+#include "geometry/include/tug_environment.hpp"
 #include <sstream>
 #include <string>
-#include "include/tug_point.hpp"
-#include "include/tug_all_pairs_shortest_path.hpp"
-#include "include/tug_shortest_path.hpp"
+#include "geometry/include/tug_point.hpp"
+#include "search/include/tug_all_pairs_shortest_path.hpp"
+#include "search/include/tug_shortest_path.hpp"
 #include <time.h>
-#include "include/tug_scheduler.hpp"
-#include "include/hungarian.hpp"
-#include "include/munkres/munkres.h"
-#include "include/tug_assign_paths.hpp"
+#include "coordination/include/tug_scheduler.hpp"
+//#include "external/src/hungarian.hpp"
+#include "external/munkres/munkres.h"
+#include "coordination/include/tug_assign_paths.hpp"
 
 int meter_to_pixels(double scale, double meter)
 {
@@ -21,7 +21,17 @@ int meter_to_pixels(double scale, double meter)
 
 int main(int argc, char **argv)
 {
+  double epsilon = 0.001;
+  Tug::Environment tug_env("/home/rebecca/GITHUB/mast/oppg/environments/similar.txt", 1.0, epsilon);
+  Tug::Point start(0,0, tug_env);
+  Tug::Point end(80,65, tug_env);
+  Tug::Polyline path;
+  Tug::Shortest_path sp(tug_env); //, start, end, path);
+  sp.calculate_shortest_path(start, end, path, tug_env);
+  tug_env.save_environment_as_svg("similar_sol.svg", path);
 
+
+/*
   time_t before;
   time_t after;
 
@@ -85,7 +95,7 @@ int main(int argc, char **argv)
   Tug::Environment asps_env("/Users/rebeccacox/GitHub/mast/oppg/environments/apsp_env.txt", 1.0, epsilon);
 
   Tug::All_pairs_shortest_path apsp(asps_env);
-
+*/
 /*
   Tug::Environment tug_env_scaled("/home/rebecca/GITHUB/mast/oppg/environments/ex1tug.txt", 1.5, epsilon);
   tug_env_scaled.add_constant_safety_margin(43);
