@@ -340,7 +340,7 @@ namespace Tug
     shortest_path.push_back(environment(start_id));
 
     //First vertex to visit. If it is equal to start_id, than there are not more points to traverse
-    int next_vertex = apsp2_[std::make_pair(finish_id, start_id)];
+    int next_vertex = apsp2_[std::make_pair(start_id, finish_id)];
 
     if (next_vertex == -1)
     {
@@ -349,12 +349,12 @@ namespace Tug
     }
     int prev_vertex = 0;
 
-    while (next_vertex != prev_vertex) 
+    while (next_vertex != 0) //prev_vertex) 
     {
       shortest_path.push_back(environment(next_vertex));
 
       prev_vertex = next_vertex;
-      next_vertex = apsp2_[std::make_pair(finish_id, prev_vertex)];
+      next_vertex = apsp2_[std::make_pair(prev_vertex, finish_id)];
 
       if (next_vertex == -1)
       {

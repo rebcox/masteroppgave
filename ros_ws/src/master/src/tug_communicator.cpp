@@ -257,6 +257,7 @@ namespace Tug
     //if (!pt_cur)
     if(pt_cur.x()==-1 && pt_cur.y()==-1)
     {
+      std::cout << "not active" << std::endl;
       return;
     }
 
@@ -264,7 +265,7 @@ namespace Tug
     {
       publish_new_waypoint(pt_cur, id);
       //Heading towards second to last waypoint
-      if(tugs_.at(id).no_waypoints_left() == 2)
+      /*if(tugs_.at(id).no_waypoints_left() == 2)
       {
         Tug::Polyline points_to_go_around_ship = route_around_ship_.best_route(pt_cur, tugs_.at(id).get_goal(), environment_tug_);
         
@@ -274,7 +275,7 @@ namespace Tug
           points_to_go_around_ship.push_back(tugs_.at(id).get_goal());
           tugs_.at(id).set_path(points_to_go_around_ship);
         }
-      }
+      }*/
     }
     else if(arrived_at_goal)
     {
@@ -288,7 +289,7 @@ namespace Tug
     }
     else
     {
-      master::Waypoint waypoint;
+      /*master::Waypoint waypoint;
       waypoint.ID = id;
       waypoint.x = pt_cur.x();
       waypoint.y = pt_cur.y();
@@ -302,7 +303,7 @@ namespace Tug
       {
         waypoint.v = 0;
       }
-      
+      */
       //  ROS_INFO("Tug %d: Publ point (%f, %f) v: %f", id, pt_cur->x(), pt_cur->y(), waypoint.v);
     }
   }

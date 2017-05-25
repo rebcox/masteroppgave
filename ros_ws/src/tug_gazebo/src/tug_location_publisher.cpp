@@ -27,8 +27,8 @@ void update_tug_pose()
 
       master::BoatPose pose_msg;
       pose_msg.ID = tug->first;
-      pose_msg.x = getmodelstate.response.pose.position.x;
-      pose_msg.y = getmodelstate.response.pose.position.y;
+      pose_msg.x = getmodelstate.response.pose.position.x/40;
+      pose_msg.y = getmodelstate.response.pose.position.y/40;
       //ROS_INFO("publised pose for %s", tug->second.c_str());
 
       pub.publish(pose_msg);
