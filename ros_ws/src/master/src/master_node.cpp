@@ -6,8 +6,8 @@
 #include "search/tug_shortest_path.hpp"
 #include "tug_communicator.hpp"
 
-#include "master/Waypoint.h"
-#include "master/BoatPose.h"
+#include "tugboat_control/Waypoint.h"
+#include "tugboat_control/BoatPose.h"
 
 namespace
 {
@@ -18,7 +18,7 @@ namespace
   Tug::Boat ship_;
 }
 
-void callback_ship_pose(const master::BoatPose::ConstPtr &msg)
+void callback_ship_pose(const tugboat_control::BoatPose::ConstPtr &msg)
 {
   Tug::Point mid_pt(msg->x, msg->y, environment_ship_);
 
@@ -29,7 +29,7 @@ void callback_ship_pose(const master::BoatPose::ConstPtr &msg)
 
   if(arrived_at_goal_flag)
   {
-    master::Waypoint waypoint;
+    tugboat_control::Waypoint waypoint;
     waypoint.x = pt_cur.x();
     waypoint.y = pt_cur.y();
     waypoint.v = 0;
@@ -37,7 +37,7 @@ void callback_ship_pose(const master::BoatPose::ConstPtr &msg)
   }
   else //if (new_waypoint_set)
   {
-    master::Waypoint waypoint;
+    tugboat_control::Waypoint waypoint;
     waypoint.x = pt_cur.x();
     waypoint.y = pt_cur.y();
     waypoint.v = 5;
@@ -55,11 +55,11 @@ int main(int argc, char **argv)
 
   ros::init(argc, argv, "master_node");
   ros::NodeHandle node;
-  ship_waypoint_pub = node.advertise<master::Waypoint>("shipWaypoint", 10);
+  ship_waypoint_pub = node.advertise<tugboat_control::Waypoint>("shipWaypoint", 10);
+  //double scale = 40.0;
+  double scale = 480.0/2.0;
 
-  double scale = 40.0;
-
-  std::string filename = "/home/rebecca/GITHUB/mast/ros_ws/big_test.txt";
+  std::string filename = "/home/sondre/RebeccaMaster/masteroppgave/ros_ws/src/master/include/master/init_test_environment.txt";
 
   //double px = 1.0/200.0;
   Tug::Environment environment_tug = Tug::Environment(filename, 1, 0.01);
@@ -67,10 +67,10 @@ int main(int argc, char **argv)
   //environment_tug_.add_constant_safety_margin(1*scale);
   environment_tug.mark_points_within_range(1.5);
 
-  Tug::Point tug1_location(0.0,0.0, environment_tug);
+  Tug::Point tug1_location(0.5*scale,0.5*scale, environment_tug);
   Tug::Boat tug1(1, tug1_location , &environment_tug);
 
-  Tug::Point tug2_location(2.0*scale, 0.0, environment_tug);
+  Tug::Point tug2_location(0.6*scale, 0.6*scale, environment_tug);
   Tug::Boat tug2(1, tug2_location , &environment_tug);
 
   std::map<int,Tug::Boat> tugs;
@@ -81,8 +81,8 @@ int main(int argc, char **argv)
 
   environment_ship_ = Tug::Environment(filename, 1.0, 0.01);
   Tug::Point ship_goal(2, 2, environment_ship_);
-  ship_width_ = 2;
-  ship_length_ = 4;
+  ship_width_ = 0.5;
+  ship_length_ = 1;
 
   Tug::Point start_location_ship(0, 0, environment_ship_);
   ship_ = Tug::Boat(1, start_location_ship, &environment_ship_);

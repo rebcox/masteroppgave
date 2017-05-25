@@ -10,20 +10,22 @@ find_package(catkin REQUIRED COMPONENTS
   coordination
   message_generation
   std_msgs
+  tugboat_control
 )
 
 add_message_files(
   DIRECTORY
   msg
   FILES 
-  Waypoint.msg
-  BoatPose.msg
-  ClearWaypoint.msg
+  #Waypoint.msg
+  #BoatPose.msg
+  #ClearWaypoint.msg
 )
 
 generate_messages(
   DEPENDENCIES
   std_msgs
+  tugboat_control
 )
 catkin_package(
   CATKIN_DEPENDS message_runtime
