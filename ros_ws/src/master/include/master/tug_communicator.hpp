@@ -11,6 +11,7 @@
 #include "master/BoatPose.h"
 #include "master/ClearWaypoint.h"
 #include "master/Waypoint.h"
+#include "std_msgs/UInt8.h"
 #include "search/tug_route_around_ship.hpp"
 #include "search/tug_shortest_path.hpp"
 
@@ -19,7 +20,7 @@ namespace Tug
   class Communicator
   {
   public:
-  	Communicator(std::map<int,Boat> &tugs, Environment &environment, double scale);
+	  Communicator(Environment &environment, double scale);
 	  float eucledian_distance(const Tug::Point &point1, const Tug::Point &point2);
 	  void print_path(Tug::Polyline path);
 	  void replan();
@@ -27,15 +28,18 @@ namespace Tug
 	  void set_holding_tug(int holding_id, int held_id);
 	  void remove_holding_tug(int holding_id, int held_id);
 	  void publish_new_waypoint(const Tug::Point pt_cur, int tug_id);
-	  int find_order_id(const Tug::Point &pt);
+	  int  find_order_id(const Tug::Point &pt);
 	  void remove_tug_from_control(int tug_id);
 	  void publish_arrived_tug(int tug_id);
 	  bool is_under_my_control(int id);
 	  void add_new_tug(Tug::Boat &tug, int id);
+    bool tug_id_already_in_system(int id);
+
 	  void callback_waypoint(const master::Waypoint::ConstPtr& msg);
 	  void callback_boat_pose(const master::BoatPose::ConstPtr& msg);
 	  void callback_ship_pose(const master::BoatPose::ConstPtr &msg);
 	  void callback_available_tugs(const std_msgs::UInt8MultiArray::ConstPtr &msg);
+    void callback_new_tug(const std_msgs::UInt8::ConstPtr &msg);
 
   private:
 	  std::map<int, Tug::Boat> tugs_;
