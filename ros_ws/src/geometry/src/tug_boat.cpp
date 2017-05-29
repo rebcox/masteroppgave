@@ -88,7 +88,7 @@ namespace Tug
   {
     //shared_ptr<Song> p1(song1);
 
-    if(current_waypoint_index_ <= path_.size())
+    if(current_waypoint_index_ < path_.size())
     {
 
       //std::shared_ptr<Point> ptr(&path_[current_waypoint_index_]);

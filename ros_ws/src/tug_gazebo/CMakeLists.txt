@@ -16,6 +16,9 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+add_executable(tug_startup_publisher src/tug_startup_publisher.cpp)
+target_link_libraries(tug_startup_publisher ${catkin_LIBRARIES})
+
 add_executable(tug_state_publisher src/tug_state_publisher.cpp)
 target_link_libraries(tug_state_publisher ${catkin_LIBRARIES})
 
