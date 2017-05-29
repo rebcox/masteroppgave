@@ -156,7 +156,7 @@ TEST(RouteAroundShipTest, correctPlacement)
   Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
 
   Tug::Point mid_pt(10, 10, tug_environment);
-  Tug::Route_around_ship route_around_ship(mid_pt, M_PI/2, 2, 4);
+  Tug::Route_around_ship route_around_ship(M_PI/2, 2, 4);
 
   Tug::Point start(14, 10, tug_environment);
   Tug::Point finish(7, 9, tug_environment);

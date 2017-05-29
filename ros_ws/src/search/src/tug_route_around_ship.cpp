@@ -13,12 +13,6 @@ namespace Tug
 
     std::cout << ship_mat_ << std::endl;
 	}
-  /*Route_around_ship::Route_around_ship()
-  {
-    Point dummy(0,0);
-    Route_around_ship(dummy, 0, 0,0);
-
-  }*/
 
     
   void Route_around_ship::move(const Point &mid_pt, double orientation)
@@ -40,7 +34,7 @@ namespace Tug
   void Route_around_ship::rotate_ship(double angle, Eigen::Matrix<double,2,4> &ship_mat)
   {
     Eigen::Translation<double, 2> trans1(-position_.x(), -position_.y());
-    Eigen::Rotation2D<double> rot(orientation_ - angle);
+    Eigen::Rotation2D<double> rot(orientation_ - angle); //TODO: Riktig retnining??
     Eigen::Translation<double, 2> trans2(position_.x(), position_.y());
 
     ship_mat = trans2*rot*trans1*ship_mat;
