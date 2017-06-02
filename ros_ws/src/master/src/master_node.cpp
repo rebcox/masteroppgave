@@ -77,7 +77,7 @@ int main(int argc, char **argv)
   tugs.insert(std::pair<int,Tug::Boat>(1, tug1));
   tugs.insert(std::pair<int,Tug::Boat>(2, tug2));
 
-  Tug::Communicator communicator(environment_tug, scale);
+  Tug::Communicator communicator(environment_tug, scale, 0.3); 
 
   environment_ship_ = Tug::Environment(filename, 1.0, 0.01);
   Tug::Point ship_goal(2, 2, environment_ship_);

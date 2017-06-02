@@ -2,26 +2,11 @@
 
 namespace Tug
 {
-  Communicator::Communicator( Environment &environment, double scale)
+  Communicator::Communicator( Environment &environment, double scale, double accept_waypoint_radius)
   {
-    /*for (std::map<int,Boat>::iterator i = tugs.begin(); i != tugs.end(); ++i)
-    {
-      add_new_tug(i->second, i->first);
-    }*/
-
-
- /* Tug::Point tug1_location(0.0*scale,0.0*scale, environment);
-  Tug::Boat tug1(1, tug1_location , &environment);
-
-  Tug::Point tug2_location(2.0*scale, 0.0*scale, environment);
-  Tug::Boat tug2(1, tug2_location , &environment);
-
-    add_new_tug(tug1, 1);
-    add_new_tug(tug2, 2);*/
-
-
     scale_ = scale;
-    route_around_ship_ = Tug::Route_around_ship(0,2,4);
+    accept_waypoint_radius_ = accept_waypoint_radius;
+    route_around_ship_ = Tug::Route_around_ship(0,0.5,0.6);
     environment_tug_ = environment;
     waypoint_pub = node_.advertise<master::Waypoint>("waypoint", 20);
     tug_arrived_pub = node_.advertise<master::ClearWaypoint>("clearWaypoint", 20);
@@ -114,7 +99,7 @@ namespace Tug
     master::Waypoint waypoint;
     waypoint.ID = tug_id;
     waypoint.x = pt_cur.x(); waypoint.y = pt_cur.y();
-    waypoint.v = 10;
+    waypoint.v = 10;// 3.6;
 
     bool another_tug_in_the_way = false;
 
@@ -200,13 +185,21 @@ namespace Tug
     {
       ROS_INFO("erased from endpoint: (%f, %f)", end_points_.at(order_id).x(), end_points_.at(order_id).y());
       end_points_.erase(order_id);
-      current_waypoints_.erase(tug_id);
       remove_tug_from_control(tug_id);
+      current_waypoints_.at(tug_id) = Point(-1, -1, -1); // erase(tug_id);
       tugs_.at(tug_id).clear_tug();
     }
-
     clear_point.orderID = order_id;
-    tug_arrived_pub.publish(clear_point);
+    order_ready_to_publish.push_back(clear_point);
+    if (end_points_.size() == 0)
+    {
+      for (int i = 0; i < order_ready_to_publish.size(); ++i)
+      {
+        tug_arrived_pub.publish(order_ready_to_publish[i]);
+      }
+    }
+    
+    //tug_arrived_pub.publish(clear_point);
   }
 
   bool Communicator::is_under_my_control(int id)
@@ -228,14 +221,12 @@ namespace Tug
     current_waypoints_.insert(std::pair<int, Tug::Point>(id, tug.get_position()));
     tugs_.insert(std::pair<int, Tug::Boat>(id, std::move(tug)));
   }
-  /*void Communicator::add_new_tug(int id)
-  {
 
-  }*/
+
 
   void Communicator::callback_waypoint(const master::Waypoint::ConstPtr& msg)
   { 
-    ROS_INFO("callback_waypoint");
+    //ROS_INFO("callback_waypoint");
 
     if (tugs_under_my_control_.size() == 0 || tugs_.size() == 0)
     {
@@ -245,7 +236,7 @@ namespace Tug
     for (std::map<int, Boat>::iterator i = tugs_.begin(); i != tugs_.end(); ++i)
     {
       Point pt(i->second.get_position());
-      if (pt.x()==-1000 && pt.y()==-1000)
+      if (pt.x()==-1 && pt.y()==-1)
       {
         ROS_WARN("Positions of tugs not set");
         return;
@@ -266,6 +257,14 @@ namespace Tug
     }
     catch(const std::out_of_range &oor)
     {
+      for (std::map<int, Boat>::iterator i = tugs_.begin(); i != tugs_.end(); ++i)
+      {
+        Point pos = i->second.get_position();
+        if (sqrt(pow(pos.x() - pt.x(), 2) + pow(pos.y() - pt.y(), 2)) < accept_waypoint_radius_*scale_)
+        {
+          return;
+        }
+      }
       //If waypoint is new
       end_points_.insert(std::pair<int, Tug::Point>(msg_id, pt));
       replan();
@@ -274,7 +273,7 @@ namespace Tug
 
   void Communicator::callback_boat_pose(const master::BoatPose::ConstPtr& msg)
   {
-    ROS_INFO("callback_boat_pose");
+    //ROS_INFO("callback_boat_pose");
 
     if (tugs_.size() == 0)
     {
@@ -294,7 +293,7 @@ namespace Tug
 
     try
     {
-      tugs_.at(id).update_position(pt, new_waypoint_set, arrived_at_goal, 0.3*scale_); //TODO: hardkoda
+      tugs_.at(id).update_position(pt, new_waypoint_set, arrived_at_goal, accept_waypoint_radius_*scale_); //TODO: hardkoda
     }
     catch(const std::out_of_range &oor)
     {
@@ -317,7 +316,7 @@ namespace Tug
       publish_new_waypoint(pt_cur, id);
       
       //Heading towards second to last waypoint
-      /*if(tugs_.at(id).no_waypoints_left() == 2)
+      if(tugs_.at(id).no_waypoints_left() == 2)
       {
         Tug::Polyline points_to_go_around_ship = route_around_ship_.best_route(pt_cur, tugs_.at(id).get_goal(), environment_tug_);
         
@@ -327,7 +326,7 @@ namespace Tug
           points_to_go_around_ship.push_back(tugs_.at(id).get_goal());
           tugs_.at(id).set_path(points_to_go_around_ship);
         }
-      }*/
+      }
     }
     else if(arrived_at_goal)
     {
@@ -348,21 +347,21 @@ namespace Tug
 
       if (tugs_.at(id).is_free_to_move())
       {
-        waypoint.v = 10;
+        waypoint.v = 3.6;
         waypoint_pub.publish(waypoint);
       }
       else
       {
         waypoint.v = 0;
-      }
-      */
+      }*/
+      
       //  ROS_INFO("Tug %d: Publ point (%f, %f) v: %f", id, pt_cur->x(), pt_cur->y(), waypoint.v);
     }
   }
 
   void Communicator::callback_ship_pose(const master::BoatPose::ConstPtr &msg)
   {
-    ROS_INFO("callback_ship_pose");
+    //ROS_INFO("callback_ship_pose");
     Tug::Point mid_pt(msg->x*scale_, msg->y*scale_, environment_tug_);
     route_around_ship_.move(mid_pt, msg->o);
   }
@@ -400,7 +399,7 @@ namespace Tug
     }
     ROS_INFO("....................callback_new_tug....................");
     //startup message
-    Point dummp_pt(-1000, -1000, environment_tug_);
+    Point dummp_pt(-1, -1, environment_tug_);
     Boat tug(1, dummp_pt, &environment_tug_);
     add_new_tug(tug, msg->data);
     //add_new_tug(msg->data);

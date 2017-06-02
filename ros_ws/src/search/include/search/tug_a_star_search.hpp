@@ -15,11 +15,11 @@ namespace Tug
                   Polyline &shortest_path,
                   double epsilon);
     ~A_star_search(){};
-    Polyline best_first_search(const Point &start,
-                                          const Point &finish,
-                                          const std::vector<Point> &points_in_environment);
   private:
-    double epsilon_;
+    Polyline best_first_search(const Point &start,
+                               const Point &finish,
+                               const std::vector<Point> &points_in_environment);
+    double epsilon_ = 0;
     double heurestic(const Point &point1, const Point &point2);
     double eucledian_distance(const Point &point1, const Point &point2);
     bool   trivial_case(const Point &start,
