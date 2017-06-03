@@ -21,7 +21,7 @@ namespace Tug
 
 
     scale_ = scale;
-    route_around_ship_ = Tug::Route_around_ship(0,2,4);
+    route_around_ship_ = Tug::Route_around_ship(0,0.50*scale_,0.60*scale_);
     environment_tug_ = environment;
     waypoint_pub = node_.advertise<tugboat_control::Waypoint>("waypoint", 20);
     tug_arrived_pub = node_.advertise<tugboat_control::ClearWaypoint>("clearWaypoint", 20);
@@ -99,22 +99,30 @@ namespace Tug
 
   void Communicator::set_holding_tug(int holding_id, int held_id)
   {
-    tugs_.at(holding_id).set_tug_held_by_this(held_id);
-    tugs_.at(held_id).set_tug_holding_this(holding_id);
+    try
+    {
+      tugs_.at(holding_id).set_tug_held_by_this(held_id);
+      tugs_.at(held_id).set_tug_holding_this(holding_id);
+    }
+    catch(const std::out_of_range &oor){}
   }
 
   void Communicator::remove_holding_tug(int holding_id, int held_id)
   {
-    tugs_.at(holding_id).remove_tug_held_by_this(held_id);
-    tugs_.at(held_id).remove_tug_holding_this(holding_id);
+    try
+    {
+      tugs_.at(holding_id).remove_tug_held_by_this(held_id);
+      tugs_.at(held_id).remove_tug_holding_this(holding_id);
+    }
+    catch(const std::out_of_range &oor){}
   }
 
   void Communicator::publish_new_waypoint(const Tug::Point pt_cur, int tug_id)
   {
     tugboat_control::Waypoint waypoint;
     waypoint.ID = tug_id;
-    waypoint.x = pt_cur.x(); waypoint.y = pt_cur.y();
-    waypoint.v = 10;
+    waypoint.x = pt_cur.x()/scale_; waypoint.y = pt_cur.y()/scale_;
+    waypoint.v = 0.1;
 
     bool another_tug_in_the_way = false;
 
@@ -126,7 +134,7 @@ namespace Tug
          continue;
        } 
        //if a current waypoint is within a certain range of the point to be published, publish it with v=0
-       if (pt->second == pt_cur ||  eucledian_distance(pt->second, pt_cur) < 0.01*scale_) //TODO: hardkoda range
+       if (pt->second == pt_cur ||  eucledian_distance(pt->second, pt_cur) < 0.005*scale_) //TODO: hardkoda range
        {
           waypoint.v = 0;
           ROS_WARN("tug %d is held by tug %d", tug_id, pt->first);
@@ -146,15 +154,19 @@ namespace Tug
     if (!another_tug_in_the_way)
     {
       //set current_waypoints_
+
       current_waypoints_.at(tug_id) = pt_cur;
       //Looping through all tugs the new published point were holding
       std::vector<int> current_tug_is_holding = tugs_.at(tug_id).is_holding();
 
       for (int i = 0; i < current_tug_is_holding.size(); ++i)
       {
+
         remove_holding_tug(tug_id, current_tug_is_holding[i]);
+
         publish_new_waypoint(tugs_.at(current_tug_is_holding[i]).get_current_waypoint(), 
                               current_tug_is_holding[i]);
+
       }
     }
   }
@@ -200,8 +212,9 @@ namespace Tug
     {
       ROS_INFO("erased from endpoint: (%f, %f)", end_points_.at(order_id).x(), end_points_.at(order_id).y());
       end_points_.erase(order_id);
-      current_waypoints_.erase(tug_id);
+      //current_waypoints_.erase(tug_id);
       remove_tug_from_control(tug_id);
+      current_waypoints_.at(tug_id) = Point(-1000, -1000, -1);
       tugs_.at(tug_id).clear_tug();
     }
 
@@ -228,10 +241,6 @@ namespace Tug
     current_waypoints_.insert(std::pair<int, Tug::Point>(id, tug.get_position()));
     tugs_.insert(std::pair<int, Tug::Boat>(id, std::move(tug)));
   }
-  /*void Communicator::add_new_tug(int id)
-  {
-
-  }*/
 
   void Communicator::callback_waypoint(const tugboat_control::Waypoint::ConstPtr& msg)
   { 
@@ -245,7 +254,7 @@ namespace Tug
     for (std::map<int, Boat>::iterator i = tugs_.begin(); i != tugs_.end(); ++i)
     {
       Point pt(i->second.get_position());
-      if (pt.x()==-1000 && pt.y()==-1000)
+      if (pt.x()==-1 && pt.y()==-1)
       {
         ROS_WARN("Positions of tugs not set");
         return;
@@ -274,7 +283,7 @@ namespace Tug
 
   void Communicator::callback_boat_pose(const tugboat_control::BoatPose::ConstPtr& msg)
   {
-    ROS_INFO("callback_boat_pose");
+    //ROS_INFO("callback_boat_pose");
 
     if (tugs_.size() == 0)
     {
@@ -303,6 +312,7 @@ namespace Tug
     }
     //Tug::Point* pt_cur = tugs_.at(id).get_current_waypoint();
     //std::shared_ptr<Tug::Point> 
+
     Tug::Point pt_cur = tugs_.at(id).get_current_waypoint();
     //Not active
     //if (!pt_cur)
@@ -331,24 +341,27 @@ namespace Tug
     }
     else if(arrived_at_goal)
     {
+
       tugboat_control::Waypoint waypoint;
       waypoint.ID = id;
-      waypoint.x = pt_cur.x();
-      waypoint.y = pt_cur.y();
+      waypoint.x = pt_cur.x()/scale_;
+      waypoint.y = pt_cur.y()/scale_;
       waypoint.v = 0;
       waypoint_pub.publish(waypoint);
+
       publish_arrived_tug(id);
+
     }
     else
     {
       tugboat_control::Waypoint waypoint;
       waypoint.ID = id;
-      waypoint.x = pt_cur.x();
-      waypoint.y = pt_cur.y();
+      waypoint.x = pt_cur.x()/scale_;
+      waypoint.y = pt_cur.y()/scale_;
 
       if (tugs_.at(id).is_free_to_move())
       {
-        waypoint.v = 10;
+        waypoint.v = 0.1;
         waypoint_pub.publish(waypoint);
       }
       else
@@ -362,7 +375,8 @@ namespace Tug
 
   void Communicator::callback_ship_pose(const tugboat_control::BoatPose::ConstPtr &msg)
   {
-    ROS_INFO("callback_ship_pose");
+    //ROS_INFO("callback_ship_pose");
+
     Tug::Point mid_pt(msg->x*scale_, msg->y*scale_, environment_tug_);
     route_around_ship_.move(mid_pt, msg->o);
   }
@@ -400,7 +414,7 @@ namespace Tug
     }
     ROS_INFO("....................callback_new_tug....................");
     //startup message
-    Point dummp_pt(-1000, -1000, environment_tug_);
+    Point dummp_pt(-1, -1, environment_tug_);
     Boat tug(1, dummp_pt, &environment_tug_);
     add_new_tug(tug, msg->data);
     //add_new_tug(msg->data);

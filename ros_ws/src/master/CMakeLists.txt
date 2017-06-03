@@ -13,14 +13,14 @@ find_package(catkin REQUIRED COMPONENTS
   tugboat_control
 )
 
-add_message_files(
-  DIRECTORY
-  msg
-  FILES 
-  #Waypoint.msg
-  #BoatPose.msg
-  #ClearWaypoint.msg
-)
+#add_message_files(
+#  DIRECTORY
+#  msg
+#  FILES 
+#  #Waypoint.msg
+#  #BoatPose.msg
+#  #ClearWaypoint.msg
+#)
 
 generate_messages(
   DEPENDENCIES
@@ -28,7 +28,7 @@ generate_messages(
   tugboat_control
 )
 catkin_package(
-  CATKIN_DEPENDS message_runtime
+  CATKIN_DEPENDS message_runtime tugboat_control
 )
 
 include_directories(
@@ -37,7 +37,8 @@ include_directories(
 )
 
 add_executable(master_node src/master_node.cpp src/tug_communicator.cpp)
-add_dependencies(master_node external geometry search)
+
+add_dependencies(master_node external geometry search tugboat_control_generate_messages_cpp ${catkin_EXPORTED_TARGETS})
 
 target_link_libraries(master_node ${catkin_LIBRARIES})
 
