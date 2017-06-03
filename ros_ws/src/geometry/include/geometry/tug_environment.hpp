@@ -57,8 +57,6 @@ namespace Tug
       int x_min_, x_max_, y_min_, y_max_; //of outer boundary
       double epsilon_;
 
-      //VisiLibity::Polygon ship;
-
       VisiLibity::Environment visilibity_environment_;
       VisiLibity::Environment visilibity_environment_with_safety_margin_;
 

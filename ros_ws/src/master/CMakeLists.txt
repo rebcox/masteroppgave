@@ -41,3 +41,14 @@ add_dependencies(master_node external geometry search)
 
 target_link_libraries(master_node ${catkin_LIBRARIES})
 
+
+add_executable(test_speed test/test_speed.cpp)
+add_dependencies(test_speed external geometry search)
+
+target_link_libraries(test_speed ${catkin_LIBRARIES})
+
+
+
+add_executable(munkres_speed_test test/munkres_speed_test.cpp)
+add_dependencies(munkres_speed_test external geometry search coordination)
+target_link_libraries(munkres_speed_test ${catkin_LIBRARIES})
