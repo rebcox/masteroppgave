@@ -20,7 +20,7 @@ namespace Tug
   class Communicator
   {
   public:
-	  Communicator(Environment &environment, double scale);
+	  Communicator(Environment &environment, double scale, double accept_waypoint_radius);
 	  float eucledian_distance(const Tug::Point &point1, const Tug::Point &point2);
 	  void print_path(Tug::Polyline path);
 	  void replan();
@@ -46,8 +46,9 @@ namespace Tug
   private:
 	  std::map<int, Tug::Boat> tugs_;
 	  Tug::Environment environment_tug_;
-
+		double accept_waypoint_radius_;
 	  std::map<int, Tug::Point> end_points_;
+	  std::vector<master::ClearWaypoint> order_ready_to_publish;
 
   	ros::NodeHandle node_;
 	  ros::Publisher waypoint_pub;
@@ -56,7 +57,7 @@ namespace Tug
 
 	  std::map<int, Tug::Point> current_waypoints_; //int is for tug_id
 
-		Tug::Route_around_ship route_around_ship_;
+	  Tug::Route_around_ship route_around_ship_;
 	  std::vector<int> tugs_under_my_control_;
 
 	  double scale_;
