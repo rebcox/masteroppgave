@@ -17,10 +17,12 @@ namespace Tug
     void set_id(int id){id_ = id;};
     int id() const {return id_;};
     void set_path(const Polyline &path);
+    Polyline get_path(){return path_;};
 
   private:
     Point position_ = Point(-1,-1,-1);
     int id_=-1;
+    Polyline path_;
   };
 }
 

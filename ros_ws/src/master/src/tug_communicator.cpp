@@ -6,12 +6,10 @@ namespace Tug
   {
     scale_ = scale;
     accept_waypoint_radius_ = accept_waypoint_radius;
-    route_around_ship_ = Tug::Route_around_ship(0,0.5,0.6);
     environment_tug_ = environment;
-    waypoint_pub = node_.advertise<master::Waypoint>("waypoint", 20);
     tug_arrived_pub = node_.advertise<master::ClearWaypoint>("clearWaypoint", 20);
-    path_pub = node_.advertise<master::Path>("paths");
-    goal_point_pub = node_.advertise<master::Waypoint>("goal_point_updater");
+    path_pub = node_.advertise<master::Path>("paths", 20);
+    goal_point_pub = node_.advertise<master::Waypoint>("goal_point_updater",20);
   }
 
   void Communicator::print_path(Tug::Polyline path)
@@ -43,23 +41,30 @@ namespace Tug
     }
 
     if (tugs_to_plan_for.size() == 0){return;}
-
+    
     assigner.assign_on_combined_shortest_path(tugs_to_plan_for, end_points_, environment_tug_); 
     
     for (int i = 0; i < tugs_to_plan_for.size(); ++i)
     {
-      Polyline path tugs_to_plan_for[i].get_path();
+      Polyline path = tugs_to_plan_for[i].get_path();
       master::Path path_msg;
+
       for (int j = 0; j < path.size(); ++j)
       {
+
         master::Waypoint wp; 
         wp.x = path[j].x(); 
         wp.y = path[j].y();
+        wp.v = 10;
+        wp.ID = tugs_to_plan_for[i].id();
         path_msg.data.push_back(wp);
       }
-      path_msg.orderID = find_order_id(*path.back());
-      path_msg.tugID = tugs_to_plan_for[i].id();
-      path_pub.publish(path_msg);
+      if (path.size() > 0)
+      {
+        path_msg.orderID = find_order_id(path.back());
+        path_msg.tugID = tugs_to_plan_for[i].id();
+        path_pub.publish(path_msg);
+      }
     }
   }
 
@@ -97,19 +102,18 @@ namespace Tug
     }
     catch(const std::out_of_range &oor)
     {
-
-      //TODO: dette er til når felles clearwaypoint blir sendt
-      /*for (std::map<int, Boat>::iterator i = tugs_.begin(); i != tugs_.end(); ++i)
+      for (std::map<int, Boat>::iterator i = tugs_.begin(); i != tugs_.end(); ++i)
       {
         Point pos = i->second.get_position();
         if (sqrt(pow(pos.x() - pt.x(), 2) + pow(pos.y() - pt.y(), 2)) < accept_waypoint_radius_*scale_)
         {
           return;
         }
-      }*/
+      }
       //If waypoint is new
       end_points_.insert(std::pair<int, Tug::Point>(msg_id, pt));
       replan();
+
     }
   }
 
@@ -133,6 +137,15 @@ namespace Tug
     try
     {
       end_points_.erase(msg->orderID);
+      order_ready_to_publish.push_back(*msg);
+      if (end_points_.size() == 0)
+      {
+        for (int i = 0; i < order_ready_to_publish.size(); ++i)
+        {
+          tug_arrived_pub.publish(order_ready_to_publish[i]);
+        }
+        order_ready_to_publish.clear();
+      }
     }
     catch(...)
     {
@@ -160,13 +173,6 @@ namespace Tug
       ROS_WARN("Tug %d has not started yet", id);
       return;
     }
-  }
-
-  void Communicator::callback_ship_pose(const master::BoatPose::ConstPtr &msg)
-  {
-    //ROS_INFO("callback_ship_pose");
-    Tug::Point mid_pt(msg->x*scale_, msg->y*scale_, environment_tug_);
-    route_around_ship_.move(mid_pt, msg->o);
   }
 
   void Communicator::callback_available_tugs(const std_msgs::UInt8MultiArray::ConstPtr &msg)

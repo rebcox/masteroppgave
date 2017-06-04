@@ -123,15 +123,15 @@ namespace Tug
     return current_min_index;
   }
 
-  Polyline Route_around_ship::best_route(Point start, Point finish, const Environment &env)
+  Polyline Route_around_ship::best_route(Point start, Point finish)
   {
     Polyline route;
     Point ship[5];
     for (int i = 0; i < 4; ++i)
     {
-      ship[i] = Point(ship_mat_(0,i), ship_mat_(1,i), env);
+      ship[i] = Point(ship_mat_(0,i), ship_mat_(1,i), -1);
     }
-    ship[4] = Point(ship_mat_(0,0), ship_mat_(1,0), env);
+    ship[4] = Point(ship_mat_(0,0), ship_mat_(1,0), -1);
 
     bool intersection[4];
     for (int i = 0; i < 4; ++i)

@@ -21,7 +21,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_library(${PROJECT_NAME} src/tug_assign_paths.cpp src/tug_scheduler.cpp)
+add_library(${PROJECT_NAME} src/tug_assign_paths.cpp)
 add_dependencies(${PROJECT_NAME} geometry search )
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 

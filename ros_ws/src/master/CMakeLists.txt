@@ -28,6 +28,7 @@ add_service_files(
     srv
   FILES
     WaypointAvailable.srv
+    AvoidShipCollision.srv
 )
 
 generate_messages(
@@ -47,19 +48,12 @@ add_executable(master_node src/master_node.cpp src/tug_communicator.cpp)
 add_dependencies(master_node external geometry search)
 target_link_libraries(master_node ${catkin_LIBRARIES})
 
-add_executable(tug_node src/tug_waypoint_publisher.cpp)
-add_dependencies(tug_node)
+add_executable(avoid_ship_collision src/avoid_ship_collision_service.cpp)
+add_dependencies(avoid_ship_collision geometry search)
+target_link_libraries(avoid_ship_collision ${catkin_LIBRARIES})
+
+add_executable(tug_node src/main_tug.cpp src/tug_waypoint_publisher.cpp)
 target_link_libraries(tug_node ${catkin_LIBRARIES})
 
 add_executable(current_waypoints_service src/current_waypoints_service.cpp)
-add_dependencies(current_waypoints_service)
 target_link_libraries(current_waypoints_service ${catkin_LIBRARIES})
-
-
-add_executable(test_speed test/test_speed.cpp)
-add_dependencies(test_speed external geometry search)
-target_link_libraries(test_speed ${catkin_LIBRARIES})
-
-add_executable(munkres_speed_test test/munkres_speed_test.cpp)
-add_dependencies(munkres_speed_test external geometry search coordination)
-target_link_libraries(munkres_speed_test ${catkin_LIBRARIES})

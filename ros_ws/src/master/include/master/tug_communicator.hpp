@@ -43,11 +43,9 @@ namespace Tug
   private:
 	  Tug::Environment environment_tug_;
 		double accept_waypoint_radius_;
-	  Tug::Route_around_ship route_around_ship_;
 	  double scale_;
 
   	ros::NodeHandle node_;
-	  ros::Publisher waypoint_pub;
 	  ros::Publisher tug_arrived_pub;
 	  ros::Publisher ship_waypoint_pub;
 	  ros::Publisher path_pub;
@@ -56,7 +54,6 @@ namespace Tug
 	  std::map<int, Tug::Boat> tugs_;
 	  std::map<int, Tug::Point> end_points_;
 	  std::vector<int> tugs_under_my_control_;
-	  std::map<int, Tug::Point> current_waypoints_; //int is for tug_id
 	  std::vector<master::ClearWaypoint> order_ready_to_publish;
 
  };

@@ -6,8 +6,6 @@
 #include <master/ClearWaypoint.h>
 #include <string>
 
-Tug::Environment environment_;
-
 namespace
 {
   std::map<int, master::Waypoint> waypoints;
@@ -29,23 +27,8 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "goal_points_generator");
   ros::NodeHandle n;
 
-  std::string filename = "/home/rebecca/GITHUB/mast/ros_ws/mini_environment.txt";  
-  environment_ = Tug::Environment(filename, 1.0, 0.01);
   ros::Publisher pub_goal = n.advertise<master::Waypoint>("waypointRequest", 20);
-
   ros::Subscriber sub_arrived = n.subscribe("clearWaypoint", 20, callback_clear_waypoint);
-
- /* master::Waypoint pt1;
-  pt1.ID = 11;
-  pt1.x = 7;
-  pt1.y = 10;
-  pt1.v = 3;
-
-  master::Waypoint pt2;
-  pt2.ID = 22;
-  pt2.x = 8.5;
-  pt2.y = 10;
-  pt2.v = 3;*/
 
   master::Waypoint pt1;
   pt1.ID = 11;

@@ -1,1 +1,1 @@
-master::Waypoint[] data
+Waypoint[] data
