@@ -11,7 +11,9 @@
 #include "master/BoatPose.h"
 #include "master/ClearWaypoint.h"
 #include "master/Waypoint.h"
+#include "master/Path.h"
 #include "std_msgs/UInt8.h"
+
 #include "search/tug_route_around_ship.hpp"
 #include "search/tug_shortest_path.hpp"
 
@@ -21,18 +23,15 @@ namespace Tug
   {
   public:
 	  Communicator(Environment &environment, double scale, double accept_waypoint_radius);
-	  float eucledian_distance(const Tug::Point &point1, const Tug::Point &point2);
 	  void print_path(Tug::Polyline path);
 	  void replan();
-	  void remove_end_point_from_planner(int point_id);
+	  void remove_end_point_from_planner(const master::ClearWaypoint::ConstPtr &msg);
 	  void set_holding_tug(int holding_id, int held_id);
 	  void remove_holding_tug(int holding_id, int held_id);
 	  void publish_new_waypoint(const Tug::Point pt_cur, int tug_id);
 	  int  find_order_id(const Tug::Point &pt);
 	  void remove_tug_from_control(int tug_id);
-	  void publish_arrived_tug(int tug_id);
-	  bool is_under_my_control(int id);
-	  void add_new_tug(Tug::Boat &tug, int id);
+	  void add_new_tug(int id);
     bool tug_id_already_in_system(int id);
 
 	  void callback_waypoint(const master::Waypoint::ConstPtr& msg);
@@ -42,23 +41,24 @@ namespace Tug
     void callback_new_tug(const std_msgs::UInt8::ConstPtr &msg);
 
   private:
-	  std::map<int, Tug::Boat> tugs_;
 	  Tug::Environment environment_tug_;
 		double accept_waypoint_radius_;
-	  std::map<int, Tug::Point> end_points_;
-	  std::vector<master::ClearWaypoint> order_ready_to_publish;
+	  Tug::Route_around_ship route_around_ship_;
+	  double scale_;
 
   	ros::NodeHandle node_;
 	  ros::Publisher waypoint_pub;
 	  ros::Publisher tug_arrived_pub;
 	  ros::Publisher ship_waypoint_pub;
+	  ros::Publisher path_pub;
+	  ros::Publisher goal_point_pub;
 
-	  std::map<int, Tug::Point> current_waypoints_; //int is for tug_id
-
-	  Tug::Route_around_ship route_around_ship_;
+	  std::map<int, Tug::Boat> tugs_;
+	  std::map<int, Tug::Point> end_points_;
 	  std::vector<int> tugs_under_my_control_;
+	  std::map<int, Tug::Point> current_waypoints_; //int is for tug_id
+	  std::vector<master::ClearWaypoint> order_ready_to_publish;
 
-	  double scale_;
  };
 
 }

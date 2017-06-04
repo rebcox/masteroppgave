@@ -67,16 +67,6 @@ int main(int argc, char **argv)
   //environment_tug_.add_constant_safety_margin(1*scale);
   environment_tug.mark_points_within_range(1.5);
 
-  Tug::Point tug1_location(0.0*scale,0.0*scale, environment_tug);
-  Tug::Boat tug1(1, tug1_location , &environment_tug);
-
-  Tug::Point tug2_location(2.0*scale, 0.0*scale, environment_tug);
-  Tug::Boat tug2(1, tug2_location , &environment_tug);
-
-  std::map<int,Tug::Boat> tugs;
-  tugs.insert(std::pair<int,Tug::Boat>(1, tug1));
-  tugs.insert(std::pair<int,Tug::Boat>(2, tug2));
-
   Tug::Communicator communicator(environment_tug, scale, 0.3); 
 
   environment_ship_ = Tug::Environment(filename, 1.0, 0.01);
@@ -98,7 +88,7 @@ int main(int argc, char **argv)
   ros::Subscriber sub_tug_locations = node.subscribe("pose", 20, &Tug::Communicator::callback_boat_pose, &communicator);
   ros::Subscriber sub_ship_locations = node.subscribe("shipPose", 1, &Tug::Communicator::callback_ship_pose, &communicator);
   ros::Subscriber sub_available_tugs = node.subscribe("waypTugs", 1, &Tug::Communicator::callback_available_tugs, &communicator);
-
+  ros::Subscriber sub_clearWaypoint = node.subscribe("clearWaypoint", 20, &Tug::Communicator::remove_end_point_from_planner, &communicator);
   ros::spin();
 
   return 0;
