@@ -53,7 +53,7 @@ bool find_path(tugboat_control::AvoidShipCollision::Request &req,
 	Tug::Point end(req.to.x, req.to.y, -1);
 
   Tug::Polyline points_to_move_around_ship = route_around_ship_.best_route(start, end);
-  ROS_INFO("added %d points in order to move around ship", points_to_move_around_ship.size());
+  //ROS_INFO("added %d points in order to move around ship", points_to_move_around_ship.size());
   res.path.push_back(req.from);
   for (int i = 0; i < points_to_move_around_ship.size(); ++i)
   {

@@ -109,7 +109,6 @@ namespace Tug
  
     if (o1 != o2 && o3 != o4)
     {
-      std::cout << "it intersected " << std::endl;
       return true;      
     }
     return false;
@@ -242,6 +241,7 @@ namespace Tug
         route.push_back(ship[0]);
       }
     }
+    std::cout << "Route intersects ship. " << std::endl;
     return route;
   }
 }

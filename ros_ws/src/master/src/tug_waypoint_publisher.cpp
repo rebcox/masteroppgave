@@ -49,8 +49,8 @@ namespace Tug
     if (path_.size() == 2)
     {
       call_path_around_ship_service(path_[0], path_[1], path_);
-      current_waypoint_index_ = 1;
-      publish_current_waypoint();
+      current_waypoint_index_ = 0;
+      //publish_current_waypoint();
     }
 
   }
@@ -155,18 +155,18 @@ namespace Tug
     {
       ROS_WARN("Tug %d arrived at waypoint", id_);
 
-      if (is_waypoint_available(path_[current_waypoint_index_]))
-      {
+      //if (is_waypoint_available(path_[current_waypoint_index_]))
+      //{
         publish_current_waypoint();
-        return true;
-      }
-      else
+      //  return true;
+      //}
+      /*else
       {
         --current_waypoint_index_;
         ROS_WARN("Tug %d on hold", id_);
         wait_at_current_point();
         return false;
-      } 
+      } */
     }
   }
 
