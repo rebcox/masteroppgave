@@ -127,7 +127,7 @@ void make_outer_boundary(const cv::Point &bottom_left, const cv::Point &upper_ri
 
 int main(int argc, char** argv)
 {
-  cv::Mat img = cv::imread("pir.png");
+  cv::Mat img = cv::imread("/home/sondre/demo_env.png");
 
   if ( img.empty() ) 
   { 
@@ -138,7 +138,7 @@ int main(int argc, char** argv)
  // float hw = (float)img.cols/img.rows;
   float hw = (float)img.rows/img.cols;
 
-  cv::resize(img, img, cv::Size(900, round(900*hw)));
+  //cv::resize(img, img, cv::Size(900, round(900*hw)));
   cv::namedWindow("Map", cv::WINDOW_NORMAL);
   //cv::resizeWindow("Map", img.cols/2, img.rows/2); //600, round((1754/2479)*600));
   cv::imshow("Map", img);

@@ -6,10 +6,10 @@
 #include "search/tug_shortest_path.hpp"
 #include "tug_communicator.hpp"
 
-#include "master/Waypoint.h"
-#include "master/BoatPose.h"
+#include "tugboat_control/Waypoint.h"
+#include "tugboat_control/BoatPose.h"
 
-#define SCALE 40
+#define SCALE 220.0
 
 /*namespace
 {
@@ -20,7 +20,7 @@
   Tug::Boat ship_;
 }*/
 
-/*void callback_ship_pose(const master::BoatPose::ConstPtr &msg)
+/*void callback_ship_pose(const tugboat_control::BoatPose::ConstPtr &msg)
 {
   Tug::Point mid_pt(msg->x, msg->y, environment_ship_);
 
@@ -31,7 +31,7 @@
 
   if(arrived_at_goal_flag)
   {
-    master::Waypoint waypoint;
+    tugboat_control::Waypoint waypoint;
     waypoint.x = pt_cur.x();
     waypoint.y = pt_cur.y();
     waypoint.v = 0;
@@ -39,7 +39,7 @@
   }
   else //if (new_waypoint_set)
   {
-    master::Waypoint waypoint;
+    tugboat_control::Waypoint waypoint;
     waypoint.x = pt_cur.x();
     waypoint.y = pt_cur.y();
     waypoint.v = 5;
@@ -57,11 +57,11 @@ int main(int argc, char **argv)
 
   ros::init(argc, argv, "master_node");
   ros::NodeHandle node;
-  //ship_waypoint_pub = node.advertise<master::Waypoint>("shipWaypoint", 10);
+  //ship_waypoint_pub = node.advertise<tugboat_control::Waypoint>("shipWaypoint", 10);
 
   double scale = SCALE;
 
-  std::string filename = "/home/rebecca/GITHUB/mast/ros_ws/big_test.txt";
+  std::string filename = "/home/sondre/demo_env.txt";
 
   //double px = 1.0/200.0;
   Tug::Environment environment_tug = Tug::Environment(filename, 1, 0.01);
@@ -74,7 +74,7 @@ int main(int argc, char **argv)
   ros::Subscriber sub_startup = node.subscribe("startup", 20, &Tug::Communicator::callback_new_tug, &communicator);
   ros::Subscriber sub_goal = node.subscribe("waypointRequest", 20, &Tug::Communicator::callback_waypoint, &communicator);
   ros::Subscriber sub_tug_locations = node.subscribe("pose", 20, &Tug::Communicator::callback_boat_pose, &communicator);
-  ros::Subscriber sub_available_tugs = node.subscribe("waypTugs", 1, &Tug::Communicator::callback_available_tugs, &communicator);
+  ros::Subscriber sub_available_tugs = node.subscribe("waypTugs", 10, &Tug::Communicator::callback_available_tugs, &communicator);
   ros::Subscriber sub_clearWaypoint = node.subscribe("clearSingleWaypoint", 20, &Tug::Communicator::remove_end_point_from_planner, &communicator);
   ros::spin();
 

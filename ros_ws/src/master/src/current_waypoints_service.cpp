@@ -1,34 +1,49 @@
 #include "ros/ros.h"
-#include "master/WaypointAvailable.h"
+#include "tugboat_control/WaypointAvailable.h"
 #include "std_msgs/Bool.h"
-#include "master/Waypoint.h"
+#include "tugboat_control/Waypoint.h"
 
+#define SCALE 220
+#define CLOSE_POINTS_RADIUS 0.1
 
 namespace
 {
-  std::map<int, master::Waypoint> waypoints_;
+  std::map<int, tugboat_control::Waypoint> waypoints_;
 }
 
-void set_waypoint(const master::Waypoint::ConstPtr &msg)
+void set_waypoint(const tugboat_control::Waypoint::ConstPtr &msg)
 {
   int id = msg->ID;
   try
   {
-    waypoints_.at(id) = *msg;
+    tugboat_control::Waypoint scaledpt;
+    scaledpt.x = msg->x*SCALE;
+    scaledpt.y = msg->y*SCALE;
+    waypoints_.at(id) = scaledpt;
   }
   catch(const std::out_of_range &oor)
   {
-    waypoints_.insert(std::pair<int,master::Waypoint>(id, *msg));
+    tugboat_control::Waypoint scaledpt;
+    scaledpt.x = msg->x*SCALE;
+    scaledpt.y = msg->y*SCALE;
+    waypoints_.insert(std::pair<int,tugboat_control::Waypoint>(id, scaledpt));
   }
 }
 
-bool check(master::WaypointAvailable::Request &req,
-           master::WaypointAvailable::Response &res)
+bool check(tugboat_control::WaypointAvailable::Request &req,
+           tugboat_control::WaypointAvailable::Response &res)
 {
-  for (std::map<int, master::Waypoint>::iterator i = waypoints_.begin(); i != waypoints_.end(); ++i)
+  for (int i = 0; i < waypoints_.size(); ++i)
   {
-    if (req.waypoint.x == i->second.x && req.waypoint.y == i->second.y)
+    ROS_INFO("wp %d: (%f, %f)", i, waypoints_[i].x, waypoints_[i].y);
+  }
+
+  for (std::map<int, tugboat_control::Waypoint>::iterator i = waypoints_.begin(); i != waypoints_.end(); ++i)
+  {
+    ROS_INFO("dist between points: %f", sqrt(pow(req.waypoint.x - i->second.x, 2) + pow(req.waypoint.y - i->second.y,2)));
+    if (sqrt(pow(req.waypoint.x - i->second.x, 2) + pow(req.waypoint.y - i->second.y,2)) < CLOSE_POINTS_RADIUS*SCALE)
     {
+      ROS_WARN("Tug %d is tring to approach a waypoint too close to antoher tug ", req.waypoint.ID);
       res.ans.data = false;
       return true;
     }
