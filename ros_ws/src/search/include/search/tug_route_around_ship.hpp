@@ -11,11 +11,13 @@ namespace Tug
 class Route_around_ship
   {
   public:
-  	Route_around_ship(double orientation, double width, double length);
+    Route_around_ship(double orientation, double width, double length);
     Route_around_ship(){};
    // Route_around_ship(){Route_around_ship(0, 0,0);}; //{position_ = Point(0,0); orientation_ = 0; };
     void move(const Point &mid_pt, double orientation);
     Polyline best_route(Point start, Point finish);
+    Point get_ship_position(){return position_;}
+    std::vector<double> ship_corners();
   private:
     void rotate_ship(double angle, Eigen::Matrix<double,2,4> &ship_mat_);
     void calculate_corners(const Point &mid_pt, double orientation, double width, double length, Eigen::Matrix<double,2,4> &ship_mat_);

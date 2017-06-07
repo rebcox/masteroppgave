@@ -61,13 +61,14 @@ int main(int argc, char **argv)
 
   double scale = SCALE;
 
-  std::string filename = "/home/sondre/demo_env.txt";
+  std::string filename = "/home/sondre/empty_environment.txt"; //demo_env.txt";
 
   //double px = 1.0/200.0;
   Tug::Environment environment_tug = Tug::Environment(filename, 1, 0.01);
 
-  //environment_tug_.add_constant_safety_margin(1*scale);
+ // environment_tug.add_constant_safety_margin(0.2*scale);
   environment_tug.mark_points_within_range(1.5);
+  environment_tug.save_environment_as_svg("/home/sondre/env.svg");
 
   Tug::Communicator communicator(environment_tug, scale, 0.3); 
 

@@ -35,16 +35,14 @@ namespace Tug
     std::vector<tugboat_control::Waypoint> get_path() const {return path_;}
     tugboat_control::Waypoint get_current_waypoint();
     tugboat_control::Waypoint get_goal(){return path_.back();}
-    void update_only_goal(tugboat_control::Waypoint goal);
     bool is_waypoint_available(const tugboat_control::Waypoint &pt);
     void publish_current_waypoint();
     int no_waypoints_left(){return path_.size() - current_waypoint_index_;};
-    void callback_update_goal(const tugboat_control::Waypoint::ConstPtr &msg);
+
   private:
     int id_=-1;
     std::vector<tugboat_control::Waypoint> path_;
     int current_waypoint_index_ = 0; 
-    bool heading_towards_goal = false;
     bool go_to_next_waypoint();
 
     double scale_;

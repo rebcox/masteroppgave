@@ -50,16 +50,9 @@ namespace Tug
     {
       call_path_around_ship_service(path_[0], path_[1], path_);
       current_waypoint_index_ = 1;
+      publish_current_waypoint();
     }
 
-  }
-
-  void Waypoint_publisher::callback_update_goal(const tugboat_control::Waypoint::ConstPtr &msg)
-  {
-    if (msg->ID == order_id_)
-    {
-      update_only_goal(*msg);
-    }
   }
 
   void Waypoint_publisher::call_path_around_ship_service(const tugboat_control::Waypoint &start,
@@ -81,35 +74,6 @@ namespace Tug
       }
   }
 
-  void Waypoint_publisher::update_only_goal(tugboat_control::Waypoint goal)
-  {
-    if (path_.size() > 0)
-    {
-      path_.pop_back();
-      path_.push_back(goal);
-
-      //if (no_waypoints_left() == 1)
-      if(heading_towards_goal)
-      {
-        tugboat_control::Waypoint now;
-        now.x = newest_pose_.x;
-        now.y = newest_pose_.y;
-        now.v = 0.1;
-        now.ID = id_;
-        call_path_around_ship_service(now, goal, path_);
-        current_waypoint_index_ = 1;
-        tugboat_control::Waypoint wp;
-        wp.ID = id_;
-        //ROS_INFO("point before scale: (%f, %f)", path_[current_waypoint_index_].x, path_[current_waypoint_index_].y);
-        wp.x = path_[current_waypoint_index_].x/scale_;
-        wp.y = path_[current_waypoint_index_].y/scale_;
-        wp.v = 0.1;
-        //ROS_INFO("point published for tug %d: (%f, %f)",id_, wp.x, wp.y);
-        wayp_pub.publish(wp);
-      }
-    }
-  }
-
   bool Waypoint_publisher::is_waypoint_available(const tugboat_control::Waypoint &pt)
   {
     tugboat_control::WaypointAvailable srv;
@@ -119,13 +83,14 @@ namespace Tug
     {
       if (srv.response.ans.data == true)
       {
-        ROS_INFO("Waypoint available");
+        //ROS_INFO("Waypoint available");
         return true;
       }
       else
       {
-        ROS_INFO("Waypoint not available");
-        return false;
+        //ROS_INFO("Waypoint not available");
+        return true;
+        //return false;
       }  
     }
     ROS_WARN("Service WaypointAvailable failed to reply");
@@ -164,23 +129,21 @@ namespace Tug
   bool Waypoint_publisher::go_to_next_waypoint()
   {
     ++current_waypoint_index_;
+
     if (current_waypoint_index_ >= path_.size())
     {
       ROS_WARN("Tug %d has arrived", id_);
       --current_waypoint_index_;
       tugboat_control::ClearWaypoint clear; clear.orderID = order_id_; clear.tugID = id_;
-     // //ROS_INFO("Tug %d arrived at goal", id_);
       //wait_at_current_point();
-      path_.clear();
-      current_waypoint_index_ = 0;
+      //path_.clear();
+      //current_waypoint_index_ = 0;
       arrival_pub.publish(clear);
-      heading_towards_goal = false;
       return false;
     }
     //heading towards goal
     else if (current_waypoint_index_ == path_.size() - 1) 
     {
-      heading_towards_goal = true;
       ROS_WARN("Trying to find route around ship if it is on the wrong side");
 
       call_path_around_ship_service(path_[current_waypoint_index_-1], path_[path_.size() - 1], path_);

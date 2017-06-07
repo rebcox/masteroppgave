@@ -1,40 +1,52 @@
 #include <tug_route_around_ship.hpp>
-
 namespace Tug
 {
-	Route_around_ship::Route_around_ship(double orientation, double width, double length)
-	{
+  Route_around_ship::Route_around_ship(double orientation, double width, double length)
+  {
     orientation_ = 0;
     position_ = Point(-1000,-1000,-1);
     ship_mat_ = Eigen::Matrix<double,2,4>(2,4);
 
     calculate_corners(position_, orientation, width, length, ship_mat_);
     rotate_ship(orientation, ship_mat_);
+  }
 
-    std::cout << ship_mat_ << std::endl;
-	}
+  std::vector<double> Route_around_ship::ship_corners()
+  {
+    std::vector<double> temp;
+    for (int i = 0; i < 4; ++i)
+    {
+      for (int j = 0; j < 2; ++j)
+      {
+        temp.push_back(ship_mat_(j,i));
+      }
+    }
+    return temp;
+  }
+  
 
-    
   void Route_around_ship::move(const Point &mid_pt, double orientation)
   {
-    if (!ship_placed_)
+    /*if (!ship_placed_)
     {
       position_ = Point(0,0,-1);
       ship_placed_ = true;
-    }
+    }*/
+   // std::cout << "move from: " << position_.x() << ", " << position_.y() << std::endl;
 
+//    std::cout << "move to: " << mid_pt.x() << ", " << mid_pt.y() << std::endl;
     Eigen::Translation2d transl(mid_pt.x() - position_.x(), mid_pt.y() - position_.y());
     Eigen::Affine2d af(transl);
     position_ = mid_pt;
     ship_mat_ = af*ship_mat_;
-
     rotate_ship(orientation, ship_mat_);
   }
+
 
   void Route_around_ship::rotate_ship(double angle, Eigen::Matrix<double,2,4> &ship_mat)
   {
     Eigen::Translation<double, 2> trans1(-position_.x(), -position_.y());
-    Eigen::Rotation2D<double> rot(orientation_ - angle); //TODO: Riktig retnining??
+    Eigen::Rotation2D<double> rot(angle - orientation_); //TODO: Riktig retnining??
     Eigen::Translation<double, 2> trans2(position_.x(), position_.y());
 
     ship_mat = trans2*rot*trans1*ship_mat;
@@ -44,10 +56,11 @@ namespace Tug
 
   void Route_around_ship::calculate_corners(const Point &mid_pt, double orientation, double width, double length, Eigen::Matrix<double,2,4> &ship_mat)
   {
+    //std::cout << mid_pt.x() << ", " << mid_pt.y() << std::endl;
     double x = mid_pt.x();
     double y = mid_pt.y();
-    double half_length = length/2;
-    double half_width = width/2;
+    double half_length = length/2.0;
+    double half_width = width/2.0;
 
     ship_mat(0, 0) = x - half_length;
     ship_mat(1, 0) = y - half_width;
@@ -89,8 +102,6 @@ namespace Tug
     {
       return false;
     }
-    // Find the four orientations needed for general and
-    // special cases
     int o1 = orientation(p1, q1, p2);
     int o2 = orientation(p1, q1, q2);
     int o3 = orientation(p2, q2, p1);
@@ -98,6 +109,7 @@ namespace Tug
  
     if (o1 != o2 && o3 != o4)
     {
+      std::cout << "it intersected " << std::endl;
       return true;      
     }
     return false;
@@ -139,16 +151,15 @@ namespace Tug
       intersection[i] = do_cross(ship[i], ship[i+1], start, finish);
     }
 
-    bool no_intersection = true;
+    int num_intersections = 0;
     for (int i = 0; i < 4; ++i)
     {
       if (intersection[i])
       {
-        no_intersection = false;
-        break;
+        num_intersections++;
       }  
     }
-    if (no_intersection)
+    if (num_intersections < 2)
     {
       return route;
     }
@@ -175,7 +186,7 @@ namespace Tug
         route.push_back(ship[1]);
         route.push_back(ship[2]);
       }
-      else
+      else if(best == 3)
       {
         route.push_back(ship[2]);
         route.push_back(ship[1]);
@@ -206,7 +217,7 @@ namespace Tug
         route.push_back(ship[3]);
         route.push_back(ship[2]);
       }
-      else
+      else if(best == 3)
       {
         route.push_back(ship[2]);
         route.push_back(ship[3]);
@@ -226,7 +237,7 @@ namespace Tug
       {
         route.push_back(ship[3]);
       }
-      else
+      else if(intersection[3] && intersection[0])
       {
         route.push_back(ship[0]);
       }
