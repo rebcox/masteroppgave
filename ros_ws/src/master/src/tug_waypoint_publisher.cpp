@@ -169,17 +169,4 @@ namespace Tug
       } */
     }
   }
-
-  tugboat_control::Waypoint Waypoint_publisher::get_current_waypoint()
-  {
-    if(current_waypoint_index_ < path_.size())
-    {
-      return path_[current_waypoint_index_];
-    }
-    else
-    {
-      tugboat_control::Waypoint wp; wp.v = -1;
-      return wp;
-    }
-  }
 }

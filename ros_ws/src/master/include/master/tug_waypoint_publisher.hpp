@@ -33,7 +33,6 @@ namespace Tug
     void wait_at_current_point();
 
     std::vector<tugboat_control::Waypoint> get_path() const {return path_;}
-    tugboat_control::Waypoint get_current_waypoint();
     tugboat_control::Waypoint get_goal(){return path_.back();}
     bool is_waypoint_available(const tugboat_control::Waypoint &pt);
     void publish_current_waypoint();

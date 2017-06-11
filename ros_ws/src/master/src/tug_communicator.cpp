@@ -198,7 +198,7 @@ namespace Tug
 
   void Communicator::remove_end_point_from_planner(const tugboat_control::ClearWaypoint::ConstPtr &msg)
   {
-   // ROS_INFO("remove_end_point_from_planner");
+    ROS_INFO("removed end point from planner");
 
     try
     {
