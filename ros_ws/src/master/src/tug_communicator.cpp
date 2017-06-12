@@ -10,6 +10,7 @@ namespace Tug
     tug_arrived_pub = node_.advertise<tugboat_control::ClearWaypoint>("clearWaypoint", 20);
     path_pub = node_.advertise<tugboat_control::Path>("paths", 20);
     goal_point_pub = node_.advertise<tugboat_control::Waypoint>("goal_point_updater",20);
+    assigner_ptr_ = std::make_shared<Assign_paths>(environment);
   }
 
   void Communicator::print_path(Tug::Polyline path)
@@ -47,7 +48,7 @@ namespace Tug
       tugboat_control::Waypoint wp; 
       wp.x = path[i].x(); 
       wp.y = path[i].y();
-      wp.v = 0.1;
+      wp.v = TUG_SPEED;
       wp.ID = tug_id;
       path_msg.data.push_back(wp);
     }
@@ -56,7 +57,6 @@ namespace Tug
 
   void Communicator::replan_route_for_one_boat(int order_id, const Tug::Point &newGoal)
   {
-    //ROS_INFO("replan for one boat");
     try
     {
       int tug_id = msg_and_tug_.at(order_id);
@@ -87,8 +87,7 @@ namespace Tug
   void Communicator::replan()
   {
     ROS_INFO("replan");
-    //TODO: HER REKALKULERES APSP IGJEN OG IGJEN
-    Tug::Assign_paths assigner;
+
 
     std::vector<Tug::Boat> tugs_to_plan_for;
     for (int i = 0; i < tugs_under_my_control_.size(); ++i)
@@ -102,7 +101,7 @@ namespace Tug
 
     if (tugs_to_plan_for.size() == 0){return;}
     
-    assigner.assign_on_combined_shortest_path(tugs_to_plan_for, end_points_, environment_tug_); 
+    assigner_ptr_->assign_on_combined_shortest_path(tugs_to_plan_for, end_points_, environment_tug_); 
     for (int i = 0; i < tugs_to_plan_for.size(); ++i)
     {
       Polyline path = tugs_to_plan_for[i].get_path();
@@ -133,8 +132,6 @@ namespace Tug
 
   void Communicator::callback_waypoint(const tugboat_control::Waypoint::ConstPtr& msg)
   { 
-    //ROS_INFO("callback_waypoint");
-
     if (tugs_under_my_control_.size() == 0 || tugs_.size() == 0)
     {
       ROS_WARN("No tugs under my control");
@@ -185,7 +182,6 @@ namespace Tug
 
   void Communicator::remove_tug_from_control(int tug_id)
   {
-   // ROS_INFO("remove_tug_from_control");
     for (std::vector<int>::iterator i = tugs_under_my_control_.begin(); i != tugs_under_my_control_.end(); ++i)
     {
       if (*i == tug_id)
@@ -215,8 +211,6 @@ namespace Tug
 
   void Communicator::remove_end_point_from_planner(const tugboat_control::ClearWaypoint::ConstPtr &msg)
   {
-    ROS_INFO("removed end point from planner");
-
     try
     {
       end_points_.erase(msg->orderID);
@@ -240,7 +234,6 @@ namespace Tug
 
   void Communicator::callback_boat_pose(const tugboat_control::BoatPose::ConstPtr& msg)
   {
-   // ROS_INFO("callback_boat_pose");
     if (tugs_.size() == 0)
     {
       return;
@@ -251,7 +244,6 @@ namespace Tug
     Tug::Point pt(msg->x*scale_, msg->y*scale_, environment_tug_);
     try
     {
-      //ROS_INFO("position set to (%f, %f)", pt.x(), pt.y());
       tugs_.at(id).update_position(pt);
     }
     catch(const std::out_of_range &oor)
@@ -263,8 +255,6 @@ namespace Tug
 
   void Communicator::callback_available_tugs(const std_msgs::UInt8MultiArray::ConstPtr &msg)
   {
-    //ROS_INFO("callback_available_tugs");
-
     tugs_under_my_control_.clear();
     for (int i = 0; i < msg->data.size(); ++i)
     {

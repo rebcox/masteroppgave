@@ -16,6 +16,7 @@
 
 #include "search/tug_route_around_ship.hpp"
 #include "search/tug_shortest_path.hpp"
+#include "tug_constants.hpp"
 
 namespace Tug
 {
@@ -48,6 +49,7 @@ namespace Tug
 	  Tug::Environment environment_tug_;
 		double accept_waypoint_radius_;
 	  double scale_;
+    std::shared_ptr<Assign_paths> assigner_ptr_;    
 
   	ros::NodeHandle node_;
 	  ros::Publisher tug_arrived_pub;

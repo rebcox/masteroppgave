@@ -15,7 +15,7 @@
 #endif
 
 #ifndef TUG_SPEED
-#define TUG_SPEED 10
+#define TUG_SPEED 8
 #endif
 
 #ifndef CLOSE_POINTS_RADIUS

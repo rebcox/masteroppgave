@@ -63,7 +63,7 @@ void callback_waypoint(const tugboat_control::Waypoint::ConstPtr &msg)
 
     update_tug_pose();
       
-    ros::Rate loop_rate(4);
+    ros::Rate loop_rate(6);
     //ROS_INFO("current goal: (%f, %f)", current_goal.position.x, current_goal.position.y);
     
     while(get_distance(tug_pose, current_goal) > distance_tolerance)

@@ -1,6 +1,6 @@
 #include "ros/ros.h"
-#include "tug_waypoint_publisher.hpp"
 #include "tug_constants.hpp"
+#include "tug_waypoint_publisher.hpp"
 
 //#define SCALE 220.0
 
@@ -23,7 +23,6 @@
     ros::NodeHandle node;
     ros::Subscriber sub = node.subscribe("pose", 20, &Tug::Waypoint_publisher::update_position, &wp);
     ros::Subscriber path_sub = node.subscribe("paths", 20, &Tug::Waypoint_publisher::set_path, &wp);
-  // ros::Subscriber goal_update_sub = node.subscribe("goal_point_updater", 20, &Tug::Waypoint_publisher::callback_update_goal, &wp);
 
     ros::spin();
     return 0;

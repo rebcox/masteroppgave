@@ -7,7 +7,7 @@
   
   <node name="spawn_tug1" pkg="gazebo_ros" type="spawn_model" args="-file $(find tug_description)/urdf/tug.urdf -urdf -x 0 -y 0 -z 1 -model tug1" />
 
-  <node name="spawn_tug2" pkg="gazebo_ros" type="spawn_model" args="-file $(find tug_description)/urdf/tug.urdf -urdf -x 80 -y 0 -z 1 -model tug2" />
+  <node name="spawn_tug2" pkg="gazebo_ros" type="spawn_model" args="-file $(find tug_description)/urdf/tug.urdf -urdf -x 0 -y 12 -z 1 -model tug2" />
 
   <node pkg="tug_gazebo" type="tug_state_publisher"
       args="tug1 1" name="tug1_state_publisher" output="screen"/>

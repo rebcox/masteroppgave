@@ -16,15 +16,15 @@ void set_waypoint(const tugboat_control::Waypoint::ConstPtr &msg)
   try
   {
     tugboat_control::Waypoint scaledpt;
-    scaledpt.x = msg->x*SCALE;
-    scaledpt.y = msg->y*SCALE;
+    scaledpt.x = msg->x*SCALE_OUT;
+    scaledpt.y = msg->y*SCALE_OUT;
     waypoints_.at(id) = scaledpt;
   }
   catch(const std::out_of_range &oor)
   {
     tugboat_control::Waypoint scaledpt;
-    scaledpt.x = msg->x*SCALE;
-    scaledpt.y = msg->y*SCALE;
+    scaledpt.x = msg->x*SCALE_OUT;
+    scaledpt.y = msg->y*SCALE_OUT;
     waypoints_.insert(std::pair<int,tugboat_control::Waypoint>(id, scaledpt));
   }
 }
@@ -40,6 +40,10 @@ bool check(tugboat_control::WaypointAvailable::Request &req,
   for (std::map<int, tugboat_control::Waypoint>::iterator i = waypoints_.begin(); i != waypoints_.end(); ++i)
   {
     //ROS_INFO("dist between points: %f", sqrt(pow(req.waypoint.x - i->second.x, 2) + pow(req.waypoint.y - i->second.y,2)));
+    if (i->first == req.tugID)
+    {
+      continue;
+    }
     if (sqrt(pow(req.waypoint.x - i->second.x, 2) + pow(req.waypoint.y - i->second.y,2)) < CLOSE_POINTS_RADIUS*SCALE)
     {
       //ROS_WARN("Tug %d is tring to approach a waypoint too close to antoher tug ", req.waypoint.ID);
