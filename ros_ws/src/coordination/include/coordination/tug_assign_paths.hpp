@@ -12,12 +12,10 @@ namespace Tug
   class Assign_paths
   {
   public:
-  	/*Assigner(std::vector<Boat> &tugs, 
-	          const std::vector<Point> &finish_points, 
-	          Environment &environment)
-  	{
-  	  assign_on_combined_shortest_path(tugs,finish_points,environment);
-  	}*/
+    Assign_paths(Environment environment)
+    {
+      shortest_path_node_ptr = std::make_shared<Shortest_path>(environment);
+    }
 
     bool assign_on_combined_shortest_path(std::map<int, Boat> &tugs, 
                                           const std::vector<Point> &finish_points, 
@@ -31,6 +29,7 @@ namespace Tug
     bool assign(std::vector<Boat> &tugs, 
                 const std::vector<Point> &finish_points, 
                 Environment &environment);
+    std::shared_ptr<Shortest_path> shortest_path_node_ptr;
 
   };
 }

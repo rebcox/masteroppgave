@@ -28,9 +28,8 @@ namespace Tug
         }
       }
 
-      Shortest_path shortest_path_node(environment);
       Polyline sp;
-      shortest_path_node.calculate_shortest_path(closest->get_position(), finish_points[0], sp, environment);
+      shortest_path_node_ptr->calculate_shortest_path(closest->get_position(), finish_points[0], sp, environment);
       closest->set_path(sp);
       return true;
     }
@@ -74,13 +73,12 @@ namespace Tug
 
     Matrix<double> cost_mat(nrows, ncols);
 
-    Shortest_path shortest_path_node(environment);
     Polyline sp_temp;
     for (int i = 0; i < nrows; ++i)
     {
       for (int j = 0; j < ncols; ++j)
       {
-        shortest_path_node.calculate_shortest_path(tugs[i].get_position(), finish_points[j], sp_temp, environment);
+        shortest_path_node_ptr->calculate_shortest_path(tugs[i].get_position(), finish_points[j], sp_temp, environment);
         cost_mat(i,j) = sp_temp.length();
       }
     }
@@ -124,9 +122,9 @@ namespace Tug
         if (cost_mat(row,col) == 0)
         {
           Polyline path;
-          shortest_path_node.calculate_shortest_path(tugs[row].get_position(), finish_points[col], path, environment);
+          shortest_path_node_ptr->calculate_shortest_path(tugs[row].get_position(), finish_points[col], path, environment);
+
           tugs[row].set_path(path);
-          //tugs[row].set_path(finish_points[col]);
         }
       }
       std::cout << std::endl;
@@ -165,22 +163,6 @@ namespace Tug
     }
     assign(tugs, end_points, environment);
   }
-
-/*
-  Assign_paths::assign_on_eucleadian_length(std::vector<Boat> &tugs, 
-                                            const std::vector<Point> &finish_points, 
-                                            const Environment &environment)
-  {
-    std::vector<std::vector<double>> distances;
-
-  }
-  Assign_paths::assign_on_not_crossing(std::vector<Boat> &tugs, 
-                                      const std::vector<Point> &finish_points, 
-                                      const Environment &environment)
-  {
-
-  }
-  */
 
   double Assign_paths::euclidean_distance(const Point &point1, const Point &point2)
   {

@@ -33,10 +33,6 @@ namespace Tug
     //Check if position is within radius of current waypoint
     if(sqrt(pow(newest_pose_.x - current_wp.x, 2) + pow(newest_pose_.y - current_wp.y, 2)) < acceptance_radius*scale_)
     {
-      ROS_INFO("new pose: (%f,%f)", newest_pose_.x, newest_pose_.y);
-      ROS_INFO("curr wp: (%f,%f)", current_wp.x, current_wp.y);
-      ROS_INFO("limit: %f", acceptance_radius*scale_);
-
       new_waypoint_set = go_to_next_waypoint();
     }
   }
@@ -52,9 +48,11 @@ namespace Tug
     }
     if (path_.size() == 2)
     {
-      call_path_around_ship_service(path_[0], path_[1], path_);
-      current_waypoint_index_ = 0;
-      //publish_current_waypoint();
+      if (!SIMULATION)
+      {
+        call_path_around_ship_service(path_[0], path_[1], path_);
+        current_waypoint_index_ = 0;
+      }
     }
 
   }
@@ -63,38 +61,37 @@ namespace Tug
                                                          const tugboat_control::Waypoint &finish,
                                                          std::vector<tugboat_control::Waypoint> &result)
   {
-      tugboat_control::AvoidShipCollision srv; 
-      srv.request.from = start;
-      srv.request.to = finish;
+    tugboat_control::AvoidShipCollision srv; 
+    srv.request.from = start;
+    srv.request.to = finish;
 
-      if(client_avoid_ship.call(srv))
-      {
-        result.clear();
-        result = srv.response.path;
-      }
-      else
-      {
-        ROS_WARN("Service avoid_ship failed to reply");
-      }
+    if(client_avoid_ship.call(srv))
+    {
+      result.clear();
+      result = srv.response.path;
+    }
+    else
+    {
+      ROS_WARN("Service avoid_ship failed to reply");
+    }
   }
 
   bool Waypoint_publisher::is_waypoint_available(const tugboat_control::Waypoint &pt)
   {
     tugboat_control::WaypointAvailable srv;
     srv.request.waypoint = pt;
+    srv.request.tugID = id_;
+
 
     if (client_is_avail.call(srv))
     {
       if (srv.response.ans.data == true)
       {
-        //ROS_INFO("Waypoint available");
         return true;
       }
       else
       {
-        //ROS_INFO("Waypoint not available");
-        return true;
-        //return false;
+        return false;
       }  
     }
     ROS_WARN("Service WaypointAvailable failed to reply");
@@ -105,18 +102,15 @@ namespace Tug
   {
     tugboat_control::Waypoint wp;
     wp.ID = id_;
-    //ROS_INFO("point before scale: (%f, %f)", path_[current_waypoint_index_].x, path_[current_waypoint_index_].y);
     wp.x = path_[current_waypoint_index_].x/SCALE_OUT;
     wp.y = path_[current_waypoint_index_].y/SCALE_OUT;
     wp.v = 0.0;
-    //ROS_INFO("point published for tug %d: (%f, %f)",id_, wp.x, wp.y);
     if (SIMULATION)
     {
       wayp_pub.publish(wp);
     }
-    //wayp_pub.publish(path_[current_waypoint_index_]);
-
   }
+
   void Waypoint_publisher::publish_current_waypoint()
   {
       tugboat_control::Waypoint wp;
@@ -136,14 +130,15 @@ namespace Tug
       ROS_WARN("Tug %d has arrived", id_);
       --current_waypoint_index_;
       tugboat_control::ClearWaypoint clear; clear.orderID = order_id_; clear.tugID = id_;
-      wait_at_current_point();
+      //wait_at_current_point();
       //path_.clear();
       //current_waypoint_index_ = 0;
       arrival_pub.publish(clear);
+      is_already_on_hold = false;
       return false;
     }
     //heading towards goal
-    /*else if (current_waypoint_index_ == path_.size() - 1) 
+    else if (!SIMULATION && current_waypoint_index_ == path_.size() - 1) 
     {
       ROS_WARN("Trying to find route around ship if it is on the wrong side");
 
@@ -151,21 +146,26 @@ namespace Tug
       current_waypoint_index_ = 1;
       publish_current_waypoint();
       return true;
-    }*/
+    }
     else
     {
-      ROS_WARN("Tug %d arrived at waypoint", id_);
+      ROS_WARN("Tug %d arrived at a waypoint", id_);
 
-      //if (is_waypoint_available(path_[current_waypoint_index_]))
-      //{
+     // if (is_waypoint_available(path_[current_waypoint_index_]))
+     //s {
         publish_current_waypoint();
-      //  return true;
-      //}
-      /*else
+        is_already_on_hold = false;
+        return true;
+      /*}
+      else
       {
         --current_waypoint_index_;
-        ROS_WARN("Tug %d on hold", id_);
-        wait_at_current_point();
+        if (!is_already_on_hold)
+        {
+          ROS_WARN("Tug %d on hold", id_);
+          wait_at_current_point();
+          is_already_on_hold = true;
+        }
         return false;
       } */
     }

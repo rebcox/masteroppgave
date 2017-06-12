@@ -43,6 +43,7 @@ namespace Tug
     std::vector<tugboat_control::Waypoint> path_;
     int current_waypoint_index_ = 0; 
     bool go_to_next_waypoint();
+    bool is_already_on_hold = false;
 
     double scale_;
     double acceptance_radius;
