@@ -6,8 +6,8 @@
   <node pkg="tug_gazebo" type="waypTugs_publisher" 
   		name="waypTugs_publisher" output="screen"/>  
   <node pkg="tug_gazebo" type="tug_startup_publisher" name="tug_startup_publisher" /> 
-  <node pkg="master" type="master_node" name="master" output="screen"/>
 
+  <node pkg="master" type="master_node" name="master" args="/home/rebecca/GITHUB/mast/ros_ws/big_test.txt" output="screen"/>
   <node pkg="master" type="tug_node" name="tug_node1" args="1" output="screen"/>
   <node pkg="master" type="tug_node" name="tug_node2" args="2" output="screen"/>
   <node pkg="master" type="current_waypoints_service" name="current_waypoints_service" output="screen"/>

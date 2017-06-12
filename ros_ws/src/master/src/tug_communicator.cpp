@@ -60,6 +60,7 @@ namespace Tug
     try
     {
       int tug_id = msg_and_tug_.at(order_id);
+
       if (!tug_is_under_my_control(tug_id))
       {
         return;
@@ -79,7 +80,7 @@ namespace Tug
     }
     catch(const std::out_of_range &oor)
     {
-      ROS_WARN("out of range in replanning for one boat");
+      ROS_WARN("out of range in function replan_route_for_one_boat");
     }
   }
 
@@ -102,7 +103,6 @@ namespace Tug
     if (tugs_to_plan_for.size() == 0){return;}
     
     assigner.assign_on_combined_shortest_path(tugs_to_plan_for, end_points_, environment_tug_); 
-    msg_and_tug_.clear();
     for (int i = 0; i < tugs_to_plan_for.size(); ++i)
     {
       Polyline path = tugs_to_plan_for[i].get_path();
@@ -111,8 +111,21 @@ namespace Tug
       {
         tugboat_control::Path path_msg;
         polyline_to_path_msg(path, tugs_to_plan_for[i].id(), find_order_id(path.back()), path_msg);
-        msg_and_tug_.insert(std::pair<int,int>(path_msg.orderID,path_msg.tugID));
+
+        try
+        {
+          msg_and_tug_.at(path_msg.orderID) = path_msg.tugID;
+        }
+        catch(const std::out_of_range &oor)
+        {
+          msg_and_tug_.insert(std::pair<int,int>(path_msg.orderID,path_msg.tugID));
+        }
+
         path_pub.publish(path_msg);
+      }
+      else
+      {
+        ROS_WARN("Could not find possible route");
       }
     }
   }
@@ -142,6 +155,10 @@ namespace Tug
 
     try
     {
+      if (end_points_.at(order_id).x() == pt.x() && end_points_.at(order_id).y() == pt.y())
+      {
+        return;
+      }
       if (pow(end_points_.at(order_id).x() - pt.x(), 2) + pow(end_points_.at(order_id).y() - pt.y(), 2) < 0.05*scale_)
       {
         end_points_.at(order_id) = pt;

@@ -6,7 +6,7 @@
 #include "gazebo_msgs/GetModelState.h"
 #include <math.h>
 #include <sstream>
-#include <master/Waypoint.h>
+#include <tugboat_control/Waypoint.h>
 
 ros::Publisher state_pub;
 geometry_msgs::Pose tug_pose;
@@ -47,7 +47,7 @@ void stop_moving()
   state_pub.publish(state_msg);
 }
 
-void callback_waypoint(const master::Waypoint::ConstPtr &msg)
+void callback_waypoint(const tugboat_control::Waypoint::ConstPtr &msg)
 {
   if (msg->ID == tug_id)
   {
@@ -115,7 +115,7 @@ int main(int argc, char** argv){
   pose_srv = node.serviceClient<gazebo_msgs::GetModelState>("/gazebo/get_model_state");
  // update_tug_pose();
  // sleep(5);
-  ros::Subscriber sub_goal = node.subscribe<master::Waypoint>("waypoint", 20, callback_waypoint);
+  ros::Subscriber sub_goal = node.subscribe<tugboat_control::Waypoint>("waypoint", 20, callback_waypoint);
 
   state_pub = node.advertise<gazebo_msgs::ModelState>("/gazebo/set_model_state", 100);
 

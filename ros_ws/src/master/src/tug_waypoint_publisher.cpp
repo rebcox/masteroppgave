@@ -33,6 +33,10 @@ namespace Tug
     //Check if position is within radius of current waypoint
     if(sqrt(pow(newest_pose_.x - current_wp.x, 2) + pow(newest_pose_.y - current_wp.y, 2)) < acceptance_radius*scale_)
     {
+      ROS_INFO("new pose: (%f,%f)", newest_pose_.x, newest_pose_.y);
+      ROS_INFO("curr wp: (%f,%f)", current_wp.x, current_wp.y);
+      ROS_INFO("limit: %f", acceptance_radius*scale_);
+
       new_waypoint_set = go_to_next_waypoint();
     }
   }
@@ -99,30 +103,27 @@ namespace Tug
 
   void Waypoint_publisher::wait_at_current_point()
   {
-    tugboat_control::Waypoint pt;
-    pt.x = path_[current_waypoint_index_].x;
-    pt.y = path_[current_waypoint_index_].y;
-    pt.v = 0.0;
-    
     tugboat_control::Waypoint wp;
     wp.ID = id_;
     //ROS_INFO("point before scale: (%f, %f)", path_[current_waypoint_index_].x, path_[current_waypoint_index_].y);
-    wp.x = path_[current_waypoint_index_].x/scale_;
-    wp.y = path_[current_waypoint_index_].y/scale_;
+    wp.x = path_[current_waypoint_index_].x/SCALE_OUT;
+    wp.y = path_[current_waypoint_index_].y/SCALE_OUT;
     wp.v = 0.0;
     //ROS_INFO("point published for tug %d: (%f, %f)",id_, wp.x, wp.y);
-    //wayp_pub.publish(wp);
-
+    if (SIMULATION)
+    {
+      wayp_pub.publish(wp);
+    }
     //wayp_pub.publish(path_[current_waypoint_index_]);
 
   }
   void Waypoint_publisher::publish_current_waypoint()
   {
       tugboat_control::Waypoint wp;
-      wp.x = path_[current_waypoint_index_].x/scale_;
-      wp.y = path_[current_waypoint_index_].y/scale_;
+      wp.x = path_[current_waypoint_index_].x/SCALE_OUT;
+      wp.y = path_[current_waypoint_index_].y/SCALE_OUT;
       wp.ID = id_;
-      wp.v = 0.1;
+      wp.v = TUG_SPEED;
       wayp_pub.publish(wp);
   }
 
@@ -135,14 +136,14 @@ namespace Tug
       ROS_WARN("Tug %d has arrived", id_);
       --current_waypoint_index_;
       tugboat_control::ClearWaypoint clear; clear.orderID = order_id_; clear.tugID = id_;
-      //wait_at_current_point();
+      wait_at_current_point();
       //path_.clear();
       //current_waypoint_index_ = 0;
       arrival_pub.publish(clear);
       return false;
     }
     //heading towards goal
-    else if (current_waypoint_index_ == path_.size() - 1) 
+    /*else if (current_waypoint_index_ == path_.size() - 1) 
     {
       ROS_WARN("Trying to find route around ship if it is on the wrong side");
 
@@ -150,7 +151,7 @@ namespace Tug
       current_waypoint_index_ = 1;
       publish_current_waypoint();
       return true;
-    }
+    }*/
     else
     {
       ROS_WARN("Tug %d arrived at waypoint", id_);

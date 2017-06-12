@@ -2,9 +2,11 @@
 #include "ros/package.h"
 #include "ros/ros.h"
 
-#include <master/Waypoint.h>
-#include <master/BoatPose.h>
+#include <tugboat_control/Waypoint.h>
+#include <tugboat_control/BoatPose.h>
 #include "gazebo_msgs/GetModelState.h"
+#include "master/tug_constants.hpp"
+
 #include <string>
 
 ros::ServiceClient pose_srv;
@@ -25,10 +27,10 @@ void update_tug_pose()
     {
       pose_srv.call(getmodelstate);
 
-      master::BoatPose pose_msg;
+      tugboat_control::BoatPose pose_msg;
       pose_msg.ID = tug->first;
-      pose_msg.x = getmodelstate.response.pose.position.x/40;
-      pose_msg.y = getmodelstate.response.pose.position.y/40;
+      pose_msg.x = getmodelstate.response.pose.position.x/SCALE;
+      pose_msg.y = getmodelstate.response.pose.position.y/SCALE;
       //ROS_INFO("publised pose for %s", tug->second.c_str());
 
       pub.publish(pose_msg);
@@ -56,10 +58,10 @@ int main(int argc, char **argv)
   }
 
   ros::NodeHandle node;
-  pub = node.advertise<master::BoatPose>("pose", 20);
+  pub = node.advertise<tugboat_control::BoatPose>("pose", 20);
   pose_srv = node.serviceClient<gazebo_msgs::GetModelState>("/gazebo/get_model_state");
 
-  ros::Rate loop_rate(4);
+  ros::Rate loop_rate(10);
   while (ros::ok())
   {
     update_tug_pose();

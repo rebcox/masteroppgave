@@ -8,8 +8,7 @@
 
 #include "tugboat_control/Waypoint.h"
 #include "tugboat_control/BoatPose.h"
-
-#define SCALE 220.0
+#include "tug_constants.hpp"
 
 /*namespace
 {
@@ -47,32 +46,33 @@
   }
 }*/
 
-double meter_to_pixel(double meter, double scale)
-{
-  return meter*scale;
-}
-
 int main(int argc, char **argv)
 {
 
   ros::init(argc, argv, "master_node");
   ros::NodeHandle node;
-  //ship_waypoint_pub = node.advertise<tugboat_control::Waypoint>("shipWaypoint", 10);
+  
+  if (argc < 2){ROS_ERROR("Need environment filename as argument"); return -1;};
 
-  double scale = SCALE;
+  std::vector<std::string> all_args(argv, argv + argc);
+  all_args.assign(argv + 1, argv + argc);
+  std::string filename = all_args.at(0);
 
-  //std::string filename = "/home/sondre/demo_env.txt";
-  std::string filename = "/home/sondre/empty_environment.txt";
+  try
+  {
+    Tug::Environment environment_tug = Tug::Environment(filename, 1, 0.01);
+  }
+  catch(...)
+  {
+    ROS_ERROR("File does not exist"); return -1;
+  }
 
-
-  //double px = 1.0/200.0;
   Tug::Environment environment_tug = Tug::Environment(filename, 1, 0.01);
 
-  environment_tug.add_constant_safety_margin(0.2*scale);
+  //environment_tug.add_constant_safety_margin(0.2*SCALE);
   //environment_tug.mark_points_within_range(1.5);
-  environment_tug.save_environment_as_svg("/home/sondre/env.svg");
 
-  Tug::Communicator communicator(environment_tug, scale, 0.3); 
+  Tug::Communicator communicator(environment_tug, SCALE, 0.3); 
 
   ros::Subscriber sub_startup = node.subscribe("startup", 20, &Tug::Communicator::callback_new_tug, &communicator);
   ros::Subscriber sub_goal = node.subscribe("waypointRequest", 20, &Tug::Communicator::callback_waypoint, &communicator);

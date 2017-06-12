@@ -8,11 +8,16 @@ find_package(catkin REQUIRED COMPONENTS
   master
   external
   geometry
+  std_msgs
+  tugboat_control
 )
 
-catkin_package()
+catkin_package(
+  CATKIN_DEPENDS tugboat_control
+)
 
 include_directories(
+  include/${PROJECT_NAME}
   ${catkin_INCLUDE_DIRS}
 )
 

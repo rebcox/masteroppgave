@@ -4,10 +4,10 @@
 #include "geometry/tug_polyline.hpp" 
 #include "search/tug_route_around_ship.hpp"
 #include "std_msgs/Float64MultiArray.h"
-
-#ifndef SCALE
-#define SCALE 220.0
-#endif
+#include "tug_constants.hpp"
+//#ifndef SCALE
+//#define SCALE 220.0
+//#endif
 
 namespace
 {
@@ -72,6 +72,9 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "avoid_ship_collision_service");
   
   ros::NodeHandle node;	
+  newest_pose_msg_ .x = -1000;
+  newest_pose_msg_ .y = -1000; 
+  newest_pose_msg_ .o = 0; 
   ros::Subscriber sub_shipPose = node.subscribe("shipPose", 1, callback_ship_pose);
 
   ros::ServiceServer service = node.advertiseService("avoid_ship_collision", find_path);

@@ -2,9 +2,8 @@
 #include "tugboat_control/WaypointAvailable.h"
 #include "std_msgs/Bool.h"
 #include "tugboat_control/Waypoint.h"
+#include "tug_constants.hpp"
 
-#define SCALE 220
-#define CLOSE_POINTS_RADIUS 0.1
 
 namespace
 {

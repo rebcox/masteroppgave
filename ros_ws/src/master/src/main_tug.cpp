@@ -1,7 +1,8 @@
 #include "ros/ros.h"
 #include "tug_waypoint_publisher.hpp"
+#include "tug_constants.hpp"
 
-#define SCALE 220.0
+//#define SCALE 220.0
 
   int main(int argc, char **argv)
   {

@@ -26,8 +26,7 @@ namespace Tug
 	  void print_path(Tug::Polyline path);
 	  void replan();
   	tugboat_control::Path polyline_to_path_msg(const Tug::Polyline &path, int tug_id, int order_id);
-  	  void polyline_to_path_msg(const Tug::Polyline &path, int tug_id, int order_id, tugboat_control::Path &path_msg);
-
+  	void polyline_to_path_msg(const Tug::Polyline &path, int tug_id, int order_id, tugboat_control::Path &path_msg);
 	  void remove_end_point_from_planner(const tugboat_control::ClearWaypoint::ConstPtr &msg);
 	  void set_holding_tug(int holding_id, int held_id);
 	  void remove_holding_tug(int holding_id, int held_id);
@@ -37,7 +36,7 @@ namespace Tug
 	  void add_new_tug(int id);
     bool tug_id_already_in_system(int id);
     bool tug_is_under_my_control(int id);
-      void replan_route_for_one_boat(int msg_id, const Tug::Point &newGoal);
+    void replan_route_for_one_boat(int msg_id, const Tug::Point &newGoal);
 	  void callback_waypoint(const tugboat_control::Waypoint::ConstPtr& msg);
 	  void callback_boat_pose(const tugboat_control::BoatPose::ConstPtr& msg);
 	  void callback_ship_pose(const tugboat_control::BoatPose::ConstPtr &msg);

@@ -1,12 +1,12 @@
 #include "ros/package.h"
 #include "ros/ros.h"
 #include "std_msgs/UInt8MultiArray.h"
-#include "master/ClearWaypoint.h"
+#include "tugboat_control/ClearWaypoint.h"
 
 std_msgs::UInt8MultiArray waypTugs_msg;
 
 
-void callback_clearWaypoint(const master::ClearWaypoint::ConstPtr &msg)
+void callback_clearWaypoint(const tugboat_control::ClearWaypoint::ConstPtr &msg)
 {
   int id = msg->tugID;
   std_msgs::UInt8MultiArray temp = waypTugs_msg;

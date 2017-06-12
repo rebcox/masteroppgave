@@ -13,32 +13,9 @@ find_package(catkin REQUIRED COMPONENTS
   tugboat_control
 )
 
-#add_message_files(
-#  DIRECTORY
-#    msg
-#  FILES 
-#    Waypoint.msg
-#    Waypoints.msg
-#    BoatPose.msg
-#    ClearWaypoint.msg
-#    Path.msg
-#)
-
-#add_service_files(
-#  DIRECTORY
-#    srv
-#  FILES
-#    WaypointAvailable.srv
-#    AvoidShipCollision.srv
-#)
-
-generate_messages(
-  DEPENDENCIES
-  std_msgs
-  tugboat_control
-)
 catkin_package(
   CATKIN_DEPENDS message_runtime tugboat_control
+  INCLUDE_DIRS include
 )
 
 include_directories(

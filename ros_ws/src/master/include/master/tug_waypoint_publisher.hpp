@@ -9,7 +9,7 @@
 #include "tugboat_control/BoatPose.h"
 #include "tugboat_control/Waypoint.h"
 #include "std_msgs/UInt8.h"
-
+#include "tug_constants.hpp"
 
 
 #include <memory>
