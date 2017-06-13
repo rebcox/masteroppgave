@@ -27,14 +27,6 @@ namespace Tug
 
   void Route_around_ship::move(const Point &mid_pt, double orientation)
   {
-    /*if (!ship_placed_)
-    {
-      position_ = Point(0,0,-1);
-      ship_placed_ = true;
-    }*/
-   // std::cout << "move from: " << position_.x() << ", " << position_.y() << std::endl;
-
-//    std::cout << "move to: " << mid_pt.x() << ", " << mid_pt.y() << std::endl;
     Eigen::Translation2d transl(mid_pt.x() - position_.x(), mid_pt.y() - position_.y());
     Eigen::Affine2d af(transl);
     position_ = mid_pt;
@@ -54,9 +46,12 @@ namespace Tug
 
   }
 
-  void Route_around_ship::calculate_corners(const Point &mid_pt, double orientation, double width, double length, Eigen::Matrix<double,2,4> &ship_mat)
+  void Route_around_ship::calculate_corners(const Point &mid_pt, 
+                                           double orientation, 
+                                           double width, 
+                                           double length, 
+                                           Eigen::Matrix<double,2,4> &ship_mat)
   {
-    //std::cout << mid_pt.x() << ", " << mid_pt.y() << std::endl;
     double x = mid_pt.x();
     double y = mid_pt.y();
     double half_length = length/2.0;
@@ -95,9 +90,11 @@ namespace Tug
 
   // The main function that returns true if line segment 'p1q1'
   // and 'p2q2' intersect.
-  bool Route_around_ship::do_cross(const Point &p1, const Point &q1, const Point &p2, const Point &q2)
+  bool Route_around_ship::do_cross(const Point &p1, const Point &q1, 
+                                   const Point &p2, const Point &q2)
   {
-    //Intersectiong endpoints will never give crossing lines, exept when they are all the same
+    //Intersectiong endpoints will never give crossing lines, 
+    //exept when they are all the same
     if (p1 == p2 || p1 == q2 || q1 == p2 || q1 == q2)
     {
       return false;
@@ -165,10 +162,14 @@ namespace Tug
     else if(intersection[0] && intersection[2])
     {
       double alternatives[4];
-      alternatives[0] = dist(start, ship[0]) + dist(ship[0], ship[3]) + dist(ship[3], finish);
-      alternatives[1] = dist(start, ship[3]) + dist(ship[3], ship[0]) + dist(ship[0], finish);
-      alternatives[2] = dist(start, ship[1]) + dist(ship[1], ship[2]) + dist(ship[2], finish);
-      alternatives[3] = dist(start, ship[2]) + dist(ship[2], ship[1]) + dist(ship[1], finish);
+      alternatives[0] = dist(start, ship[0]) + dist(ship[0], ship[3]) +
+                        dist(ship[3], finish);
+      alternatives[1] = dist(start, ship[3]) + dist(ship[3], ship[0]) + 
+                        dist(ship[0], finish);
+      alternatives[2] = dist(start, ship[1]) + dist(ship[1], ship[2]) + 
+                        dist(ship[2], finish);
+      alternatives[3] = dist(start, ship[2]) + dist(ship[2], ship[1]) + 
+                        dist(ship[1], finish);
 
       int best = min_element_index(alternatives);
 
@@ -194,10 +195,14 @@ namespace Tug
     else if(intersection[1] && intersection[3])
     {
       double alternatives[4];
-      alternatives[0] = dist(start, ship[0]) + dist(ship[0], ship[1]) + dist(ship[1], finish);
-      alternatives[1] = dist(start, ship[1]) + dist(ship[1], ship[0]) + dist(ship[0], finish);
-      alternatives[2] = dist(start, ship[3]) + dist(ship[3], ship[2]) + dist(ship[2], finish);
-      alternatives[3] = dist(start, ship[2]) + dist(ship[2], ship[3]) + dist(ship[3], finish);
+      alternatives[0] = dist(start, ship[0]) + dist(ship[0], ship[1]) + 
+                        dist(ship[1], finish);
+      alternatives[1] = dist(start, ship[1]) + dist(ship[1], ship[0]) + 
+                        dist(ship[0], finish);
+      alternatives[2] = dist(start, ship[3]) + dist(ship[3], ship[2]) + 
+                        dist(ship[2], finish);
+      alternatives[3] = dist(start, ship[2]) + dist(ship[2], ship[3]) + 
+                        dist(ship[3], finish);
 
       int best = min_element_index(alternatives);
 

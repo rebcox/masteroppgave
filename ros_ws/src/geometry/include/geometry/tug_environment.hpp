@@ -1,13 +1,14 @@
 #ifndef TUG_ENVIRONMENT_H
 #define TUG_ENVIRONMENT_H
 
-#include "external/visilibity.hpp"
 #include "external/clipper.hpp"
+#include "external/visilibity.hpp"
 #include "SVG_builder.hpp"
-#include <vector>
 #include "tug_point.hpp"
 #include "tug_polyline.hpp"
-#include "map"
+
+#include <map>
+#include <vector>
 
 namespace Tug
 {
@@ -46,9 +47,6 @@ namespace Tug
 
       void print_coordinates_and_id() const;
       void mark_points_within_range(float range);
-
-     // void place_ship(Point &pt1, Point &pt2, Point &pt3, Point &pt4);
-
 
     private:
       int id_counter_ = 0;

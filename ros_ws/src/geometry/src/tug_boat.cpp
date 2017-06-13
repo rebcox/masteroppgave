@@ -1,6 +1,8 @@
 #include "tug_boat.hpp"
+
+#include <ros/ros.h>
 #include <stdexcept>
-#include "ros/ros.h"
+
 namespace Tug
 { 
   Point Boat::get_position()

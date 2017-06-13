@@ -1,4 +1,3 @@
-// tests.cpp
 #include "tug_environment.hpp"
 #include <gtest/gtest.h>
 
@@ -14,15 +13,17 @@ TEST(ConstructorTest, XAndYSetCorrectly)
 //TUG_ENVIRONMENT start
 TEST(TugEnvironmentTest, PointsOnBoundaryMarkedCorrectly)
 {
-  Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
+  Tug::Environment tug_environment(
+    "/home/rebecca/GITHUB/mast/oppg/environments/test_environment.txt", 1.0, 0.01);
 
   tug_environment.add_constant_safety_margin(50);
 
   //These are manually checked that they are on boundary
   bool on_boundary[] = {1,1,0,0,0,0,1,1,1,0,0,0,0,1,1,0,0};
   int a = 0;
-  //for (int i = 0; i < points.size(); ++i)
-  for (std::map<int, Tug::Point>::const_iterator pt = tug_environment.const_begin(); pt != tug_environment.const_end(); ++pt)
+  for (std::map<int, Tug::Point>::const_iterator pt = tug_environment.const_begin();
+                                                 pt != tug_environment.const_end(); 
+                                                 ++pt)
   {
     if (on_boundary[a])
     {
@@ -38,7 +39,9 @@ TEST(TugEnvironmentTest, PointsOnBoundaryMarkedCorrectly)
 
 TEST(TugEnvironmentTest, AllPointsWithinOuterBoundary)
 {
-  Tug::Environment tug_environment("/home/rebecca/GITHUB/mast/oppg/environments/test_environment_out_of_boundary.txt", 1.0, 0.01);
+  Tug::Environment tug_environment(
+        "/home/rebecca/GITHUB/mast/oppg/environments/test_environment_out_of_boundary.txt",
+         1.0, 0.01);
 
   Tug::Point pt0(350, 260,tug_environment); 
   Tug::Point pt1(320, 260,tug_environment); 

@@ -1,11 +1,11 @@
 #ifndef TUG_POINT_H
 #define TUG_POINT_H
 
-#include "math.h"
 #include "external/clipper.hpp"
 #include "external/visilibity.hpp"
 
-#include "map"
+#include <math.h>
+#include <map>
 
 namespace Tug
 {

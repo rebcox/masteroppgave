@@ -1,8 +1,7 @@
 #include "tug_environment.hpp"
-#include <sstream>
-#include <limits>
 
-//#include "search/tug_shortest_path.hpp"
+#include <limits>
+#include <sstream>
 
 
 namespace Tug
@@ -122,7 +121,8 @@ namespace Tug
     }
   }
       
-  void Environment::clip_against_outer_boundary(ClipperLib::Paths &paths_in, ClipperLib::Paths &paths_out)
+  void Environment::clip_against_outer_boundary(ClipperLib::Paths &paths_in, 
+                                                ClipperLib::Paths &paths_out)
   {
     ClipperLib::Clipper clipper;
     clipper.AddPath(paths_in[0], ClipperLib::ptClip, true);
@@ -172,17 +172,20 @@ namespace Tug
       paths_with_safety_margin_.push_back(tempPaths2[i]);
     }
 
-    convert_to_visilibity_environment(paths_with_safety_margin_, visilibity_environment_with_safety_margin_);
+    convert_to_visilibity_environment(paths_with_safety_margin_, 
+                                      visilibity_environment_with_safety_margin_);
     
     visilibity_environment_with_safety_margin_.is_valid(epsilon_);
 
     environment_has_safety_margin = true;
-    update_tug_point_list(paths_with_safety_margin_, points_in_environment_with_safety_margin_);
+    update_tug_point_list(paths_with_safety_margin_, 
+                          points_in_environment_with_safety_margin_);
   }
   
   bool Environment::point_is_within_outer_boundary(const Tug::Point point)
   {
-    if (point.x() >= x_max_-1 || point.x() <= x_min_+1 || point.y() <= y_min_+1 || point.y() >= y_max_-1) 
+    if (point.x() >= x_max_-1 || point.x() <= x_min_+1 ||
+        point.y() <= y_min_+1 || point.y() >= y_max_-1) 
     {
       return false;
     }
@@ -204,7 +207,8 @@ namespace Tug
     }
   }
 
-  void Environment::convert_to_visilibity_environment(const ClipperLib::Paths &paths, VisiLibity::Environment &environment)
+  void Environment::convert_to_visilibity_environment(const ClipperLib::Paths &paths,
+                                                     VisiLibity::Environment &environment)
   {
     if (paths.size() == 0)
     {
@@ -252,7 +256,8 @@ namespace Tug
     }
   }
 
-  void Environment::update_tug_point_list(const ClipperLib::Paths &paths, std::map<int, Point> &tug_points)
+  void Environment::update_tug_point_list(const ClipperLib::Paths &paths, 
+                                          std::map<int, Point> &tug_points)
   {
     tug_points.clear();
 
@@ -273,7 +278,8 @@ namespace Tug
   {
     for (auto i = coordinate_to_id.begin(); i != coordinate_to_id.end(); ++i)
     {
-      std::cout << i->second << ": " << i->first.first << ", " << i->first.second << std::endl;
+      std::cout << i->second << ": " << i->first.first << ", "
+                << i->first.second << std::endl;
     }
   }
 
@@ -293,7 +299,8 @@ namespace Tug
     return shortest_path;
   }*/
 
-  void Environment::set_outer_boundary(const ClipperLib::Path &outer_boundary, VisiLibity::Environment &environment)
+  void Environment::set_outer_boundary(const ClipperLib::Path &outer_boundary,
+                                       VisiLibity::Environment &environment)
   {
     find_max_and_min_in_path(outer_boundary, 'X', x_max_, x_min_);
     find_max_and_min_in_path(outer_boundary, 'Y', y_max_, y_min_);
@@ -322,14 +329,17 @@ namespace Tug
   bool Environment::point_is_on_outer_boundary(const VisiLibity::Point &point) const
   {
     //outer boundary is 1 unit smaller
-    if (point.x() == x_max_-1 || point.x() == x_min_+1 || point.y() == y_min_+1 || point.y() == y_max_-1)
+    if (point.x() == x_max_-1 || point.x() == x_min_+1 || 
+        point.y() == y_min_+1 || point.y() == y_max_-1)
     {
       return true;
     }
     return false;
   }
 
-  bool Environment::load_from_file(ClipperLib::Paths &ppg, const std::string& filename, double scale)
+  bool Environment::load_from_file(ClipperLib::Paths &ppg, 
+                                   const std::string& filename,
+                                   double scale)
   {
     //file format assumes: 
     //  1. path coordinates (x,y) are comma separated (+/- spaces) and 
@@ -356,7 +366,8 @@ namespace Tug
       if (c == ',') {ss.read(&c, 1); c = ss.peek();} //gobble comma
       while (c == ' ') {ss.read(&c, 1); c = ss.peek();} //gobble spaces after comma
       if (!(ss >> Y)) break; //oops!
-      pg.push_back(ClipperLib::IntPoint((ClipperLib::cInt)(X * scale),(ClipperLib::cInt)(Y * scale)));
+      pg.push_back(ClipperLib::IntPoint((ClipperLib::cInt)(X * scale),
+                   (ClipperLib::cInt)(Y * scale)));
     }
     if (pg.size() > 0) ppg.push_back(pg);
     ifs.close();
@@ -364,7 +375,10 @@ namespace Tug
     return true;
   }
 
-  void Environment::find_max_and_min_in_path(const ClipperLib::Path &path, char coordinate, int &max_val, int &min_val) 
+  void Environment::find_max_and_min_in_path(const ClipperLib::Path &path, 
+                                            char coordinate, 
+                                            int &max_val, 
+                                            int &min_val) 
   {
     if (!(coordinate == 'X' || coordinate == 'Y'))
     {
@@ -409,7 +423,8 @@ namespace Tug
 
   }
 
-  void Environment::get_boundaries(int &x_min_out, int &x_max_out, int &y_min_out, int &y_max_out) const
+  void Environment::get_boundaries(int &x_min_out, int &x_max_out, 
+                                   int &y_min_out, int &y_max_out) const
   {
     x_min_out = x_min_+1;
     x_max_out = x_max_-1;
@@ -439,42 +454,22 @@ namespace Tug
     }
   }
 
- /* bool Environement::place_ship(const Point &pt1, const Point &pt2, const Point &pt3, const Point &pt4, double margin)
-  {
-    if (!is_listed_clockwise(pt1, pt2, pt3, pt4))
-      return false;
-
-    ClipperLib::Path ship;
-    ClipperLib::ClipperOffset co;
-    //Add safety margin
-    co.AddPath(ship, ClipperLib::jtMiter, ClipperLib::etClosedPolygon);
-    
-    VisiLibity::Polygon hole;
-    ClipperLib::Paths paths;
-    co.Execute(tpaths, margin);
-
-    if(paths.size() > 0)
-    {
-      reverse_path(paths[0]);
-      path_to_hole(paths[0], hole);
-    }
-  }*/
-
-
   void Environment::save_environment_as_svg(const std::string filename)
   {
     Polyline dummy;
     save_environment_as_svg(filename, dummy);
   }
 
-  void Environment::save_environment_as_svg(const std::string filename, const Polyline &shortest_path)
+  void Environment::save_environment_as_svg(const std::string filename, 
+                                            const Polyline &shortest_path)
   {
     std::vector<Polyline> shortest_paths;
     shortest_paths.push_back(shortest_path);
     save_environment_as_svg(filename, shortest_paths);
   }
 
-  void Environment::save_environment_as_svg(const std::string filename, const std::vector<Polyline> &shortest_paths)
+  void Environment::save_environment_as_svg(const std::string filename, 
+                                            const std::vector<Polyline> &shortest_paths)
   {
     SVGBuilder svg;    
     svg.style.brushClr = 0x129C0000;

@@ -4,17 +4,17 @@
 #include "external/clipper.hpp"  
 #include "tug_polyline.hpp"
 
-#include <cmath>
 #include <algorithm>
-#include <ctime>
-#include <cstdlib>
+#include <cmath>
 #include <cstdio>
-#include <vector>
+#include <cstdlib>
+#include <ctime>
+#include <fstream>
 #include <iomanip>
 #include <iostream>
-#include <fstream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 class SVGBuilder
 {

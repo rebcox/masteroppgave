@@ -15,12 +15,6 @@ int main(int argc, char **argv)
   std_msgs::UInt8 msg2;
   msg2.data = 2;
 
-/*
-  sleep(10);
-  pub_goal.publish(msg1);
-  pub_goal.publish(msg2);
-*/
-
   ros::Rate loop_rate(0.5);  
   while (ros::ok())
   {

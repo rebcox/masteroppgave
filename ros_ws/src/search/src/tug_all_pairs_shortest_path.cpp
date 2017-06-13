@@ -4,10 +4,10 @@
 
 namespace Tug
 {
-  All_pairs_shortest_path::All_pairs_shortest_path( Environment &environment)
+  All_pairs_shortest_path::All_pairs_shortest_path( Environment &env)
   {
-    apsp_ = find_optimal_path_from_all_points(environment);
-    find_optimal_path_from_all_points_2(environment, apsp2_);
+    apsp_ = find_optimal_path_from_all_points(env);
+    find_optimal_path_from_all_points_2(env, apsp2_);
     //write_to_file(apsp_);
   }
 
@@ -27,21 +27,26 @@ namespace Tug
     file_output.close();
   }
 
-  std::vector<std::vector<int>> All_pairs_shortest_path::find_optimal_path_from_all_points( Environment &environment)
+  std::vector<std::vector<int>> 
+  All_pairs_shortest_path::find_optimal_path_from_all_points( Environment &env)
   {
-    std::vector<std::vector<int>> optimal_vertex(environment.n());
-    for (int i = 0; i < environment.n(); ++i)
+    std::vector<std::vector<int>> optimal_vertex(env.n());
+    for (int i = 0; i < env.n(); ++i)
     {
-      optimal_vertex[i] = std::vector<int>(environment.n());
+      optimal_vertex[i] = std::vector<int>(env.n());
     }
     Polyline shortest_path_temp;
 
     int a = 0;
-      for (std::map<int,Point>::iterator i = environment.begin(); i != environment.end(); ++i)
+      for (std::map<int,Point>::iterator i = env.begin(); 
+                                         i != env.end(); 
+                                         ++i)
       {
         int b = 0;
 
-        for (std::map<int,Point>::iterator j = environment.begin(); j != environment.end(); ++j)
+        for (std::map<int,Point>::iterator j = env.begin(); 
+                                           j != env.end(); 
+                                           ++j)
         {
           if (a==b)
           {
@@ -51,7 +56,7 @@ namespace Tug
           {
             A_star_search(i->second, //start point
                           j->second, //end point
-                          environment.points(),
+                          env.points(),
                           shortest_path_temp,
                           epsilon_);
             if (shortest_path_temp.size() > 0)
@@ -71,15 +76,17 @@ namespace Tug
 
   }
 
-  void All_pairs_shortest_path::find_optimal_path_from_all_points_2( Environment &environment, std::map<std::pair<int,int>, int> &apsp)
+  void All_pairs_shortest_path::find_optimal_path_from_all_points_2(
+                                Environment &env, 
+                                std::map<std::pair<int,int>, int> &apsp)
   {
     // map<pair<from, to>, go_via>>
     Polyline shortest_path_temp;
     apsp.clear();
 
-      for (std::map<int,Point>::iterator i = environment.begin(); i != environment.end(); ++i)
+      for (std::map<int,Point>::iterator i = env.begin(); i != env.end(); ++i)
       {
-        for (std::map<int,Point>::iterator j = environment.begin(); j != environment.end(); ++j)
+        for (std::map<int,Point>::iterator j = env.begin(); j != env.end(); ++j)
         {
           std::pair<int,int> pair_of_points(i->first, j->first);
           if (i->first == j->first)
@@ -91,7 +98,7 @@ namespace Tug
           {
             A_star_search(i->second, //start point
                           j->second, //end point
-                          environment.points(),
+                          env.points(),
                           shortest_path_temp,
                           epsilon_);
             if (shortest_path_temp.size() > 0)

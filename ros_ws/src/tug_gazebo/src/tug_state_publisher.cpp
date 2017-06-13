@@ -1,12 +1,13 @@
-#include <ros/ros.h>
+#include "tugboat_control/Waypoint.h"
+
+#include <gazebo_msgs/GetModelState.h>
 #include <gazebo_msgs/ModelState.h>
+#include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/Vector3.h>
-#include <geometry_msgs/Pose.h>
-#include "gazebo_msgs/GetModelState.h"
 #include <math.h>
+#include <ros/ros.h>
 #include <sstream>
-#include <tugboat_control/Waypoint.h>
 
 ros::Publisher state_pub;
 geometry_msgs::Pose tug_pose;
@@ -29,7 +30,6 @@ void update_tug_pose()
 
   tug_pose.position.x = getmodelstate.response.pose.position.x;
   tug_pose.position.y = getmodelstate.response.pose.position.y;
-//  ROS_ERROR("%s is at (%f, %f)", tug_name.c_str(), tug_pose.position.x, tug_pose.position.y);
 }
 
 void stop_moving()

@@ -18,7 +18,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_library(${PROJECT_NAME} src/tug_point.cpp src/tug_boat.cpp src/tug_environment.cpp src/tug_waypoint.cpp src/SVG_builder.cpp src/tug_switching_point_decision.cpp)
+add_library(${PROJECT_NAME} src/tug_point.cpp src/tug_boat.cpp src/tug_environment.cpp src/SVG_builder.cpp)
 add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 

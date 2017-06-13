@@ -24,8 +24,7 @@ void callback_ship_pose(const tugboat_control::BoatPose::ConstPtr &msg)
   new_bp.o = msg->o;
   new_bp.ID = msg->ID;
 	newest_pose_msg_ = new_bp;
-  //ROS_INFO("ship pose called");
-//2 next lines: Move ship so it is drawn on screen. Not necessary for service to work
+  //2 next lines: Move ship so it is drawn on screen. Not necessary for service to work
   Tug::Point pt(newest_pose_msg_.x, newest_pose_msg_.y, -1);
   route_around_ship_.move(pt, newest_pose_msg_.o);
 
@@ -47,13 +46,10 @@ bool find_path(tugboat_control::AvoidShipCollision::Request &req,
 	route_around_ship_.move(pt, newest_pose_msg_.o);
   Tug::Point pos = route_around_ship_.get_ship_position();
 
- // ROS_INFO("ship pos: (%f, %f)", pos.x()/SCALE, pos.y()/SCALE);
-
 	Tug::Point start(req.from.x, req.from.y, -1);
 	Tug::Point end(req.to.x, req.to.y, -1);
 
   Tug::Polyline points_to_move_around_ship = route_around_ship_.best_route(start, end);
-  //ROS_INFO("added %d points in order to move around ship", points_to_move_around_ship.size());
   res.path.push_back(req.from);
   for (int i = 0; i < points_to_move_around_ship.size(); ++i)
   {

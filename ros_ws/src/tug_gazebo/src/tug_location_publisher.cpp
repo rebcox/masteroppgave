@@ -1,12 +1,10 @@
-
-#include "ros/package.h"
-#include "ros/ros.h"
-
-#include <tugboat_control/Waypoint.h>
-#include <tugboat_control/BoatPose.h>
-#include "gazebo_msgs/GetModelState.h"
 #include "master/tug_constants.hpp"
+#include "tugboat_control/BoatPose.h"
+#include "tugboat_control/Waypoint.h"
 
+#include <gazebo_msgs/GetModelState.h>
+#include <ros/package.h>
+#include <ros/ros.h>
 #include <string>
 
 ros::ServiceClient pose_srv;
@@ -18,7 +16,9 @@ void update_tug_pose()
 {
   gazebo_msgs::GetModelState getmodelstate;
 
-  for (std::map<int, std::string>::iterator tug = tugs_.begin(); tug != tugs_.end(); ++tug)
+  for (std::map<int, std::string>::iterator tug = tugs_.begin(); 
+                                            tug != tugs_.end(); 
+                                            ++tug)
   {
     getmodelstate.request.model_name = tug->second.c_str();
     getmodelstate.request.relative_entity_name = "world";
@@ -41,7 +41,6 @@ void update_tug_pose()
 
 int main(int argc, char **argv)
 {
-
   ros::init(argc, argv, "tug_location_publisher");
   int i = 1;
   while (i < argc)

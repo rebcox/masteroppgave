@@ -123,7 +123,8 @@ struct DoublePoint
 //------------------------------------------------------------------------------
 
 #ifdef use_xyz
-typedef void (*ZFillCallback)(IntPoint& e1bot, IntPoint& e1top, IntPoint& e2bot, IntPoint& e2top, IntPoint& pt);
+typedef void (*ZFillCallback)(IntPoint& e1bot, IntPoint& e1top, IntPoint& e2bot,
+                              IntPoint& e2top, IntPoint& pt);
 #endif
 
 enum InitOptions {ioReverseSolution = 1, ioStrictlySimple = 2, ioPreserveCollinear = 4};
@@ -172,8 +173,10 @@ bool Orientation(const Path &poly);
 double Area(const Path &poly);
 int PointInPolygon(const IntPoint &pt, const Path &path);
 
-void SimplifyPolygon(const Path &in_poly, Paths &out_polys, PolyFillType fillType = pftEvenOdd);
-void SimplifyPolygons(const Paths &in_polys, Paths &out_polys, PolyFillType fillType = pftEvenOdd);
+void SimplifyPolygon(const Path &in_poly, Paths &out_polys, 
+                      PolyFillType fillType = pftEvenOdd);
+void SimplifyPolygons(const Paths &in_polys, Paths &out_polys,
+                     PolyFillType fillType = pftEvenOdd);
 void SimplifyPolygons(Paths &polys, PolyFillType fillType = pftEvenOdd);
 
 void CleanPolygon(const Path& in_poly, Path& out_poly, double distance = 1.415);
@@ -181,8 +184,10 @@ void CleanPolygon(Path& poly, double distance = 1.415);
 void CleanPolygons(const Paths& in_polys, Paths& out_polys, double distance = 1.415);
 void CleanPolygons(Paths& polys, double distance = 1.415);
 
-void MinkowskiSum(const Path& pattern, const Path& path, Paths& solution, bool pathIsClosed);
-void MinkowskiSum(const Path& pattern, const Paths& paths, Paths& solution, bool pathIsClosed);
+void MinkowskiSum(const Path& pattern, const Path& path, Paths& solution,
+                   bool pathIsClosed);
+void MinkowskiSum(const Path& pattern, const Paths& paths, Paths& solution,
+                  bool pathIsClosed);
 void MinkowskiDiff(const Path& poly1, const Path& poly2, Paths& solution);
 
 void PolyTreeToPaths(const PolyTree& polytree, Paths& paths);
@@ -400,5 +405,3 @@ class clipperException : public std::exception
 } //ClipperLib namespace
 
 #endif //clipper_hpp
-
-

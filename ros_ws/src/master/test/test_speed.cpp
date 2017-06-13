@@ -1,10 +1,10 @@
-#include <ros/package.h>
-#include <ros/ros.h>
-
 #include "geometry/tug_boat.hpp"
 #include "geometry/tug_environment.hpp"
 #include "search/tug_shortest_path.hpp"
+
 #include <chrono>
+#include <ros/package.h>
+#include <ros/ros.h>
 
 
     int x_min_; int y_min_;
@@ -162,7 +162,7 @@ void run_method1(std::string &filename, const Tug::Point &start, const Tug::Poin
   std::cout << "Method 1, " << no_nodes << " nodes: " << ms << " microseconds. "<< std::endl;
 }
 
-void run_method2(Tug::Environment &env, const Tug::Point &start, const Tug::Point &goal, int no_nodes, double epsilon)
+Tug::Polyline run_method2(Tug::Environment &env, const Tug::Point &start, const Tug::Point &goal, int no_nodes, double epsilon)
 {
   Tug::Polyline shortest_path;
   auto begin = std::chrono::high_resolution_clock::now();    
@@ -170,6 +170,7 @@ void run_method2(Tug::Environment &env, const Tug::Point &start, const Tug::Poin
   auto end = std::chrono::high_resolution_clock::now();
   auto ms = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
   std::cout << "Method 2, " << no_nodes << " nodes: " << ms << " microseconds. "<< std::endl;
+  return shortest_path;
 }
 
 void run_method3(Tug::Environment &env, const Tug::Point &start, const Tug::Point &goal, int no_nodes, double epsilon)
@@ -187,14 +188,14 @@ void run_method3(Tug::Environment &env, const Tug::Point &start, const Tug::Poin
 int main(int argc, char **argv)
 {
   double epsilon = 0.01;
-  /*
+  
   std::string filename10 = "/home/rebecca/GITHUB/mast/ros_ws/src/master/environments/env10.txt";
   Tug::Environment env10 = Tug::Environment(filename10, 1, epsilon);
 
   Tug::Point start10(145, 492, env10);
   Tug::Point goal10(684, 97, env10);
-
   run_method1(filename10,start10,goal10,10,epsilon);
+  Tug::Polyline sp10 =
   run_method2(env10,start10,goal10,10,epsilon);
   run_method3(env10,start10,goal10,10,epsilon);
 
@@ -205,9 +206,9 @@ int main(int argc, char **argv)
   Tug::Point goal20(684, 97, env20);
 
   run_method1(filename20,start20,goal20,20,epsilon);
+  Tug::Polyline sp20 =
   run_method2(env20,start20,goal20,20,epsilon);
   run_method3(env20,start20,goal20,20,epsilon);
-
 
   std::string filename50 = "/home/rebecca/GITHUB/mast/ros_ws/src/master/environments/env50.txt";
   Tug::Environment env50 = Tug::Environment(filename50, 1, epsilon);
@@ -216,6 +217,7 @@ int main(int argc, char **argv)
   Tug::Point goal50(868, 3, env50);
 
   run_method1(filename50,start50,goal50,50,epsilon);
+  Tug::Polyline sp50 =
   run_method2(env50,start50,goal50,50,epsilon);
   run_method3(env50,start50,goal50,50,epsilon);
 
@@ -224,30 +226,30 @@ int main(int argc, char **argv)
 
   Tug::Point start100(10, 570, env100);
   Tug::Point goal100(868, 3, env100);
-
+  
   run_method1(filename100,start100,goal100,100,epsilon);
+  Tug::Polyline sp100 =
   run_method2(env100,start100,goal100,100,epsilon);
   run_method3(env100,start100,goal100,100,epsilon);
 
 
-  std::string filename50 = "/home/rebecca/GITHUB/mast/ros_ws/src/master/environments/env50.txt";
-  Tug::Environment env50 = Tug::Environment(filename50, 1, epsilon);
-
-  Tug::Point start50(10, 570, env50);
-  Tug::Point goal50(868, 3, env50);
-
-  run_method1(filename50,start50,goal50,50,epsilon);
-  run_method2(env50,start50,goal50,50,epsilon);
-  run_method3(env50,start50,goal50,50,epsilon);
-*/
   std::string filename200 = "/home/rebecca/GITHUB/mast/ros_ws/src/master/environments/env200.txt";
   Tug::Environment env200 = Tug::Environment(filename200, 1, epsilon);
 
   Tug::Point start200(10, 570, env200);
   Tug::Point goal200(868, 3, env200);
-
+  
   run_method1(filename200,start200,goal200,200,epsilon);
+  Tug::Polyline sp200 =
   run_method2(env200,start200,goal200,200,epsilon);
   run_method3(env200,start200,goal200,200,epsilon);
+
+
+  env10.save_environment_as_svg("env10.svg", sp10);
+  env20.save_environment_as_svg("env20.svg", sp20);
+  env50.save_environment_as_svg("env50.svg", sp50);
+  env100.save_environment_as_svg("env100.svg", sp100);
+  env200.save_environment_as_svg("env200.svg", sp200);
+
 }
 

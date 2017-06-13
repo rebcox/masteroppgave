@@ -1,3 +1,28 @@
+/**
+ * \file visilibity.cpp
+ * \author Karl J. Obermeyer
+ * \date March 20, 2008
+ * \Modified by Rebecca Cox June 13, 2017
+\remarks
+VisiLibity:  A Floating-Point Visibility Algorithms Library,
+Copyright (C) 2008  Karl J. Obermeyer (karl.obermeyer [ at ] gmail.com)
+
+This file is part of VisiLibity.
+
+VisiLibity is free software: you can redistribute it and/or modify it under
+the terms of the GNU Lesser General Public License as published by the
+Free Software Foundation, either version 3 of the License, or (at your
+option) any later version.
+
+VisiLibity is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with VisiLibity.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #ifndef SHORTEST_PATH_NODE_H
 #define SHORTEST_PATH_NODE_H
 

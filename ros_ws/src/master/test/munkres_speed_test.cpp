@@ -1,10 +1,11 @@
-#include <ros/package.h>
-#include <ros/ros.h>
-
+#include "coordination/tug_assign_paths.hpp"
 #include "geometry/tug_boat.hpp"
 #include "geometry/tug_environment.hpp"
 #include "search/tug_shortest_path.hpp"
-#include "coordination/tug_assign_paths.hpp"
+
+#include <ros/package.h>
+#include <ros/ros.h>
+
 #include <chrono>
 
 int main(int argc, char **argv)
@@ -12,9 +13,9 @@ int main(int argc, char **argv)
   ClipperLib::Paths solution;
   double epsilon = 0.001;
 
-
- // Tug::Environment tug_env("/Users/rebeccacox/GitHub/mast/oppg/environments/ex1tug.txt", 1.0, epsilon);
-  Tug::Environment tug_env("/home/rebecca/GITHUB/mast/oppg/environments/ex1tug.txt", 1.0, epsilon);
+  Tug::Environment tug_env("/home/rebecca/GITHUB/mast/oppg/environments/ex1tug.txt",
+                           1.0, 
+                           epsilon);
 
   std::vector<Tug::Point> start_points;
   start_points.push_back(Tug::Point(60, 60, tug_env));
@@ -28,7 +29,6 @@ int main(int argc, char **argv)
   start_points.push_back(Tug::Point(330 ,320, tug_env));
   start_points.push_back(Tug::Point(5, 318, tug_env));
 
-
   std::vector<Tug::Point> finish_points;
   finish_points.push_back(Tug::Point(318, 320, tug_env));
   finish_points.push_back(Tug::Point(40, 240, tug_env));
@@ -40,8 +40,6 @@ int main(int argc, char **argv)
   finish_points.push_back(Tug::Point(310, 324, tug_env));
   finish_points.push_back(Tug::Point(170, 200, tug_env));
   finish_points.push_back(Tug::Point(50, 290, tug_env));
-
-
 
   std::vector<Tug::Boat> tugs;
 
@@ -67,9 +65,7 @@ int main(int argc, char **argv)
   {
     shortest_paths.push_back(tugs[i].get_path());
   }
-
   tug_env.save_environment_as_svg("speed_test.svg", shortest_paths);
-
 
   return 0;
 }

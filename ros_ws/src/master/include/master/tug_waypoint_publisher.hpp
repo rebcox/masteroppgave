@@ -1,18 +1,17 @@
 #ifndef WAYPOINT_PUBLISHER_H
 #define WAYPOINT_PUBLISHER_H
 
-#include <ros/ros.h>
 #include "tugboat_control/WaypointAvailable.h"
 #include "tugboat_control/AvoidShipCollision.h"
 #include "tugboat_control/Path.h"
 #include "tugboat_control/ClearWaypoint.h"
 #include "tugboat_control/BoatPose.h"
 #include "tugboat_control/Waypoint.h"
-#include "std_msgs/UInt8.h"
 #include "tug_constants.hpp"
 
-
 #include <memory>
+#include <ros/ros.h>
+#include <std_msgs/UInt8.h>
 
 namespace Tug
 {
@@ -26,12 +25,10 @@ namespace Tug
     void set_id(int id){id_ = id;};
     int id() const {return id_;};
     void call_path_around_ship_service(const tugboat_control::Waypoint &start,
-                                     const tugboat_control::Waypoint &finish,
-                                     std::vector<tugboat_control::Waypoint> &result);
+                                       const tugboat_control::Waypoint &finish,
+                                       std::vector<tugboat_control::Waypoint> &result);
 
     tugboat_control::BoatPose get_position(){return newest_pose_;}
-    void wait_at_current_point();
-
     std::vector<tugboat_control::Waypoint> get_path() const {return path_;}
     tugboat_control::Waypoint get_goal(){return path_.back();}
     bool is_waypoint_available(const tugboat_control::Waypoint &pt);
@@ -58,7 +55,6 @@ namespace Tug
 
     ros::ServiceClient client_is_avail;
     ros::ServiceClient client_avoid_ship;
-
   };
 }
 

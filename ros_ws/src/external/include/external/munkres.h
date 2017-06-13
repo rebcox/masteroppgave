@@ -228,8 +228,10 @@ private:
     return false;
   }
 
-  bool pair_in_list(const std::pair<size_t,size_t> &needle, const std::list<std::pair<size_t,size_t> > &haystack) {
-    for ( std::list<std::pair<size_t,size_t> >::const_iterator i = haystack.begin() ; i != haystack.end() ; i++ ) {
+  bool pair_in_list(const std::pair<size_t,size_t> &needle, 
+                    const std::list<std::pair<size_t,size_t> > &haystack) {
+    for ( std::list<std::pair<size_t,size_t> >::const_iterator i = haystack.begin() ;
+                                                         i != haystack.end() ; i++ ) {
       if ( needle == *i ) {
         return true;
       }
@@ -280,7 +282,8 @@ private:
     }
 
   #ifdef DEBUG
-    std::cout << "Munkres matrix has " << covercount << " of " << matrix.minsize() << " Columns covered:" << std::endl;
+    std::cout << "Munkres matrix has " << covercount << " of " << 
+    matrix.minsize() << " Columns covered:" << std::endl;
     std::cout << matrix << std::endl;
   #endif
 
@@ -292,9 +295,11 @@ private:
     /*
     Main Zero Search
 
-     1. Find an uncovered Z in the distance matrix and prime it. If no such zero exists, go to Step 5
+     1. Find an uncovered Z in the distance matrix and prime it. If no such zero exists,
+      go to Step 5
      2. If No Z* exists in the row of the Z', go to Step 4.
-     3. If a Z* exists, cover this row and uncover the column of the Z*. Return to Step 3.1 to find a new Z
+     3. If a Z* exists, cover this row and uncover the column of the Z*.
+      Return to Step 3.1 to find a new Z
     */
     if ( find_uncovered_in_matrix(0, saverow, savecol) ) {
       mask_matrix(saverow,savecol) = PRIME; // prime it.

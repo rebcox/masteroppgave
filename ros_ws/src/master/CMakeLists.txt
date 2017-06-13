@@ -36,3 +36,7 @@ target_link_libraries(tug_node ${catkin_LIBRARIES})
 
 add_executable(current_waypoints_service src/current_waypoints_service.cpp)
 target_link_libraries(current_waypoints_service ${catkin_LIBRARIES})
+
+
+add_executable(test_speed test/test_speed.cpp)
+target_link_libraries(test_speed ${catkin_LIBRARIES})

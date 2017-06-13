@@ -10,7 +10,7 @@ namespace Tug
 	class All_pairs_shortest_path
 	{
 	public:
-		All_pairs_shortest_path( Environment &environment);
+		All_pairs_shortest_path( Environment &env);
     void write_to_file( std::vector<std::vector<int>> &apsp);
 
     std::vector<std::vector<int>> get_apsp_matrix() const {return apsp_;};
@@ -20,8 +20,8 @@ namespace Tug
 	private:
 		std::vector<std::vector<Point>> optimal_paths;
 		double epsilon_ = 0.001;
-    void find_optimal_path_from_all_points_2(Environment &environment, std::map<std::pair<int,int>, int> &apsp);
-    std::vector<std::vector<int>> find_optimal_path_from_all_points(Environment &environment);
+    void find_optimal_path_from_all_points_2(Environment &env, std::map<std::pair<int,int>, int> &apsp);
+    std::vector<std::vector<int>> find_optimal_path_from_all_points(Environment &env);
     std::vector<std::vector<int>> apsp_;
     std::map<std::pair<int,int>, int> apsp2_;
     std::map<std::pair<int,int>, double> apsp_costs_;

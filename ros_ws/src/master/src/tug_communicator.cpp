@@ -2,7 +2,8 @@
 
 namespace Tug
 {
-  Communicator::Communicator( Environment &environment, double scale, double accept_waypoint_radius)
+  Communicator::Communicator( Environment &environment, double scale, 
+                              double accept_waypoint_radius)
   {
     scale_ = scale;
     accept_waypoint_radius_ = accept_waypoint_radius;
@@ -38,7 +39,10 @@ namespace Tug
     return false;
   }
 
-  void Communicator::polyline_to_path_msg(const Tug::Polyline &path, int tug_id, int order_id, tugboat_control::Path &path_msg)
+  void Communicator::polyline_to_path_msg(const Tug::Polyline &path, 
+                                          int tug_id, 
+                                          int order_id, 
+                                          tugboat_control::Path &path_msg)
   {
     path_msg.orderID = order_id;
     path_msg.tugID = tug_id;
@@ -101,7 +105,9 @@ namespace Tug
 
     if (tugs_to_plan_for.size() == 0){return;}
     
-    assigner_ptr_->assign_on_combined_shortest_path(tugs_to_plan_for, end_points_, environment_tug_); 
+    assigner_ptr_->assign_on_combined_shortest_path(tugs_to_plan_for, 
+                                                    end_points_, 
+                                                    environment_tug_); 
     for (int i = 0; i < tugs_to_plan_for.size(); ++i)
     {
       Polyline path = tugs_to_plan_for[i].get_path();
@@ -109,7 +115,8 @@ namespace Tug
       if (path.size() > 0)
       {
         tugboat_control::Path path_msg;
-        polyline_to_path_msg(path, tugs_to_plan_for[i].id(), find_order_id(path.back()), path_msg);
+        polyline_to_path_msg(path, tugs_to_plan_for[i].id(), 
+                             find_order_id(path.back()), path_msg);
 
         try
         {
@@ -156,7 +163,8 @@ namespace Tug
       {
         return;
       }
-      if (pow(end_points_.at(order_id).x() - pt.x(), 2) + pow(end_points_.at(order_id).y() - pt.y(), 2) < 0.05*scale_)
+      if (pow(end_points_.at(order_id).x() - pt.x(), 2) + 
+          pow(end_points_.at(order_id).y() - pt.y(), 2) < 0.05*scale_)
       {
         end_points_.at(order_id) = pt;
         replan_route_for_one_boat(order_id, pt);
@@ -167,7 +175,8 @@ namespace Tug
       for (std::map<int, Boat>::iterator i = tugs_.begin(); i != tugs_.end(); ++i)
       {
         Point pos = i->second.get_position();
-        if (sqrt(pow(pos.x() - pt.x(), 2) + pow(pos.y() - pt.y(), 2)) < accept_waypoint_radius_*scale_)
+        if (sqrt(pow(pos.x() - pt.x(), 2) + pow(pos.y() - pt.y(), 2)) <
+                                         accept_waypoint_radius_*scale_)
         {
           ROS_INFO("A tug is already at goal");
           return;
@@ -182,7 +191,9 @@ namespace Tug
 
   void Communicator::remove_tug_from_control(int tug_id)
   {
-    for (std::vector<int>::iterator i = tugs_under_my_control_.begin(); i != tugs_under_my_control_.end(); ++i)
+    for (std::vector<int>::iterator i = tugs_under_my_control_.begin(); 
+                                    i != tugs_under_my_control_.end(); 
+                                    ++i)
     {
       if (*i == tug_id)
       {
@@ -199,7 +210,9 @@ namespace Tug
 
   int Communicator::find_order_id(const Tug::Point &pt)
   {
-    for (std::map<int,Tug::Point>::iterator i = end_points_.begin(); i != end_points_.end(); ++i)
+    for (std::map<int,Tug::Point>::iterator i = end_points_.begin(); 
+                                            i != end_points_.end(); 
+                                            ++i)
     {
       if (i->second == pt)
       {
@@ -209,7 +222,8 @@ namespace Tug
     return -1;
   }
 
-  void Communicator::remove_end_point_from_planner(const tugboat_control::ClearWaypoint::ConstPtr &msg)
+  void Communicator::remove_end_point_from_planner(
+                            const tugboat_control::ClearWaypoint::ConstPtr &msg)
   {
     try
     {
@@ -253,7 +267,8 @@ namespace Tug
     }
   }
 
-  void Communicator::callback_available_tugs(const std_msgs::UInt8MultiArray::ConstPtr &msg)
+  void Communicator::callback_available_tugs(
+                        const std_msgs::UInt8MultiArray::ConstPtr &msg)
   {
     tugs_under_my_control_.clear();
     for (int i = 0; i < msg->data.size(); ++i)

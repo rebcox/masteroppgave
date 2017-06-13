@@ -1,10 +1,10 @@
-
 #ifndef TUG_BOAT_H
 #define TUG_BOAT_H
 
+#include "tug_environment.hpp"
 #include "tug_point.hpp"
 #include "tug_polyline.hpp"
-#include "tug_environment.hpp"
+
 #include <memory>
 
 namespace Tug

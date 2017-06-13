@@ -10,7 +10,6 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 catkin_package(
- # DEPENDS #geometry search
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS roscpp
@@ -24,12 +23,6 @@ include_directories(
 add_library(${PROJECT_NAME} src/tug_assign_paths.cpp)
 add_dependencies(${PROJECT_NAME} geometry search )
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
-
-if (CATKIN_ENABLE_TESTING)
-  find_package(catkin REQUIRED COMPONENTS geometry search coordination)
-  catkin_add_gtest(uTestCoordination test/test.cpp)
-  target_link_libraries(uTestCoordination ${catkin_LIBRARIES})
-endif()
 
 install(TARGETS ${PROJECT_NAME} 
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

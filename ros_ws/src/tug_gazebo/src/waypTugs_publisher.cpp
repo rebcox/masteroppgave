@@ -1,7 +1,8 @@
-#include "ros/package.h"
-#include "ros/ros.h"
-#include "std_msgs/UInt8MultiArray.h"
 #include "tugboat_control/ClearWaypoint.h"
+
+#include <ros/package.h>
+#include <ros/ros.h>
+#include <std_msgs/UInt8MultiArray.h>
 
 std_msgs::UInt8MultiArray waypTugs_msg;
 
@@ -18,7 +19,6 @@ void callback_clearWaypoint(const tugboat_control::ClearWaypoint::ConstPtr &msg)
       waypTugs_msg.data.push_back(temp.data[i]);
     }
   }
-    
 }
 
 int main(int argc, char **argv)
@@ -41,7 +41,6 @@ int main(int argc, char **argv)
     loop_rate.sleep();
     ros::spinOnce();
   }
-
 
   ros::spin();
   return 0;

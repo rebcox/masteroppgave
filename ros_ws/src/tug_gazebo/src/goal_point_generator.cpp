@@ -1,9 +1,10 @@
-#include "ros/package.h"
-#include "ros/ros.h"
 
 #include "geometry/tug_environment.hpp"
-#include <tugboat_control/Waypoint.h>
-#include <tugboat_control/ClearWaypoint.h>
+#include "tugboat_control/ClearWaypoint.h"
+#include "tugboat_control/Waypoint.h"
+
+#include <ros/package.h>
+#include <ros/ros.h>
 #include <string>
 
 namespace
@@ -48,7 +49,9 @@ int main(int argc, char **argv)
   ros::Rate loop_rate(2);  
   while (ros::ok())
   {
-    for (std::map<int, tugboat_control::Waypoint>::iterator pt = waypoints.begin(); pt != waypoints.end(); ++pt)
+    for (std::map<int, tugboat_control::Waypoint>::iterator pt = waypoints.begin(); 
+                                                            pt != waypoints.end();
+                                                            ++pt)
     {
       pub_goal.publish(pt->second);
     }
