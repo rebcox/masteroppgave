@@ -22,17 +22,13 @@ void update_tug_pose()
   {
     getmodelstate.request.model_name = tug->second.c_str();
     getmodelstate.request.relative_entity_name = "world";
-
     try
     {
       pose_srv.call(getmodelstate);
-
       tugboat_control::BoatPose pose_msg;
       pose_msg.ID = tug->first;
       pose_msg.x = getmodelstate.response.pose.position.x/SCALE;
       pose_msg.y = getmodelstate.response.pose.position.y/SCALE;
-      //ROS_INFO("publised pose for %s", tug->second.c_str());
-
       pub.publish(pose_msg);
     }
     catch(...)
@@ -61,15 +57,11 @@ int main(int argc, char **argv)
   pub = node.advertise<tugboat_control::BoatPose>("pose", 20);
   pose_srv = node.serviceClient<gazebo_msgs::GetModelState>("/gazebo/get_model_state");
 
-  ros::Rate loop_rate(10);
+  ros::Rate loop_rate(12);
   while (ros::ok())
   {
     update_tug_pose();
-   // ROS_ERROR("tugpose sendt");
     loop_rate.sleep();
   }
-
-  //ros::spin();
-
   return 0;
 }

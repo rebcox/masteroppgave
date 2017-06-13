@@ -78,10 +78,14 @@ namespace Tug
 
   bool Waypoint_publisher::is_waypoint_available(const tugboat_control::Waypoint &pt)
   {
+    //Waypoint available service not tested in real test setup
+    if (!SIMULATION)
+    {
+      return true;
+    }
     tugboat_control::WaypointAvailable srv;
     srv.request.waypoint = pt;
     srv.request.tugID = id_;
-
 
     if (client_is_avail.call(srv))
     {
@@ -131,8 +135,6 @@ namespace Tug
       --current_waypoint_index_;
       tugboat_control::ClearWaypoint clear; clear.orderID = order_id_; clear.tugID = id_;
       //wait_at_current_point();
-      //path_.clear();
-      //current_waypoint_index_ = 0;
       arrival_pub.publish(clear);
       is_already_on_hold = false;
       return false;
@@ -151,23 +153,23 @@ namespace Tug
     {
       ROS_WARN("Tug %d arrived at a waypoint", id_);
 
-     // if (is_waypoint_available(path_[current_waypoint_index_]))
-     //s {
+      if (is_waypoint_available(path_[current_waypoint_index_]))
+      {
         publish_current_waypoint();
         is_already_on_hold = false;
         return true;
-      /*}
+      }
       else
       {
         --current_waypoint_index_;
         if (!is_already_on_hold)
         {
           ROS_WARN("Tug %d on hold", id_);
-          wait_at_current_point();
+          //wait_at_current_point();
           is_already_on_hold = true;
         }
         return false;
-      } */
+      } 
     }
   }
 }

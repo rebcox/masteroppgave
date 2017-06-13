@@ -63,14 +63,13 @@ void callback_waypoint(const tugboat_control::Waypoint::ConstPtr &msg)
 
     update_tug_pose();
       
-    ros::Rate loop_rate(6);
-    //ROS_INFO("current goal: (%f, %f)", current_goal.position.x, current_goal.position.y);
+    ros::Rate loop_rate(4);
     
     while(get_distance(tug_pose, current_goal) > distance_tolerance)
     {
       double speed_x = (current_goal.position.x - tug_pose.position.x);
       double speed_y = (current_goal.position.y - tug_pose.position.y);
-      double norm_const = speed_x+speed_y;
+      double norm_const = sqrt(pow(speed_x,2)+pow(speed_y,2));
 
       vel_msg.linear.x = speed*speed_x/norm_const;
       vel_msg.linear.y = speed*speed_y/norm_const;
@@ -80,14 +79,13 @@ void callback_waypoint(const tugboat_control::Waypoint::ConstPtr &msg)
       state_msg.pose = tug_pose;
 
       state_pub.publish(state_msg);
-      loop_rate.sleep();
-      update_tug_pose();
       ros::spinOnce(); //check if current_goal is updated
+      loop_rate.sleep();
+      ros::spinOnce(); //check if current_goal is updated
+      update_tug_pose();
     } 
     
     stop_moving();
-    update_tug_pose();
-
   }
 }
 
@@ -119,16 +117,10 @@ int main(int argc, char** argv){
 
   state_pub = node.advertise<gazebo_msgs::ModelState>("/gazebo/set_model_state", 100);
 
-  //start_moving(2, 0.5);
 
 
-  //sleep(5);
-  
-  /*geometry_msgs::Pose goal_pose;
-  goal_pose.position.x = 7;
-  goal_pose.position.y = 7;
-  move_to(goal_pose, 3, 0.1);
-*/
+
+
   ros::spin();
  
   return 0;
