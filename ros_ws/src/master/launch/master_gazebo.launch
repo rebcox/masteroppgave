@@ -1,0 +1,11 @@
+<launch>
+  <include file="$(find tug_gazebo)/launch/init_tugs.launch"> </include>
+  <node pkg="tug_gazebo" type="goal_point_generator" name="goal_point_generator" /> 
+  <node pkg="tug_gazebo" type="tug_location_publisher" 
+  		name="tug_location_publisher" args="tug1 1 tug2 2" output="screen"/> 
+  <node pkg="tug_gazebo" type="waypTugs_publisher" 
+  		name="waypTugs_publisher" output="screen"/>  
+  <node pkg="tug_gazebo" type="tug_startup_publisher" name="tug_startup_publisher" /> 
+  <node pkg="master" type="master_node" name="master" output="screen"/>
+
+</launch>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package>
+  <name>external</name>
+  <version>0.0.0</version>
+  <description>The external package</description>
+
+  <maintainer email="rebcoxx@gmail.com">Rebecca Cox</maintainer>
+
+  <license>BSD GNU Boost</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+
+  <run_depend>roscpp</run_depend>
+
+</package>

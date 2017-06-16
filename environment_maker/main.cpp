@@ -13,7 +13,7 @@ struct PointsAndImage
 
 bool is_listed_clockwise(const std::vector<cv::Point> &points)
 {
-  //Shoelace formula
+  //Shoelace formula. Returns true if points are listed clockwise in a regular cartesian coordinate system
   int n_points = points.size();
   int sum = 0;
 
@@ -90,10 +90,10 @@ void callBackFunc(int event, int x, int y, int flags, void* userdata)
   }
 }
 
-void write_environment_to_file(const std::vector<std::vector<cv::Point>> &obstacles)
+void write_environment_to_file(const std::vector<std::vector<cv::Point>> &obstacles, const std::string &filename)
 {
   std::ofstream file_output;
-  file_output.open ("environment.txt");
+  file_output.open (filename);
   for (int i = 0; i < obstacles.size(); i++)
   {
     for (int j = 0; j < obstacles[i].size(); ++j)
@@ -105,10 +105,29 @@ void write_environment_to_file(const std::vector<std::vector<cv::Point>> &obstac
 
   file_output.close();
 }
+void make_outer_boundary(const cv::Point &bottom_left, const cv::Point &upper_right, PointsAndImage &points_and_image)
+{
+  //Screen coordinates
+  int x_min = bottom_left.x; 
+  int x_max = upper_right.x; 
+  int y_max = bottom_left.y; 
+  int y_min = upper_right.y; 
+
+  std::vector<cv::Point> points;
+  //Outer boundary must be listet counter clockwise, that is clockwise in screen coordinates
+  points.push_back(cv::Point(x_min,y_min));
+  points.push_back(cv::Point(x_max,y_min));
+  points.push_back(cv::Point(x_max,y_max));
+  points.push_back(cv::Point(x_min,y_max));
+
+  points_and_image.obstacles.clear();
+  points_and_image.obstacles.push_back(points);
+
+}
 
 int main(int argc, char** argv)
 {
-  cv::Mat img = cv::imread("map.jpg");
+  cv::Mat img = cv::imread("/home/sondre/demo_env.png");
 
   if ( img.empty() ) 
   { 
@@ -116,13 +135,27 @@ int main(int argc, char** argv)
       return -1; 
   }
 
-  cv::namedWindow("Map", 1);
+ // float hw = (float)img.cols/img.rows;
+  float hw = (float)img.rows/img.cols;
+
+  //cv::resize(img, img, cv::Size(900, round(900*hw)));
+  cv::namedWindow("Map", cv::WINDOW_NORMAL);
+  //cv::resizeWindow("Map", img.cols/2, img.rows/2); //600, round((1754/2479)*600));
   cv::imshow("Map", img);
+
+/*
+resize(image, image, Size(image.cols/2, image.rows/2)); // to half size or even smaller
+namedWindow( "Display frame",CV_WINDOW_AUTOSIZE);
+imshow("Display frame", image);
+*/
+
 
   PointsAndImage points_and_image;
   points_and_image.image = img;
 
   cv::setMouseCallback("Map", callBackFunc, &points_and_image);
+  
+  std::cout << "Choose bottom left and top right corner of outer boundary" << std::endl;
 
   while(1)
   {
@@ -130,15 +163,11 @@ int main(int argc, char** argv)
     if(key==27) break;
     else if (key==13)
     {
-      //First obstacle (outer boundary) must be listet counter clockwise
       if (points_and_image.obstacles.size()==1)
       {
-        if (is_listed_clockwise(points_and_image.obstacles.back()))
-        {
-          std::reverse(points_and_image.obstacles.back().begin(), points_and_image.obstacles.back().end());
-        }
-      }//All other obstacles must be listed clockwise
-      else if(!is_listed_clockwise(points_and_image.obstacles.back()))
+        make_outer_boundary(points_and_image.obstacles[0][0], points_and_image.obstacles[0][1], points_and_image);
+      }//All obstacles must be listed clockwise
+      else if(points_and_image.obstacles.size()>1 && !is_listed_clockwise(points_and_image.obstacles.back()))
       {
         std::reverse(points_and_image.obstacles.back().begin(), points_and_image.obstacles.back().end());
       }
@@ -149,8 +178,8 @@ int main(int argc, char** argv)
     }
   }             
 
-  write_environment_to_file(points_and_image.obstacles);
-  std::cout << "yeess" << std::endl;
+  write_environment_to_file(points_and_image.obstacles, "environment.txt");
+  std::cout << "Environment saved to file" << std::endl;
 
   return 0;
 }

@@ -1,0 +1,4 @@
+Waypoint waypoint
+uint8 tugID
+---
+std_msgs/Bool ans

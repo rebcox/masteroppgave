@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package>
+  <name>search</name>
+  <version>0.0.0</version>
+  <description>The search package</description>
+
+  <maintainer email="rebcoxx@gmail.com">Rebecca Cox</maintainer>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>external</build_depend>
+  <build_depend>geometry</build_depend>
+  <build_depend>cmake_modules</build_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>external</run_depend>
+  <run_depend>geometry</run_depend>
+
+</package>
