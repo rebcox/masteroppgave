@@ -6,15 +6,24 @@
   </include>
   
   <node name="spawn_tug1" pkg="gazebo_ros" type="spawn_model" args="-file $(find tug_description)/urdf/tug.urdf -urdf -x 0 -y 12 -z 1 -model tug1" />
-
   <node name="spawn_tug2" pkg="gazebo_ros" type="spawn_model" args="-file $(find tug_description)/urdf/tug.urdf -urdf -x 0 -y 0 -z 1 -model tug2" />
+  <node name="spawn_tug3" pkg="gazebo_ros" type="spawn_model" args="-file $(find tug_description)/urdf/tug.urdf -urdf -x 12 -y 0 -z 1 -model tug3" />
+  <node name="spawn_tug4" pkg="gazebo_ros" type="spawn_model" args="-file $(find tug_description)/urdf/tug.urdf -urdf -x 20 -y 5 -z 1 -model tug4" />
+  <node name="spawn_tug5" pkg="gazebo_ros" type="spawn_model" args="-file $(find tug_description)/urdf/tug.urdf -urdf -x 10 -y 55 -z 1 -model tug5" />
+  <node name="spawn_tug6" pkg="gazebo_ros" type="spawn_model" args="-file $(find tug_description)/urdf/tug.urdf -urdf -x 40 -y 10 -z 1 -model tug6" />
 
   <node pkg="tug_gazebo" type="tug_state_publisher"
       args="tug1 1" name="tug1_state_publisher" output="screen"/>
-
   <node pkg="tug_gazebo" type="tug_state_publisher"
       args="tug2 2" name="tug2_state_publisher" output="screen"/>
-  
+  <node pkg="tug_gazebo" type="tug_state_publisher"
+      args="tug3 3" name="tug3_state_publisher" output="screen"/>
+  <node pkg="tug_gazebo" type="tug_state_publisher"
+      args="tug4 4" name="tug4_state_publisher" output="screen"/>
+  <node pkg="tug_gazebo" type="tug_state_publisher"
+      args="tug5 5" name="tug5_state_publisher" output="screen"/>
+  <node pkg="tug_gazebo" type="tug_state_publisher"
+      args="tug6 6" name="tug6_state_publisher" output="screen"/>
 
 
 </launch>

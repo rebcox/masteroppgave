@@ -10,7 +10,6 @@ namespace Tug
     environment_tug_ = environment;
     tug_arrived_pub = node_.advertise<tugboat_control::ClearWaypoint>("clearWaypoint", 20);
     path_pub = node_.advertise<tugboat_control::Path>("paths", 20);
-    goal_point_pub = node_.advertise<tugboat_control::Waypoint>("goal_point_updater",20);
     assigner_ptr_ = std::make_shared<Assign_paths>(environment);
   }
 

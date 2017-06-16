@@ -53,7 +53,6 @@ namespace Tug
 	  ros::Publisher tug_arrived_pub;
 	  ros::Publisher ship_waypoint_pub;
 	  ros::Publisher path_pub;
-	  ros::Publisher goal_point_pub;
 
 	  std::map<int, Tug::Boat> tugs_;
 	  std::map<int, Tug::Point> end_points_;

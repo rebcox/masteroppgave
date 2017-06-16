@@ -73,7 +73,7 @@ int main(int argc, char **argv)
   newest_pose_msg_ .o = 0; 
   ros::Subscriber sub_shipPose = node.subscribe("shipPose", 1, callback_ship_pose);
 
-  ros::ServiceServer service = node.advertiseService("avoid_ship_collision", find_path);
+  ros::ServiceServer service = node.advertiseService("avoidShipCollision", find_path);
 
 
   ros::NodeHandle node_;

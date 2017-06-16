@@ -41,9 +41,20 @@ int main(int argc, char **argv)
   pt2.x = 2.5;
   pt2.y = 1.75;
 
+  tugboat_control::Waypoint pt3;
+  pt3.ID = 33;
+  pt3.x = 2;
+  pt3.y = 1.25;
+
+  tugboat_control::Waypoint pt4;
+  pt4.ID = 44;
+  pt4.x = 2.375;
+  pt4.y = 1.125;
+
   waypoints.insert(std::pair<int, tugboat_control::Waypoint>(pt1.ID, pt1));
   waypoints.insert(std::pair<int, tugboat_control::Waypoint>(pt2.ID, pt2));
-
+  waypoints.insert(std::pair<int, tugboat_control::Waypoint>(pt3.ID, pt3));
+  waypoints.insert(std::pair<int, tugboat_control::Waypoint>(pt4.ID, pt4));
 
 
   ros::Rate loop_rate(2);  

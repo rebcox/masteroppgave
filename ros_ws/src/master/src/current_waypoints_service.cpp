@@ -57,7 +57,7 @@ int main(int argc, char **argv)
   ros::NodeHandle node;
 
   ros::Subscriber sub = node.subscribe("waypoint", 20, set_waypoint);
-  ros::ServiceServer service = node.advertiseService("is_waypoint_available", check);
+  ros::ServiceServer service = node.advertiseService("isWaypointAvailable", check);
 
   ros::spin();
   return 0;

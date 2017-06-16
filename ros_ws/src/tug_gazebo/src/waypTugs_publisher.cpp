@@ -33,6 +33,11 @@ int main(int argc, char **argv)
 
   waypTugs_msg.data.push_back(1);
   waypTugs_msg.data.push_back(2);
+  waypTugs_msg.data.push_back(3);
+  waypTugs_msg.data.push_back(4);
+  waypTugs_msg.data.push_back(5);
+  waypTugs_msg.data.push_back(6);
+
 
   ros::Rate loop_rate(1);  
   while (ros::ok())

@@ -12,9 +12,9 @@ namespace Tug
     arrival_pub = node_.advertise<tugboat_control::ClearWaypoint>
                                 ("clearSingleWaypoint", 20);
     client_is_avail = node_.serviceClient<tugboat_control::WaypointAvailable>
-                                        ("is_waypoint_available");
+                                        ("isWaypointAvailable");
     client_avoid_ship = node_.serviceClient<tugboat_control::AvoidShipCollision>
-                                          ("avoid_ship_collision");
+                                          ("avoidShipCollision");
   }
 
   void Waypoint_publisher::update_position(const tugboat_control::BoatPose::ConstPtr& msg)
